@@ -16,7 +16,10 @@ const signup = (req, res, next) => {
       return next(err);
     }
 
-    passport.authenticate('local')(req, res, () => res.json(user));
+    req.login(user, err => {
+      if (err) next(err);
+      res.json(user);
+    });
   });
 };
 
