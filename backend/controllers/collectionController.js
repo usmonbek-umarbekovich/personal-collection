@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Collection = require('../models/collectionModel');
+const notFoundError = require('../helpers/notFoundError');
 
 /**
  * @desc Get collections
@@ -7,10 +8,10 @@ const Collection = require('../models/collectionModel');
  * @access Public
  */
 const getCollections = asyncHandler(async (req, res) => {
-  let collection;
+  let collections;
   const { term } = req.query;
   if (!term) {
-    collection = await Collection.find({});
+    collections = await Collection.find({});
   } else {
     const pipeline = [
       {
@@ -24,10 +25,10 @@ const getCollections = asyncHandler(async (req, res) => {
         },
       },
     ];
-    collection = await Collection.aggregate(pipeline);
+    collections = await Collection.aggregate(pipeline);
   }
 
-  res.status(200).json(collection);
+  res.status(200).json(collections);
 });
 
 /**
@@ -46,7 +47,12 @@ const getOwnCollections = asyncHandler(async (req, res) => {
  * @access Private
  */
 const createCollection = asyncHandler(async (req, res) => {
-  const { name, topic, description, picture } = req.body;
+  const { name, topic, description, picture, ...additional } = req.body;
+
+  Object.entries(additional).forEach(([key, value]) => {
+    const obj = { [key]: eval(value) };
+    Collection.schema.path('items').schema.add(obj);
+  });
 
   const collection = await Collection.create({
     user: req.user._id,
@@ -66,11 +72,7 @@ const createCollection = asyncHandler(async (req, res) => {
  */
 const updateCollection = asyncHandler(async (req, res) => {
   const collection = await Collection.findById(req.params.id);
-
-  if (!collection) {
-    res.status(400);
-    throw new Error('Collection not found');
-  }
+  if (!collection) notFoundError(res, 'Collection');
 
   const updatedCollection = await Collection.findByIdAndUpdate(
     req.params.id,
@@ -88,16 +90,12 @@ const updateCollection = asyncHandler(async (req, res) => {
  */
 const deleteCollection = asyncHandler(async (req, res) => {
   const collection = await Collection.findById(req.params.id);
-
-  if (!collection) {
-    res.status(400);
-    throw new Error('collection not found');
-  }
+  if (!collection) notFoundError(res, 'Collection');
 
   await collection.remove();
 
   res.status(200).json({ id: req.params.id });
-});
+})
 
 module.exports = {
   getCollections,
