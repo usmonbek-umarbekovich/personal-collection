@@ -19,4 +19,7 @@ router.put('/:id', ensureLoggedIn, updateCollection);
 router.delete('/:id', ensureLoggedIn, deleteCollection);
 router.get('/me', ensureLoggedIn, getOwnCollections);
 
+// collection items routes
+router.use('/:colId/item', require('./itemRoutes'));
+
 module.exports = router;
