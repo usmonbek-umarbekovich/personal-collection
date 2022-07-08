@@ -6,21 +6,38 @@ const Collection = require('../models/collectionModel');
  * @route GET /api/collections
  * @access Public
  */
-const getCollections = asyncHandler(async (req, res, next) => {
-  const { term = '' } = req.query;
-  const collection = await Collection.aggregate([
-    {
-      $search: {
-        index: "searchIndex",
-        text: {
-          query: term,
-          path: { wildcard: '*' },
-          fuzzy: {},
+const getCollections = asyncHandler(async (req, res) => {
+  let collection;
+  const { term } = req.query;
+  if (!term) {
+    collection = await Collection.find({});
+  } else {
+    const pipeline = [
+      {
+        $search: {
+          index: 'searchIndex',
+          text: {
+            query: term,
+            path: { wildcard: '*' },
+            fuzzy: {},
+          },
         },
       },
-    },
-  ]);
+    ];
+    collection = await Collection.aggregate(pipeline);
+  }
+
   res.status(200).json(collection);
+});
+
+/**
+ * @desc Get user's collections
+ * @route Get /api/collections/me
+ * @access Private
+ */
+const getOwnCollections = asyncHandler(async (req, res) => {
+  const collections = await Collection.where('user').equals(req.user._id);
+  res.status(200).json(collections);
 });
 
 /**
@@ -84,6 +101,7 @@ const deleteCollection = asyncHandler(async (req, res) => {
 
 module.exports = {
   getCollections,
+  getOwnCollections,
   createCollection,
   updateCollection,
   deleteCollection,

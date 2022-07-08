@@ -2,6 +2,7 @@ const express = require('express');
 const ensureLoggedIn = require('../middlewares/ensureLoggedIn');
 const {
   getCollections,
+  getOwnCollections,
   createCollection,
   updateCollection,
   deleteCollection,
@@ -16,5 +17,6 @@ router.get('/', getCollections);
 router.post('/', ensureLoggedIn, createCollection);
 router.put('/:id', ensureLoggedIn, updateCollection);
 router.delete('/:id', ensureLoggedIn, deleteCollection);
+router.get('/me', ensureLoggedIn, getOwnCollections);
 
 module.exports = router;
