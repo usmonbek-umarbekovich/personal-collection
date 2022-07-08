@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 
-const schema = mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     name: {
       first: {
@@ -17,6 +17,7 @@ const schema = mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
     },
     lastSeen: {
       type: Date,
