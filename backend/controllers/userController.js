@@ -28,8 +28,18 @@ const signup = (req, res, next) => {
  * @route POST /api/users/login
  * @access Public
  */
-const login = (req, res) => {
-  passport.authenticate('local')(req, res, () => res.json(req.user));
+const login = (req, res, next) => {
+  passport.authenticate('local', (_, user, err) => {
+    if (err) {
+      res.status(401);
+      return next(err);
+    }
+
+    req.login(user, err => {
+      if (err) next(err);
+      res.json(user);
+    });
+  })(req, res, () => res.json(req.user));
 };
 
 /**

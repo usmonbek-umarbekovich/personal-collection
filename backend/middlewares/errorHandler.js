@@ -1,6 +1,6 @@
 const errorHandler = (err, req, res, next) => {
   if (res.statusCode === 200) {
-    res.status(400)
+    res.status(400);
   }
   res.status(res.statusCode);
 
