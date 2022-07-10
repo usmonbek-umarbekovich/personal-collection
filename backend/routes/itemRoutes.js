@@ -5,6 +5,7 @@ const {
   createItem,
   updateItem,
   deleteItem,
+  likeOrUnlikeItem,
 } = require('../controllers/itemController');
 const {
   getComments,
@@ -24,6 +25,10 @@ router
   .get(getItem)
   .put(ensureLoggedIn, updateItem)
   .delete(ensureLoggedIn, deleteItem);
+
+router
+  .route('/:id/like')
+  .post(ensureLoggedIn, likeOrUnlikeItem);
 
 // comment routes
 router
