@@ -10,13 +10,18 @@ const {
 
 const router = express.Router();
 
-// public routes
-router.get('/', getCollections);
+router
+  .route('/')
+  .get(getCollections)
+  .post(ensureLoggedIn, createCollection);
 
-// private routes
-router.post('/', ensureLoggedIn, createCollection);
-router.put('/:id', ensureLoggedIn, updateCollection);
-router.delete('/:id', ensureLoggedIn, deleteCollection);
-router.get('/me', ensureLoggedIn, getOwnCollections);
+router
+  .route('/:id')
+  .put(ensureLoggedIn, updateCollection)
+  .delete(ensureLoggedIn, deleteCollection);
+
+router
+  .route('/me')
+  .get(ensureLoggedIn, getOwnCollections);
 
 module.exports = router;
