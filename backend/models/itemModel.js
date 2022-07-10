@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema(
   {
-    collection: {
-      type: mongoose.SchemaTypes.ObjectId,
+    collectionId: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'Collection',
+      immutable: true,
     },
     name: {
       type: String,
@@ -14,9 +15,10 @@ const schema = new mongoose.Schema(
     comments: [
       {
         user: {
-          type: mongoose.SchemaTypes.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
           required: true,
           ref: 'User',
+          immutable: true,
         },
         date: {
           type: Date,
@@ -29,9 +31,10 @@ const schema = new mongoose.Schema(
     likes: [
       {
         user: {
-          type: mongoose.SchemaTypes.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
           required: true,
           ref: 'User',
+          immutable: true,
         },
       },
     ],

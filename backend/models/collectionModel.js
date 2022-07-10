@@ -3,9 +3,10 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema(
   {
     user: {
-      type: mongoose.SchemaTypes.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'User',
+      immutable: true,
     },
     name: {
       type: String,

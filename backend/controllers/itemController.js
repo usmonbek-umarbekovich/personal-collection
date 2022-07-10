@@ -9,7 +9,7 @@ const notFoundError = require('../helpers/notFoundError');
  * @access Public
  */
 const getItem = asyncHandler(async (req, res) => {
-  const item = Item.findById(req.params.id);
+  const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
   res.status(200).json(item);
@@ -21,7 +21,7 @@ const getItem = asyncHandler(async (req, res) => {
  * @access Private
  */
 const createItem = asyncHandler(async (req, res) => {
-  const collection = await Collection.findById(req.body.collection);
+  const collection = await Collection.findById(req.body.collectionId);
   if (!collection) notFoundError(res, 'Collection');
 
   const item = await Item.create(req.body);
@@ -35,7 +35,7 @@ const createItem = asyncHandler(async (req, res) => {
  * @access Private
  */
 const updateItem = asyncHandler(async (req, res) => {
-  const item = Item.findById(req.params.id);
+  const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
   Object.assign(item, req.body);
@@ -50,7 +50,7 @@ const updateItem = asyncHandler(async (req, res) => {
  * @access Private
  */
 const deleteItem = asyncHandler(async (req, res) => {
-  const item = Item.findById(req.params.id);
+  const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
   await item.remove();

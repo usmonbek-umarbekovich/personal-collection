@@ -47,12 +47,7 @@ const getOwnCollections = asyncHandler(async (req, res) => {
  * @access Private
  */
 const createCollection = asyncHandler(async (req, res) => {
-  const { name, topic, description, picture, ...additional } = req.body;
-
-  Object.entries(additional).forEach(([key, value]) => {
-    const obj = { [key]: eval(value) };
-    Collection.schema.path('items').schema.add(obj);
-  });
+  const { name, topic, description, picture } = req.body;
 
   const collection = await Collection.create({
     user: req.user._id,
