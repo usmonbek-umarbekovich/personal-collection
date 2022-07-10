@@ -95,7 +95,7 @@ const deleteCollection = asyncHandler(async (req, res) => {
   await collection.remove();
 
   res.status(200).json({ id: req.params.id });
-})
+});
 
 module.exports = {
   getCollections,

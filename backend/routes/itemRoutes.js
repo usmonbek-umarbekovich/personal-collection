@@ -7,14 +7,14 @@ const {
   deleteItem,
 } = require('../controllers/itemController');
 
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 
 // public routes
-router.get('/:itemId', getItem);
+router.get('/:id', getItem);
 
 // private routes
 router.post('/', ensureLoggedIn, createItem);
-router.put('/:itemId', ensureLoggedIn, updateItem);
-router.delete('/:itemId', ensureLoggedIn, deleteItem);
+router.put('/:id', ensureLoggedIn, updateItem);
+router.delete('/:id', ensureLoggedIn, deleteItem);
 
 module.exports = router;
