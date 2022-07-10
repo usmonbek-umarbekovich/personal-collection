@@ -6,15 +6,31 @@ const {
   updateItem,
   deleteItem,
 } = require('../controllers/itemController');
+const {
+  getComments,
+  createComment,
+  updateComment,
+  deleteComment,
+} = require('../controllers/commentController');
 
 const router = express.Router();
 
-// public routes
-router.get('/:id', getItem);
+router
+  .route('/')
+  .post(ensureLoggedIn, createItem);
 
-// private routes
-router.post('/', ensureLoggedIn, createItem);
-router.put('/:id', ensureLoggedIn, updateItem);
-router.delete('/:id', ensureLoggedIn, deleteItem);
+router
+  .route('/:id')
+  .get(getItem)
+  .put(ensureLoggedIn, updateItem)
+  .delete(ensureLoggedIn, deleteItem);
+
+// comment routes
+router
+  .route('/:id/comments')
+  .get(getComments)
+  .post(ensureLoggedIn, createComment)
+  .put(ensureLoggedIn, updateComment)
+  .delete(ensureLoggedIn, deleteComment);
 
 module.exports = router;
