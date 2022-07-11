@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import Stack from 'react-bootstrap/Stack';
 import UserInfoProvider from './contexts/userInfoContext';
-import Header from './components/Header';
+import Navigation from './components/Navigation';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -12,7 +12,7 @@ function App() {
   return (
     <Stack className="min-vh-100">
       <UserInfoProvider>
-        <Header />
+        <Navigation />
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
