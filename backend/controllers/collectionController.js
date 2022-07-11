@@ -8,25 +8,11 @@ const notFoundError = require('../helpers/notFoundError');
  * @access Public
  */
 const getCollections = asyncHandler(async (req, res) => {
-  let collections;
-  const { term } = req.query;
-  if (!term) {
-    collections = await Collection.find({});
-  } else {
-    const pipeline = [
-      {
-        $search: {
-          index: 'searchIndex',
-          text: {
-            query: term,
-            path: { wildcard: '*' },
-            fuzzy: {},
-          },
-        },
-      },
-    ];
-    collections = await Collection.aggregate(pipeline);
-  }
+  const { limit, ...sortBy } = req.query;
+  const collections = await Collection.find({})
+    .sort(sortBy)
+    .limit(+limit)
+    .populate('user', 'name picture _id');
 
   res.status(200).json(collections);
 });

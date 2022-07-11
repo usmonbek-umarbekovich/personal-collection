@@ -18,6 +18,9 @@ const schema = new mongoose.Schema(
     },
     description: String,
     picture: Buffer,
+    meta: {
+      numItems: { type: Number, default: 0 },
+    },
   },
   { timestamps: true }
 );

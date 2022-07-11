@@ -1,6 +1,12 @@
+import Showcase from '../components/Showcase';
+import Collections from '../components/Collections';
+
 function Dashboard() {
   return (
-    <div>Dashboard</div>
-  )
+    <>
+      <Showcase />
+      <Collections />
+    </>
+  );
 }
-export default Dashboard
+export default Dashboard;

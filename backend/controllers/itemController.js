@@ -25,6 +25,8 @@ const createItem = asyncHandler(async (req, res) => {
   if (!collection) notFoundError(res, 'Collection');
 
   const item = await Item.create(req.body);
+  collection.meta.numItems++;
+  await collection.save();
 
   res.status(200).json(item);
 });
@@ -53,7 +55,12 @@ const deleteItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
+  const collection = await Collection.findById(item.collectionId);
+
   await item.remove();
+
+  collection.meta.numItems--;
+  await collection.save();
 
   res.status(200).json({ id: req.params.id });
 });
