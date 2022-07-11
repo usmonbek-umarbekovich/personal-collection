@@ -1,0 +1,14 @@
+li {
+  list-style: none;
+}
+
+@media (min-width: 992px) {
+  .search-form {
+    width: 25%;
+    transition: 0.3s ease-in-out;
+  }
+
+  .search-form:focus-within {
+    width: 50%;
+  }
+}
