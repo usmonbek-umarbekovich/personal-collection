@@ -19,6 +19,7 @@ function Login() {
       loginUser(values).then(() => setSubmitting(false));
     },
     validateOnBlur: false,
+    validateOnChange: false,
   });
 
   return (
