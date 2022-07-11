@@ -34,13 +34,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-class UserClass {
-  get fullName() {
-    return `${this.name.first} ${this.name.last}`;
-  }
-}
-
-schema.loadClass(UserClass);
 schema.plugin(passportLocalMongoose, {
   usernameField: 'email',
   selectFields: ['name', 'email', '_id'],
