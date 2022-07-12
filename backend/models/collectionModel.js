@@ -14,10 +14,10 @@ const schema = new mongoose.Schema(
     },
     topic: {
       type: String,
+      lowercase: true,
       required: [true, 'Please choose a topic for your collection'],
     },
     description: String,
-    picture: Buffer,
     meta: {
       numItems: { type: Number, default: 0 },
     },

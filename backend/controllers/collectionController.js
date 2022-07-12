@@ -18,6 +18,16 @@ const getCollections = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc Get collection topics
+ * @route GET /api/collections/topics
+ * @access Public
+ */
+const getCollectionTopics = asyncHandler(async (req, res) => {
+  const topics = await Collection.find({}).select('topic').distinct('topic');
+  res.status(200).json(topics);
+});
+
+/**
  * @desc Get user's collections
  * @route Get /api/collections/me
  * @access Private
@@ -33,14 +43,13 @@ const getOwnCollections = asyncHandler(async (req, res) => {
  * @access Private
  */
 const createCollection = asyncHandler(async (req, res) => {
-  const { name, topic, description, picture } = req.body;
+  const { name, topic, description } = req.body;
 
   const collection = await Collection.create({
     user: req.user._id,
     name,
     topic,
     description,
-    picture,
   });
 
   res.status(200).json(collection);
@@ -81,6 +90,7 @@ const deleteCollection = asyncHandler(async (req, res) => {
 module.exports = {
   getCollections,
   getOwnCollections,
+  getCollectionTopics,
   createCollection,
   updateCollection,
   deleteCollection,

@@ -3,6 +3,7 @@ const ensureLoggedIn = require('../middlewares/ensureLoggedIn');
 const {
   getCollections,
   getOwnCollections,
+  getCollectionTopics,
   createCollection,
   updateCollection,
   deleteCollection,
@@ -23,5 +24,9 @@ router
 router
   .route('/me')
   .get(ensureLoggedIn, getOwnCollections);
+
+router
+  .route('/topics')
+  .get(getCollectionTopics);
 
 module.exports = router;
