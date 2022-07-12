@@ -49,6 +49,18 @@ const getOwnCollections = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc Get single collection
+ * @route GET /api/collections/single/:id
+ * @access Public
+ */
+const getSingleCollection = asyncHandler(async (req, res) => {
+  const collection = await Collection.findById(req.params.id);
+  if (!collection) notFoundError(res, 'Collection');
+
+  res.status(200).json(collection);
+});
+
+/**
  * @desc Create collection
  * @route POST /api/collections
  * @access Private
@@ -102,6 +114,7 @@ module.exports = {
   getCollections,
   getOwnCollections,
   getCollectionTopics,
+  getSingleCollection,
   createCollection,
   updateCollection,
   deleteCollection,

@@ -4,6 +4,7 @@ const {
   getCollections,
   getOwnCollections,
   getCollectionTopics,
+  getSingleCollection,
   createCollection,
   updateCollection,
   deleteCollection,
@@ -28,5 +29,9 @@ router
 router
   .route('/topics')
   .get(getCollectionTopics);
+
+router
+  .route('/single/:id')
+  .get(getSingleCollection);
 
 module.exports = router;

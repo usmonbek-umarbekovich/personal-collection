@@ -1,6 +1,8 @@
 export const getFullName = name => `${name.first} ${name.last}`;
 
 export const capitalize = str => {
+  if (!str) return str;
+  
   return str
     .split(' ')
     .map(word => `${word[0].toUpperCase()}${word.slice(1).toLowerCase()}`)
