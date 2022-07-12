@@ -23,7 +23,14 @@ const getCollections = asyncHandler(async (req, res) => {
  * @access Public
  */
 const getCollectionTopics = asyncHandler(async (req, res) => {
-  const topics = await Collection.find({}).select('topic').distinct('topic');
+  const { skip, limit } = req.query;
+
+  let topics = await Collection.find({})
+    .limit(limit)
+    .skip(skip)
+    .select('topic');
+
+  topics = topics.map(t => t.topic);
   res.status(200).json(topics);
 });
 
@@ -33,7 +40,11 @@ const getCollectionTopics = asyncHandler(async (req, res) => {
  * @access Private
  */
 const getOwnCollections = asyncHandler(async (req, res) => {
-  const collections = await Collection.where('user').equals(req.user._id);
+  const { skip, limit } = req.query;
+  const collections = await Collection.where('user')
+    .equals(req.user._id)
+    .limit(limit)
+    .skip(skip);
   res.status(200).json(collections);
 });
 

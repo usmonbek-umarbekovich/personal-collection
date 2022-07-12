@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import itemService from '../services/itemService';
 import collectionService from '../services/collectionService';
+import useLazyLoad from '../hooks/useLazyLoad';
 import { capitalize } from '../helpers';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -14,34 +15,45 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 function CreateItemPage() {
-  const [savedTags, setSavedTags] = useState([]);
-  const [savedCollections, setSavedCollections] = useState([]);
+  const [tagSkip, setTagSkip] = useState(0);
+  const [colSkip, setColSkip] = useState(0);
+
+  let [savedTags, tagLoading, tagHasMore] = useLazyLoad(
+    10,
+    tagSkip,
+    itemService.getTags
+  );
+  let [savedCollections, colLoading, colHasMore] = useLazyLoad(
+    5,
+    colSkip,
+    collectionService.getOwnCollections
+  );
+
+  savedTags = savedTags.map(tag => {
+    return {
+      value: tag.name,
+      label: tag.name,
+    };
+  });
+  savedCollections = savedCollections.map(col => {
+    return {
+      value: col._id,
+      label: capitalize(col.name),
+    };
+  });
 
   const { user } = useUserInfo();
   const navigate = useNavigate();
 
   useEffect(() => {
-    itemService.getTags().then(data => {
-      setSavedTags(
-        data.map(tag => {
-          return {
-            value: tag.name,
-            label: tag.name,
-          };
-        })
-      );
-    });
-    collectionService.getOwnCollections().then(data => {
-      setSavedCollections(
-        data.map(col => {
-          return {
-            value: col._id,
-            label: capitalize(col.name),
-          };
-        })
-      );
-    });
-  }, []);
+    if (tagLoading) return;
+    if (tagHasMore) setTagSkip(prevSkip => prevSkip + 10);
+  }, [tagHasMore, tagLoading]);
+
+  useEffect(() => {
+    if (colLoading) return;
+    if (colHasMore) setColSkip(prevSkip => prevSkip + 10);
+  }, [colHasMore, colLoading]);
 
   useEffect(() => {
     if (!user) navigate('/login');

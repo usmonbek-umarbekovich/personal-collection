@@ -11,18 +11,24 @@ const getCollections = async params => {
   }
 };
 
-const getOwnCollections = async () => {
+const getOwnCollections = async (limit, skip, controller) => {
   try {
-    const response = await axios.get(`${API_URL}/me`);
+    const response = await axios.get(`${API_URL}/me`, {
+      params: { limit, skip },
+      signal: controller.signal,
+    });
     return response.data;
   } catch (error) {
     return error.response;
   }
 };
 
-const getCollectionTopics = async () => {
+const getCollectionTopics = async (limit, skip, controller) => {
   try {
-    const response = await axios.get(`${API_URL}/topics`);
+    const response = await axios.get(`${API_URL}/topics`, {
+      params: { limit, skip },
+      signal: controller.signal,
+    });
     return response.data;
   } catch (error) {
     return error.response;

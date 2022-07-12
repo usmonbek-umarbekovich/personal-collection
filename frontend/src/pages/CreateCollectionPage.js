@@ -5,6 +5,7 @@ import { useUserInfo } from '../contexts/userInfoContext';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import collectionService from '../services/collectionService';
+import useLazyLoad from '../hooks/useLazyLoad';
 import { capitalize } from '../helpers';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -12,22 +13,27 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 function CreateCollectionPage() {
-  const [savedTopics, setSavedTopics] = useState([]);
+  const [skip, setSkip] = useState(0);
+  let [savedTopics, loading, hasMore] = useLazyLoad(
+    5,
+    skip,
+    collectionService.getCollectionTopics
+  );
+
+  savedTopics = [...new Set(savedTopics)].map(topic => {
+    return {
+      value: topic,
+      label: capitalize(topic),
+    };
+  });
+
   const { user } = useUserInfo();
   const navigate = useNavigate();
 
   useEffect(() => {
-    collectionService.getCollectionTopics().then(data => {
-      setSavedTopics(
-        data.map(topic => {
-          return {
-            value: topic,
-            label: capitalize(topic),
-          };
-        })
-      );
-    });
-  }, []);
+    if (loading) return;
+    if (hasMore) setSkip(prevSkip => prevSkip + 5);
+  }, [hasMore, loading]);
 
   useEffect(() => {
     if (!user) navigate('/login');
