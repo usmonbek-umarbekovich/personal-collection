@@ -18,9 +18,9 @@ function Navigation() {
         fixed="top"
         bg="warning"
         variant="light"
-        expand="lg"
-        className="py-3 border-bottom border-1 border-dark">
-        <Container>
+        expand="md"
+        className="py-3 px-2 border-bottom border-1 border-dark">
+        <Container fluid="md">
           <Navbar.Brand as={Link} to="/" className="me-auto fs-4 fw-bold">
             Personal Collection
           </Navbar.Brand>
@@ -28,8 +28,8 @@ function Navigation() {
           <Navbar.Collapse id="navbar">
             <Stack
               gap="3"
-              className="align-items-lg-center flex-lg-row-reverse">
-              <Nav as="ul" className="align-items-lg-center">
+              className="align-items-md-center flex-md-row-reverse">
+              <Nav as="ul" className="align-items-md-center">
                 {user ? (
                   <>
                     <NavDropdown
@@ -64,7 +64,7 @@ function Navigation() {
                       id="profile"
                       as="ul"
                       active
-                      className="fs-4 px-0 ps-3">
+                      className="fs-4 px-0 ps-md-3">
                       <NavDropdown.Item as="li">
                         <Nav.Link
                           eventKey="me"

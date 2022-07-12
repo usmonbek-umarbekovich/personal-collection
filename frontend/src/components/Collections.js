@@ -24,14 +24,14 @@ function Collections() {
   }, []);
 
   return (
-    <section className="border-bottom mb-3 py-5">
-      <Container>
+    <section className="border-bottom mb-3 py-5 px-2">
+      <Container fluid="md">
         <h2 className="fs-4">
           <FaCheckDouble className="fs-5" /> Top Largest Collections
         </h2>
         <Row as="ul" className="g-4 pt-4 px-0">
           {collections.map((col, index) => (
-            <Col key={col._id} md="6" lg="4" className="lh-1">
+            <Col key={col._id} sm="6" lg="4" className="lh-1">
               <Stack direction="horizontal" className="align-items-start gap-3">
                 <p className="fs-3 fw-bold text-secondary opacity-75 mt-1">
                   0{index + 1}
@@ -56,7 +56,7 @@ function Collections() {
                     </p>
                   </Stack>
                   <p className="fs-5 fw-bold">{col.name}</p>
-                  {col.description && <p className="fs-5">{col.description}</p>}
+                  {col.description && <p className="fs-5 lh-sm">{col.description}</p>}
                   <Stack
                     gap="2"
                     direction="horizontal"

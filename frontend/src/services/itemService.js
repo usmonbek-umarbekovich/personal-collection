@@ -14,9 +14,12 @@ const getItems = async (limit, skip, controller) => {
   }
 };
 
-const getTags = async () => {
+const getTags = async (limit, skip, controller) => {
   try {
-    const response = await axios.get(`${API_URL}/tags/all`);
+    const response = await axios.get(`${API_URL}/tags/all`, {
+      params: { limit, skip },
+      signal: controller.signal,
+    });
     return response.data;
   } catch (error) {
     return error.response;

@@ -35,7 +35,8 @@ const getItems = asyncHandler(async (req, res) => {
  * @access Public
  */
 const getTags = asyncHandler(async (req, res) => {
-  const tags = await Tag.find({});
+  const { skip, limit } = req.query;
+  const tags = await Tag.find({}).limit(limit).skip(skip);
   res.status(200).json(tags);
 });
 
