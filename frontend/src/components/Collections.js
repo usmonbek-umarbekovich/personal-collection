@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import collectionService from '../services/collectionService';
+import { getFullName, formatTime } from '../helpers';
 import Container from 'react-bootstrap/Container';
 import Stack from 'react-bootstrap/Stack';
 import Row from 'react-bootstrap/Row';
@@ -10,15 +11,6 @@ import { FaCheckDouble } from 'react-icons/fa';
 
 function Collections() {
   const [collections, setCollections] = useState([]);
-
-  const getFullName = name => `${name.first} ${name.last}`;
-  const formatTime = rawTime => {
-    const parsed = new Date(rawTime);
-    const intl = new Intl.DateTimeFormat([], {
-      dateStyle: 'medium',
-    });
-    return intl.format(parsed);
-  };
 
   useEffect(() => {
     collectionService
@@ -64,6 +56,7 @@ function Collections() {
                     </p>
                   </Stack>
                   <p className="fs-5 fw-bold">{col.name}</p>
+                  {col.description && <p className="fs-5">{col.description}</p>}
                   <Stack
                     gap="2"
                     direction="horizontal"
