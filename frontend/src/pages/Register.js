@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Container from 'react-bootstrap/Container';
@@ -9,7 +11,12 @@ import Col from 'react-bootstrap/Col';
 import { useUserInfo } from '../contexts/userInfoContext';
 
 function Register() {
-  const { registerUser } = useUserInfo();
+  const { registerUser, user } = useUserInfo();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) navigate('/');
+  }, [user, navigate]);
 
   const handleImageSelect = e => {
     const image = e.target.files[0];
@@ -28,7 +35,7 @@ function Register() {
       lastName: '',
       email: '',
       password: '',
-      avatar: { name: 'Choose your profile photo' },
+      avatar: null,
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required('First Name is required'),
@@ -43,6 +50,8 @@ function Register() {
     validateOnBlur: false,
     validateOnChange: false,
   });
+
+  if (user) return null;
 
   return (
     <Container className="col-md-6 m-auto">

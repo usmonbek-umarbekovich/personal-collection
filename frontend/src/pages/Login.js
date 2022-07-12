@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useUserInfo } from '../contexts/userInfoContext';
@@ -7,7 +9,12 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 function Login() {
-  const { loginUser } = useUserInfo();
+  const { loginUser, user } = useUserInfo();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) navigate('/');
+  }, [user, navigate]);
 
   const formik = useFormik({
     initialValues: { email: '', password: '' },
@@ -21,6 +28,8 @@ function Login() {
     validateOnBlur: false,
     validateOnChange: false,
   });
+
+  if (user) return null;
 
   return (
     <Container className="col-md-6 m-auto">
