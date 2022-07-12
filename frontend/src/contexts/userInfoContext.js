@@ -18,12 +18,11 @@ export default function UserInfoProvider({ children }) {
 
   useEffect(() => {
     if (error) toast.error(error);
-    if (user) navigate('/');
 
     return () => {
       setError('');
     };
-  }, [user, navigate, error]);
+  }, [navigate, error]);
 
   const logoutUser = () => {
     authService.logout();
