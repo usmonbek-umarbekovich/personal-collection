@@ -4,6 +4,29 @@ const Collection = require('../models/collectionModel');
 const notFoundError = require('../helpers/notFoundError');
 
 /**
+ * @desc Get items
+ * @route GET /api/item
+ * @access Public
+ */
+const getItems = asyncHandler(async (req, res) => {
+  const { limit, skip } = req.query;
+  const items = await Item.find({})
+    .limit(limit)
+    .skip(skip)
+    .populate({
+      path: 'collectionId',
+      select: 'name user',
+      populate: {
+        path: 'user',
+        select: 'name picture _id',
+      },
+    })
+    .sort({ createdAt: 'desc' });
+
+  res.status(200).json(items);
+});
+
+/**
  * @desc Get single collection item
  * @route GET /api/item/:id
  * @access Public
@@ -91,6 +114,7 @@ const likeOrUnlikeItem = asyncHandler(async (req, res) => {
 
 module.exports = {
   getItem,
+  getItems,
   createItem,
   updateItem,
   deleteItem,

@@ -2,6 +2,7 @@ const express = require('express');
 const ensureLoggedIn = require('../middlewares/ensureLoggedIn');
 const {
   getItem,
+  getItems,
   createItem,
   updateItem,
   deleteItem,
@@ -18,6 +19,7 @@ const router = express.Router();
 
 router
   .route('/')
+  .get(getItems)
   .post(ensureLoggedIn, createItem);
 
 router
