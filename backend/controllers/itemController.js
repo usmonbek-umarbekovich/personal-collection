@@ -1,6 +1,8 @@
 const asyncHandler = require('express-async-handler');
+const mongoose = require('mongoose');
 const Item = require('../models/itemModel');
 const Collection = require('../models/collectionModel');
+const Tag = require('../models/tagModel');
 const notFoundError = require('../helpers/notFoundError');
 
 /**
@@ -21,9 +23,20 @@ const getItems = asyncHandler(async (req, res) => {
         select: 'name picture _id',
       },
     })
+    .populate('tags')
     .sort({ createdAt: 'desc' });
 
   res.status(200).json(items);
+});
+
+/**
+ * @desc Get tags
+ * @route GET /api/item/tags/all
+ * @access Public
+ */
+const getTags = asyncHandler(async (req, res) => {
+  const tags = await Tag.find({});
+  res.status(200).json(tags);
 });
 
 /**
@@ -47,7 +60,24 @@ const createItem = asyncHandler(async (req, res) => {
   const collection = await Collection.findById(req.body.collectionId);
   if (!collection) notFoundError(res, 'Collection');
 
-  const item = await Item.create(req.body);
+  let savedTags = await Promise.all(
+    req.body.tags.map(name => {
+      return Tag.findOne({ name });
+    })
+  );
+  savedTags = savedTags.filter(Boolean);
+  const savedTagNames = savedTags.map(tag => tag.name);
+  const newTagNames = req.body.tags.filter(
+    name => !savedTagNames.includes(name)
+  );
+  const newTags = await Promise.all(
+    newTagNames.map(name => {
+      return Tag.create({ name });
+    })
+  );
+  const tags = savedTags.concat(newTags).map(tag => tag._id);
+
+  const item = await Item.create({ ...req.body, tags });
   collection.meta.numItems++;
   await collection.save();
 
@@ -115,6 +145,7 @@ const likeOrUnlikeItem = asyncHandler(async (req, res) => {
 module.exports = {
   getItem,
   getItems,
+  getTags,
   createItem,
   updateItem,
   deleteItem,

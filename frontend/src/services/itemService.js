@@ -14,8 +14,28 @@ const getItems = async (limit, skip, controller) => {
   }
 };
 
+const getTags = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/tags/all`);
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const createItem = async data => {
+  try {
+    const response = await axios.post(API_URL, data);
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const itemService = {
   getItems,
+  getTags,
+  createItem,
 };
 
 export default itemService;

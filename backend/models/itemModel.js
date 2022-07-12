@@ -30,15 +30,19 @@ const schema = new mongoose.Schema(
     ],
     likes: [
       {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          required: true,
-          ref: 'User',
-          immutable: true,
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User',
+        immutable: true,
       },
     ],
-    tags: [String],
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tag',
+      },
+    ],
+    picture: Buffer,
   },
   { timestamps: true }
 );

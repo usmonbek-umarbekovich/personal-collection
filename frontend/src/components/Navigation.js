@@ -3,6 +3,7 @@ import { useUserInfo } from '../contexts/userInfoContext';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
@@ -30,16 +31,60 @@ function Navigation() {
               className="align-items-lg-center flex-lg-row-reverse">
               <Nav as="ul" className="align-items-lg-center">
                 {user ? (
-                  <Nav.Item as="li">
-                    <Nav.Link
-                      eventKey="logout"
-                      as={Button}
-                      variant="danger"
-                      className="text-light px-3"
-                      onClick={logoutUser}>
-                      Logout
-                    </Nav.Link>
-                  </Nav.Item>
+                  <>
+                    <NavDropdown
+                      title="Create"
+                      id="create"
+                      as="ul"
+                      active
+                      className="fs-4 px-0">
+                      <NavDropdown.Item as="li">
+                        <Nav.Link
+                          eventKey="collection"
+                          as={Link}
+                          to="/collections/create"
+                          className="p-0 text-dark fs-5">
+                          Collection
+                        </Nav.Link>
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item as="li">
+                        <Nav.Link
+                          eventKey="item"
+                          as={Link}
+                          to="/items/create"
+                          className="p-0 text-dark fs-5">
+                          Item
+                        </Nav.Link>
+                      </NavDropdown.Item>
+                    </NavDropdown>
+
+                    <NavDropdown
+                      title="Profile"
+                      id="profile"
+                      as="ul"
+                      active
+                      className="fs-4 px-0 ps-3">
+                      <NavDropdown.Item as="li">
+                        <Nav.Link
+                          eventKey="me"
+                          as={Link}
+                          to="/me"
+                          className="p-0 text-dark fs-5">
+                          Profile
+                        </Nav.Link>
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item
+                        as={Button}
+                        variant="light"
+                        eventKey="logout"
+                        className="fs-5"
+                        onClick={logoutUser}>
+                        Logout
+                      </NavDropdown.Item>
+                    </NavDropdown>
+                  </>
                 ) : (
                   <>
                     <Nav.Item as="li" className="me-2">

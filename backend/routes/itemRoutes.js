@@ -3,6 +3,7 @@ const ensureLoggedIn = require('../middlewares/ensureLoggedIn');
 const {
   getItem,
   getItems,
+  getTags,
   createItem,
   updateItem,
   deleteItem,
@@ -31,6 +32,10 @@ router
 router
   .route('/:id/like')
   .post(ensureLoggedIn, likeOrUnlikeItem);
+
+router
+  .route('/tags/all')
+  .get(getTags)
 
 // comment routes
 router
