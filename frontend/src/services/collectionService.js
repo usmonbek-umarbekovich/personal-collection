@@ -35,6 +35,30 @@ const getCollectionTopics = async (limit, skip, controller) => {
   }
 };
 
+const getCollectionItems = id => async (limit, skip, controller) => {
+  try {
+    const response = await axios.get(`${API_URL}/${id}/items`, {
+      params: { limit, skip },
+      signal: controller.signal,
+    });
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const getCollectionTags = id => async (limit, skip, controller) => {
+  try {
+    const response = await axios.get(`${API_URL}/${id}/tags`, {
+      params: { limit, skip },
+      signal: controller.signal,
+    });
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const getSingleCollection = async id => {
   try {
     const response = await axios.get(`${API_URL}/single/${id}`);
@@ -64,6 +88,8 @@ const updateCollection = async (id, data) => {
 
 const collectionService = {
   getCollections,
+  getCollectionItems,
+  getCollectionTags,
   getCollectionTopics,
   getOwnCollections,
   getSingleCollection,

@@ -25,4 +25,10 @@ const schema = new mongoose.Schema(
   { timestamps: true }
 );
 
+schema.virtual('items', {
+  ref: 'Item',
+  localField: '_id',
+  foreignField: 'collectionId',
+});
+
 module.exports = mongoose.model('Collection', schema);

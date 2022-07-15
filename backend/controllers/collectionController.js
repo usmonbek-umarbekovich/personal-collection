@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Collection = require('../models/collectionModel');
-const notFoundError = require('../helpers/notFoundError');
+const { notFoundError, notAuthorizedError } = require('../customErrors');
 
 /**
  * @desc Get collections
@@ -15,6 +15,70 @@ const getCollections = asyncHandler(async (req, res) => {
     .populate('user', 'name picture _id');
 
   res.status(200).json(collections);
+});
+
+/**
+ * @desc Get collection items
+ * @route GET /api/collections/:id/items
+ * @access Public
+ */
+const getCollectionItems = asyncHandler(async (req, res) => {
+  const { skip, limit } = req.query;
+  const { id } = req.params;
+
+  const collection = await Collection.findById(id).populate({
+    path: 'items',
+    populate: [
+      {
+        path: 'collectionId',
+        select: 'name user',
+        populate: {
+          path: 'user',
+          select: 'name picture _id',
+        },
+      },
+      { path: 'tags', options: { limit: 3 } },
+    ],
+    options: {
+      limit,
+      skip,
+      sort: { createdAt: 'desc' },
+    },
+  });
+
+  res.status(200).json(collection.items);
+});
+
+/**
+ * @desc Get collection tags
+ * @route GET /api/collections/:id/tags
+ * @access Public
+ */
+const getCollectionTags = asyncHandler(async (req, res) => {
+  const { skip, limit } = req.query;
+  const { id } = req.params;
+
+  const collection = await Collection.findById(id).populate({
+    path: 'items',
+    select: 'tags',
+    populate: {
+      path: 'tags',
+      select: 'name',
+    },
+    options: { limit, skip },
+  });
+
+  const seen = new Set();
+  const tags = collection.items
+    .flatMap(item => item.tags)
+    .filter(tag => {
+      if (seen.has(tag._id)) return false;
+
+      seen.add(tag._id);
+      return true;
+    });
+
+  res.status(200).json(tags);
 });
 
 /**
@@ -87,10 +151,14 @@ const updateCollection = asyncHandler(async (req, res) => {
   const collection = await Collection.findById(req.params.id);
   if (!collection) notFoundError(res, 'Collection');
 
+  if (!collection.user.equals(req.user._id)) {
+    notAuthorizedError(res);
+  }
+
   const updatedCollection = await Collection.findByIdAndUpdate(
     req.params.id,
     req.body,
-    { new: true }
+    { new: true, runValidators: true }
   );
 
   res.status(200).json(updatedCollection);
@@ -105,6 +173,10 @@ const deleteCollection = asyncHandler(async (req, res) => {
   const collection = await Collection.findById(req.params.id);
   if (!collection) notFoundError(res, 'Collection');
 
+  if (!collection.user.equals(req.user._id)) {
+    notAuthorizedError(res);
+  }
+
   await collection.remove();
 
   res.status(200).json({ id: req.params.id });
@@ -113,6 +185,8 @@ const deleteCollection = asyncHandler(async (req, res) => {
 module.exports = {
   getCollections,
   getOwnCollections,
+  getCollectionItems,
+  getCollectionTags,
   getCollectionTopics,
   getSingleCollection,
   createCollection,

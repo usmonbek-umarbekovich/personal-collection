@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import collectionService from '../services/collectionService';
 import { getFullName, formatTime } from '../helpers';
 import Container from 'react-bootstrap/Container';
@@ -52,11 +53,19 @@ function Collections() {
                       )}
                     </div>
                     <p className="fw-bolder" style={{ lineHeight: 0 }}>
-                      {getFullName(col.user.name)}
+                      <Link to={`users/${col.user._id}`} className="text-reset">
+                        {getFullName(col.user.name)}
+                      </Link>
                     </p>
                   </Stack>
-                  <p className="fs-5 fw-bold">{col.name}</p>
-                  {col.description && <p className="fs-5 lh-sm">{col.description}</p>}
+                  <Stack>
+                    <Link to={`collections/${col._id}`} className="text-reset">
+                      <p className="fs-5 fw-bold">{col.name}</p>
+                      {col.description && (
+                        <p className="fs-5 lh-sm">{col.description}</p>
+                      )}
+                    </Link>
+                  </Stack>
                   <Stack
                     gap="2"
                     direction="horizontal"
