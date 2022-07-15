@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useUserInfo } from '../contexts/userInfoContext';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
@@ -21,7 +21,7 @@ function Navigation() {
         expand="md"
         className="py-3 px-2 border-bottom border-1 border-dark">
         <Container fluid="md">
-          <Navbar.Brand as={Link} to="/" className="me-auto fs-4 fw-bold">
+          <Navbar.Brand as={NavLink} to="/" className="me-auto fs-4 fw-bold">
             Personal Collection
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbar" />
@@ -41,7 +41,7 @@ function Navigation() {
                       <NavDropdown.Item as="li">
                         <Nav.Link
                           eventKey="collection"
-                          as={Link}
+                          as={NavLink}
                           to="/collections/create"
                           className="p-0 text-dark fs-5">
                           Collection
@@ -51,7 +51,7 @@ function Navigation() {
                       <NavDropdown.Item as="li">
                         <Nav.Link
                           eventKey="item"
-                          as={Link}
+                          as={NavLink}
                           to="/items/create"
                           className="p-0 text-dark fs-5">
                           Item
@@ -68,7 +68,7 @@ function Navigation() {
                       <NavDropdown.Item as="li">
                         <Nav.Link
                           eventKey="me"
-                          as={Link}
+                          as={NavLink}
                           to="/me"
                           className="p-0 text-dark fs-5">
                           Profile
@@ -90,7 +90,7 @@ function Navigation() {
                     <Nav.Item as="li" className="me-2">
                       <Nav.Link
                         eventKey="login"
-                        as={Link}
+                        as={NavLink}
                         to="/login"
                         className="fs-5 text-dark">
                         Sign In
@@ -99,7 +99,7 @@ function Navigation() {
                     <Nav.Item as="li">
                       <Nav.Link
                         eventKey="signup"
-                        as={Link}
+                        as={NavLink}
                         to="/register"
                         className="fs-5 text-dark">
                         Get Started
