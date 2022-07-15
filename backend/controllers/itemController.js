@@ -1,9 +1,8 @@
 const asyncHandler = require('express-async-handler');
-const mongoose = require('mongoose');
 const Item = require('../models/itemModel');
 const Collection = require('../models/collectionModel');
 const Tag = require('../models/tagModel');
-const notFoundError = require('../helpers/notFoundError');
+const { notFoundError, notAuthorizedError } = require('../customErrors');
 
 /**
  * @desc Get items
@@ -23,7 +22,7 @@ const getItems = asyncHandler(async (req, res) => {
         select: 'name picture _id',
       },
     })
-    .populate('tags')
+    .populate({ path: 'tags', options: { limit: 3 } })
     .sort({ createdAt: 'desc' });
 
   res.status(200).json(items);
@@ -67,14 +66,11 @@ const createItem = asyncHandler(async (req, res) => {
     })
   );
   savedTags = savedTags.filter(Boolean);
-  const savedTagNames = savedTags.map(tag => tag.name);
-  const newTagNames = req.body.tags.filter(
-    name => !savedTagNames.includes(name)
-  );
+
   const newTags = await Promise.all(
-    newTagNames.map(name => {
-      return Tag.create({ name });
-    })
+    req.body.tags
+      .filter(name => !savedTags.find(tag => tag.name === name))
+      .map(name => Tag.create({ name }))
   );
   const tags = savedTags.concat(newTags).map(tag => tag._id);
 
@@ -94,10 +90,17 @@ const updateItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
-  Object.assign(item, req.body);
-  await item.save();
+  const userId = await item.populate('collectionId', 'user');
+  if (!userId.equals(req.user._id)) {
+    notAuthorizedError(res);
+  }
 
-  res.status(200).json(item);
+  const updatedItem = Item.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json(updatedItem);
 });
 
 /**
@@ -109,12 +112,17 @@ const deleteItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
-  const collection = await Collection.findById(item.collectionId);
+  const collection = item.populate('collectionId');
+  if (!collection.user.equals(req.user._id)) {
+    notAuthorizedError(res);
+  }
 
   await item.remove();
 
-  collection.meta.numItems--;
-  await collection.save();
+  await collection.update(
+    { 'meta.numItems': collection.meta.numItems - 1 },
+    { runValidators: true }
+  );
 
   res.status(200).json({ id: req.params.id });
 });
@@ -130,7 +138,7 @@ const likeOrUnlikeItem = asyncHandler(async (req, res) => {
   if (!item) notFoundError(res, 'Item');
 
   const userIndex = item.likes.findIndex(l => {
-    return l.user.valueOf() === req.user._id.valueOf();
+    return l.user.equals(req.user._id);
   });
 
   if (userIndex < 0) {

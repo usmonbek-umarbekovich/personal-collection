@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Item = require('../models/itemModel');
-const notFoundError = require('../helpers/notFoundError');
+const { notFoundError } = require('../customErrors');
 
 /**
  * @desc Get item comments
