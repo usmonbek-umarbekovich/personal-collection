@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
 import useLazyLoad from '../hooks/useLazyLoad';
-import itemService from '../services/itemService';
 import LoadingBalls from '../components/LoadingBalls';
 import { getFullName, formatTime } from '../helpers';
 import Stack from 'react-bootstrap/Stack';
@@ -8,9 +7,9 @@ import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 
-function Items() {
+function Items({ callback }) {
   const [skip, setSkip] = useState(0);
-  const [items, loading, hasMore] = useLazyLoad(5, skip, itemService.getItems);
+  const [items, loading, hasMore] = useLazyLoad(5, skip, callback);
 
   const observer = useRef();
   const lastItemElement = useCallback(
@@ -72,7 +71,7 @@ function Items() {
                 gap="2"
                 direction="horizontal"
                 className="align-items-center">
-                {item.tags.slice(0, 3).map(tag => (
+                {item.tags.map(tag => (
                   <Button
                     key={tag._id}
                     variant="secondary"
