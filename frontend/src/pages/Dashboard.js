@@ -14,7 +14,7 @@ function Dashboard() {
     <>
       {!user && <Showcase />}
       <Collections />
-      <main className="py-lg-5 py-2 px-2">
+      <main className="py-lg-5 px-2">
         <Container fluid="md">
           <Row className="justify-content-between align-items-start">
             <Tags callback={itemService.getTags} />

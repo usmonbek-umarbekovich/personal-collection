@@ -12,7 +12,7 @@ function Navigation() {
   const { user, logoutUser } = useUserInfo();
 
   return (
-    <header style={{ marginTop: '76px' }}>
+    <header style={{ marginTop: '79px' }}>
       <Navbar
         collapseOnSelect
         fixed="top"

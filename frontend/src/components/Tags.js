@@ -16,7 +16,7 @@ function Tags({ callback }) {
   return (
     <Col
       lg={{ span: 4, order: 'last' }}
-      className="tags position-lg-sticky sticky-lg-top border-bottom pb-4 mb-4"
+      className="tags position-lg-sticky sticky-lg-top border-bottom py-lg-0 py-3"
       style={{ top: 'calc(76px + 2.5rem)' }}>
       <Row className="g-3 row-cols-auto justify-content-lg-start justify-content-center">
         {tags.map(tag => (
