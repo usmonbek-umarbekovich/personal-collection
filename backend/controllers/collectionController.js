@@ -118,7 +118,10 @@ const getOwnCollections = asyncHandler(async (req, res) => {
  * @access Public
  */
 const getSingleCollection = asyncHandler(async (req, res) => {
-  const collection = await Collection.findById(req.params.id);
+  const collection = await Collection.findById(req.params.id).populate(
+    'user',
+    '_id name picture'
+  );
   if (!collection) notFoundError(res, 'Collection');
 
   res.status(200).json(collection);
