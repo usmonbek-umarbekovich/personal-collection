@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import collectionService from '../services/collectionService';
-import { getFullName, formatTime } from '../helpers';
+import { formatTime } from '../helpers';
+import AuthorInfo from './AuthorInfo';
 import Container from 'react-bootstrap/Container';
 import Stack from 'react-bootstrap/Stack';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Image from 'react-bootstrap/Image';
 import Badge from 'react-bootstrap/Badge';
 import { FaCheckDouble } from 'react-icons/fa';
 
@@ -25,12 +25,12 @@ function Collections() {
   }, []);
 
   return (
-    <section className="border-bottom mb-3 py-5 px-2">
+    <section className="border-bottom pt-lg-5 py-4 px-2">
       <Container fluid="md">
         <h2 className="fs-4">
           <FaCheckDouble className="fs-5" /> Top Largest Collections
         </h2>
-        <Row as="ul" className="g-4 pt-4 px-0">
+        <Row as="ul" className="g-4 pt-3 pt-lg-4 px-0">
           {collections.map((col, index) => (
             <Col key={col._id} sm="6" lg="4" className="lh-1">
               <Stack direction="horizontal" className="align-items-start gap-3">
@@ -38,26 +38,7 @@ function Collections() {
                   0{index + 1}
                 </p>
                 <Stack>
-                  <Stack
-                    gap="2"
-                    direction="horizontal"
-                    className="align-items-end py-2">
-                    <div
-                      style={{ width: '1.75rem', height: '1.75rem' }}
-                      className="bg-secondary rounded-circle">
-                      {col.user.picture && (
-                        <Image
-                          src={col.user.picture}
-                          alt={getFullName(col.user.name)}
-                        />
-                      )}
-                    </div>
-                    <p className="fw-bolder" style={{ lineHeight: 0 }}>
-                      <Link to={`users/${col.user._id}`} className="text-reset">
-                        {getFullName(col.user.name)}
-                      </Link>
-                    </p>
-                  </Stack>
+                  <AuthorInfo user={col.user} size="sm" />
                   <Stack>
                     <Link to={`collections/${col._id}`} className="text-reset">
                       <p className="fs-5 fw-bold">{col.name}</p>
@@ -75,7 +56,7 @@ function Collections() {
                       {col.meta.numItems > 1 ? 's' : ''}
                     </p>
                     <p>-</p>
-                    <p>{formatTime(col.createdAt)}</p>
+                    <p>{formatTime(col.createdAt, 'medium')}</p>
                   </Stack>
                 </Stack>
               </Stack>

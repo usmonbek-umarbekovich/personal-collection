@@ -1,13 +1,14 @@
 import { useState, useRef, useCallback } from 'react';
 import useLazyLoad from '../hooks/useLazyLoad';
 import LoadingBalls from '../components/LoadingBalls';
-import { getFullName, formatTime } from '../helpers';
+import { formatTime } from '../helpers';
+import AuthorInfo from './AuthorInfo';
 import Stack from 'react-bootstrap/Stack';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 
-function Items({ callback }) {
+function Items({ callback, inCollection }) {
   const [skip, setSkip] = useState(0);
   const [items, loading, hasMore] = useLazyLoad(5, skip, callback);
 
@@ -28,7 +29,7 @@ function Items({ callback }) {
   );
 
   return (
-    <Col lg={{ span: 8, order: 'first' }}>
+    <Col lg={{ span: 8, order: 'first' }} className="py-lg-0 py-3">
       <Stack gap="5" className="lh-1">
         {items.map((item, index) => (
           <Stack
@@ -37,24 +38,9 @@ function Items({ callback }) {
             className="align-items-center justify-content-end"
             ref={items.length === index + 1 ? lastItemElement : null}>
             <Stack>
-              <Stack
-                gap="2"
-                direction="horizontal"
-                className="align-items-end py-2">
-                <div
-                  style={{ width: '1.75rem', height: '1.75rem' }}
-                  className="bg-secondary rounded-circle">
-                  {item.collectionId.user.picture && (
-                    <Image
-                      src={item.collectionId.user.picture}
-                      alt={getFullName(item.collectionId.user.name)}
-                    />
-                  )}
-                </div>
-                <p className="fw-bolder" style={{ lineHeight: 0 }}>
-                  {getFullName(item.collectionId.user.name)}
-                </p>
-              </Stack>
+              {inCollection || (
+                <AuthorInfo user={item.collectionId.user} size="sm" />
+              )}
               <p className="fs-4 fw-bold">{item.name}</p>
               {item.description && (
                 <p className="fs-5 lh-sm">{item.description}</p>
@@ -63,9 +49,13 @@ function Items({ callback }) {
                 gap="2"
                 direction="horizontal"
                 className="align-items-start text-muted">
-                <p>{formatTime(item.createdAt)}</p>
-                <p>-</p>
-                <p>{item.collectionId.name}</p>
+                <p>{formatTime(item.createdAt, 'medium')}</p>
+                {inCollection || (
+                  <>
+                    <p>-</p>
+                    <p>{item.collectionId.name}</p>
+                  </>
+                )}
               </Stack>
               <Stack
                 gap="2"
