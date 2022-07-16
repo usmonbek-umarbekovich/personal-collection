@@ -35,9 +35,9 @@ function Items({ callback, inCollection }) {
           <Stack
             key={item._id}
             direction="horizontal"
-            className="align-items-center justify-content-end"
+            className="align-items-center"
             ref={items.length === index + 1 ? lastItemElement : null}>
-            <Stack>
+            <Stack className="justify-content-center">
               {inCollection || (
                 <AuthorInfo user={item.collectionId.user} size="sm" />
               )}
