@@ -18,7 +18,7 @@ function CreateItemPage() {
   const [tagSkip, setTagSkip] = useState(0);
   const [colSkip, setColSkip] = useState(0);
   const tagParams = useMemo(() => ({ limit: 10, skip: tagSkip }), [tagSkip]);
-  const colParams = useMemo(() => ({ limit: 5, skip: colSkip }), [colSkip]);
+  const colParams = useMemo(() => ({ limit: 6, skip: colSkip }), [colSkip]);
 
   const { user } = useUserInfo();
   const navigate = useNavigate();
@@ -47,13 +47,13 @@ function CreateItemPage() {
 
   useEffect(() => {
     if (tagLoading) return;
-    if (tagHasMore) setTagSkip(prevSkip => prevSkip + 10);
-  }, [tagHasMore, tagLoading]);
+    if (tagHasMore) setTagSkip(prevSkip => prevSkip + tagParams.limit);
+  }, [tagHasMore, tagLoading, tagParams.limit]);
 
   useEffect(() => {
     if (colLoading) return;
-    if (colHasMore) setColSkip(prevSkip => prevSkip + 10);
-  }, [colHasMore, colLoading]);
+    if (colHasMore) setColSkip(prevSkip => prevSkip + colParams.limit);
+  }, [colHasMore, colLoading, colParams.limit]);
 
   useEffect(() => {
     if (!user) navigate('/login');

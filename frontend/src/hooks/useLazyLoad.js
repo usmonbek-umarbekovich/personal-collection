@@ -12,6 +12,8 @@ const useLazyLoad = (params, callback) => {
     const controller = new AbortController();
     callback(params, controller)
       .then(currData => {
+        if (!currData) return;
+
         setData(prevData => prevData.concat(currData));
         setHasMore(currData.length > 0);
       })
