@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useUserInfo } from '../contexts/userInfoContext';
-import { getFullName, lastSeen } from '../helpers';
+import { getFullName, timeDiff } from '../helpers';
 import userService from '../services/userService';
 import Items from '../components/Items';
 import Collections from '../components/Collections';
@@ -13,15 +13,20 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import { FaBan } from 'react-icons/fa';
+import { FaBan, FaCheck } from 'react-icons/fa';
 
 function UserProfile() {
   const [user, setUser] = useState();
   const itemQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), []);
   const colQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), []);
 
+  const navigate = useNavigate();
   const { id } = useParams();
   const { user: me } = useUserInfo();
+
+  useEffect(() => {
+    if (!me) navigate('/login');
+  }, [me, navigate]);
 
   useEffect(() => {
     let userId;
@@ -39,14 +44,51 @@ function UserProfile() {
     <main className="px-2">
       <Container fluid="md">
         <Row>
-          <Col as="section" lg={8} className="py-lg-5 mt-lg-5 py-4 pe-lg-5">
+          <Col
+            as="aside"
+            lg={{ span: 4, order: 'last' }}
+            className="user-sidebar border-start py-lg-5 ps-lg-4 pt-4">
+            <div className="position-relative">
+              <div
+                style={{ top: 'calc(79px + 3rem)' }}
+                className="position-lg-sticky sticky-lg-top">
+                <AuthorInfo
+                  fontSize="lg"
+                  picSize="lg"
+                  weight="bolder"
+                  direction="vertical"
+                  user={user}
+                  description={timeDiff(user.lastSeen, 'user', 'long')}
+                />
+                {user.bio && <p className="mt-3 fs-5 text-muted">{user.bio}</p>}
+              </div>
+              <div className="d-lg-none position-absolute top-0 end-0 mt-4">
+                {user.active ? (
+                  <Button variant="outline-danger">
+                    <FaBan className="fs-5" />
+                  </Button>
+                ) : (
+                  <Button variant="outline-success">
+                    <FaCheck className="fs-5" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </Col>
+          <Col as="section" lg={8} className="py-lg-5 mt-lg-5 pe-lg-5">
             <Stack
               direction="horizontal"
-              className="align-items-center justify-content-between">
+              className="align-items-center justify-content-between d-lg-flex d-none">
               <h1>{getFullName(user.name)}</h1>
-              <Button variant="outline-danger">
-                <FaBan className="fs-5" />
-              </Button>
+              {user.active ? (
+                <Button variant="outline-danger">
+                  <FaBan className="fs-5" />
+                </Button>
+              ) : (
+                <Button variant="outline-success">
+                  <FaCheck className="fs-5" />
+                </Button>
+              )}
             </Stack>
             <Tabs defaultActiveKey="collections" className="fs-5 pt-5">
               <Tab eventKey="collections" title="Collections">
@@ -75,21 +117,6 @@ function UserProfile() {
                 </Row>
               </Tab>
             </Tabs>
-          </Col>
-          <Col as="aside" lg={4} className="border-start py-lg-5 py-2 ps-4">
-            <div
-              style={{ top: 'calc(79px + 3rem)' }}
-              className="position-lg-sticky sticky-lg-top">
-              <AuthorInfo
-                user={user}
-                description={lastSeen(user.lastSeen)}
-                fontSize="lg"
-                picSize="lg"
-                weight="bolder"
-                direction="vertical"
-              />
-              {user.bio && <p className="mt-3 fs-5 text-muted">{user.bio}</p>}
-            </div>
           </Col>
         </Row>
       </Container>

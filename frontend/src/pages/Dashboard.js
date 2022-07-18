@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useUserInfo } from '../contexts/userInfoContext';
 import collectionService from '../services/collectionService';
 import itemService from '../services/itemService';
@@ -10,6 +11,7 @@ import Row from 'react-bootstrap/Row';
 
 function Dashboard() {
   const { user } = useUserInfo();
+  const colQuery = useMemo(() => ({ 'meta.numItems': 'desc', limit: 6 }), []);
 
   return (
     <>
@@ -21,7 +23,9 @@ function Dashboard() {
             indexes={true}
             showUser={true}
             topCollections={true}
-            query={{ 'meta.numItems': 'desc', limit: 6 }}
+            maxWords={10}
+            maxChars={100}
+            query={colQuery}
             callback={collectionService.getAllCollections}
           />
         </Container>
@@ -34,7 +38,7 @@ function Dashboard() {
               showUser={true}
               showCollection={true}
               span={8}
-              query={{ limit: 6 }}
+              query={{ createdAt: 'desc', limit: 6 }}
               callback={itemService.getAllItems}
             />
           </Row>

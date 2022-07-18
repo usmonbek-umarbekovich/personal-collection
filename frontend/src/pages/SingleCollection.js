@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import collectionService from '../services/collectionService';
-import { formatTime } from '../helpers';
+import { timeDiff } from '../helpers';
 import Items from '../components/Items';
 import Tags from '../components/Tags';
 import AuthorInfo from '../components/AuthorInfo';
@@ -10,7 +10,7 @@ import Row from 'react-bootstrap/Row';
 
 function SingleCollection() {
   const [collection, setCollection] = useState();
-  const itemQuery = useMemo(() => ({ limit: 6 }), []);
+  const itemQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), []);
   const { id } = useParams();
 
   useEffect(() => {
@@ -27,7 +27,7 @@ function SingleCollection() {
             fontSize="lg"
             picSize="md"
             user={collection.user}
-            description={formatTime(collection.createdAt, 'long')}
+            description={timeDiff(collection.createdAt, 'item', 'long')}
             root="../.."
           />
           <h1 className="lh-base">{collection.name}</h1>

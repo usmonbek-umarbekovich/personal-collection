@@ -1,6 +1,9 @@
-export const getFullName = name => `${name.first} ${name.last}`;
+const getFullName = name => `${name.first} ${name.last}`;
 
-export const capitalize = str => {
+/**
+ * @desc Capitalize first letter of every word
+ */
+const capitalize = str => {
   if (!str) return str;
 
   return str
@@ -9,31 +12,70 @@ export const capitalize = str => {
     .join(' ');
 };
 
-export const formatTime = (rawTime, dateStyle) => {
+const formatTime = (rawTime, dateStyle) => {
   const parsed = new Date(rawTime);
   const intl = new Intl.DateTimeFormat([], { dateStyle });
   return intl.format(parsed);
 };
 
-export const lastSeen = time => {
-  if (!time) return 'Blocked';
+/**
+ * @desc Truncate words
+ */
+const truncate = (text, maxWords, maxChars) => {
+  const words = text.split(/\s+/);
+  const newText = words.slice(0, maxWords).join(' ');
+  if (newText.length <= maxChars) {
+    if (words.length <= maxWords) return newText;
+    else return `${newText}...`;
+  }
 
-  const timeDiff = new Date() - new Date(time);
-
-  const minutes = Math.trunc(timeDiff / 1000 / 60);
-  if (minutes === 0) return 'Online';
-  if (minutes === 1) return 'Last Seen a minute ago';
-  if (minutes < 60) return `Last Seen ${minutes} minutes ago`;
-
-  const hours = Math.trunc(timeDiff / 1000 / 3600);
-  if (hours === 1) return 'Last Seen an hour ago';
-  if (hours < 24) return `Last Seen ${hours} hours ago`;
-
-  const days = Math.trunc(timeDiff / 1000 / 3600 / 24);
-  if (days === 1) return 'Last Seen a day ago';
-  if (days < 7) return `Last Seen ${days} days ago`;
-  if (days === 7) return 'Last Seen a week ago';
-
-  const date = formatTime(time, 'long');
-  return `Last seen on ${date}`;
+  return `${newText.slice(0, maxChars)}...`;
 };
+
+/**
+ * @desc Information about time difference from now
+ * @param time String
+ * @param type user | item
+ * @param dataStyle short | medium | long | full
+ */
+const timeDiff = (time, type, dateStyle = 'short', noPrefix = false) => {
+  const calculateTimeDIff = () => {
+    let prefix;
+    if (noPrefix) {
+      prefix = '';
+    } else {
+      prefix = type === 'user' ? 'Last seen ' : 'Created ';
+    }
+
+    if (time === 'blocked') return 'Blocked';
+
+    const timeDiff = new Date() - new Date(time);
+
+    const minutes = Math.trunc(timeDiff / 1000 / 60);
+    if (minutes === 0) {
+      if (type === 'user') return 'Online';
+      if (type === 'item') return 'Just now';
+    }
+    if (minutes === 1) return `${prefix}a minute ago`;
+    if (minutes < 60) return `${prefix}${minutes} minutes ago`;
+
+    const hours = Math.trunc(timeDiff / 1000 / 3600);
+    if (hours === 1) return `${prefix}an hour ago`;
+    if (hours < 24) return `${prefix}${hours} hours ago`;
+
+    const days = Math.trunc(timeDiff / 1000 / 3600 / 24);
+    if (days === 1) return `${prefix}a day ago`;
+    if (days < 7) return `${prefix}${days} days ago`;
+    if (days === 7) return `${prefix}a week ago`;
+
+    const date = formatTime(time, dateStyle);
+    if (noPrefix) return date;
+
+    return `${prefix} on ${date}`;
+  };
+
+  const result = calculateTimeDIff();
+  return result[0].toUpperCase() + result.slice(1);
+};
+
+export { getFullName, capitalize, truncate, timeDiff };
