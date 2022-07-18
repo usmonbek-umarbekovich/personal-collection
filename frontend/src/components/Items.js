@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import useLazyLoad from '../hooks/useLazyLoad';
 import LoadingBalls from '../components/LoadingBalls';
@@ -21,7 +21,13 @@ function Items({
 }) {
   const [skip, setSkip] = useState(0);
   const params = useMemo(() => ({ skip, ...query }), [skip, query]);
-  const [items, loading, hasMore] = useLazyLoad(params, callback);
+  const [items, loading, hasMore, setItems] = useLazyLoad(params, callback);
+
+  useEffect(() => {
+    setSkip(0);
+    setItems([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   const observer = useRef();
   const lastItemElement = useCallback(

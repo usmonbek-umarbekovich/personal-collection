@@ -20,20 +20,26 @@ function Collections({
   maxChars = 180,
   root = '',
 }) {
-  // fill: true | false
-  const columns = {
-    true: { lg: 12 },
-    false: { sm: 6, lg: 4 },
-  };
-
   const [skip, setSkip] = useState(0);
   const params = useMemo(() => ({ skip, ...query }), [query, skip]);
-  const [collections, loading, hasMore] = useLazyLoad(params, callback);
+  const [collections, loading, hasMore, setCollections] = useLazyLoad(
+    params,
+    callback
+  );
+
+  useEffect(() => {
+    setSkip(0);
+    setCollections([]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   useEffect(() => {
     if (loading) return;
     if (hasMore && !topCollections) setSkip(prevSkip => prevSkip + query.limit);
   }, [loading, hasMore, query.limit, topCollections]);
+
+  // fill: true | false
+  const columns = fill ? { lg: 12 } : { sm: 6, lg: 4 };
 
   return (
     <div>
@@ -44,7 +50,7 @@ function Collections({
       )}
       <Row as="ul" className="g-4 px-0">
         {collections.map((col, index) => (
-          <Col key={col._id} {...columns[fill]} className="lh-1">
+          <Col key={col._id} {...columns} className="lh-1">
             <Stack direction="horizontal" className="align-items-start gap-3">
               {indexes && (
                 <p className="fs-3 fw-bold text-secondary opacity-75 mt-1">

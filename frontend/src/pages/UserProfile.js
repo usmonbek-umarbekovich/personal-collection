@@ -17,12 +17,14 @@ import { FaBan, FaCheck } from 'react-icons/fa';
 
 function UserProfile() {
   const [user, setUser] = useState();
-  const itemQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), []);
-  const colQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), []);
-
   const navigate = useNavigate();
   const { id } = useParams();
   const { user: me } = useUserInfo();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const itemQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), [id]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const colQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), [id]);
 
   useEffect(() => {
     if (!me) navigate('/login');
@@ -30,11 +32,9 @@ function UserProfile() {
 
   useEffect(() => {
     let userId;
-    if (me && id === 'me') {
-      userId = me._id;
-    } else {
-      userId = id;
-    }
+    if (me && id === 'me') userId = me._id;
+    else userId = id;
+
     userService.getSingleUser(userId).then(setUser);
   }, [id, me]);
 

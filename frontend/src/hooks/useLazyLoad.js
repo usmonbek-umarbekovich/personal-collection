@@ -25,7 +25,7 @@ const useLazyLoad = (params, callback) => {
     return () => controller.abort();
   }, [params, callback]);
 
-  return [data, loading, hasMore];
+  return [data, loading, hasMore, setData];
 };
 
 export default useLazyLoad;
