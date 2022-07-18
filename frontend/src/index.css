@@ -6,6 +6,10 @@ a {
   text-decoration: none;
 }
 
+textarea {
+  resize: none;
+}
+
 @media (min-width: 992px) {
   .search-form {
     width: 25%;
@@ -18,5 +22,11 @@ a {
 
   .tags {
     border-bottom: none !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .user-sidebar {
+    border-left: none !important;
   }
 }
