@@ -1,30 +1,10 @@
 import axios from 'axios';
+import { getPartialData } from './helpers';
 
-const API_URL = '/api/item';
+const API_URL = '/api/items';
 
-const getItems = async (limit, skip, controller) => {
-  try {
-    const response = await axios.get(API_URL, {
-      params: { limit, skip },
-      signal: controller.signal,
-    });
-    return response.data;
-  } catch (error) {
-    return error.response;
-  }
-};
-
-const getTags = async (limit, skip, controller) => {
-  try {
-    const response = await axios.get(`${API_URL}/tags/all`, {
-      params: { limit, skip },
-      signal: controller.signal,
-    });
-    return response.data;
-  } catch (error) {
-    return error.response;
-  }
-};
+const getAllItems = getPartialData(API_URL);
+const getAllTags = getPartialData(`${API_URL}/all/tags`);
 
 const createItem = async data => {
   try {
@@ -36,8 +16,8 @@ const createItem = async data => {
 };
 
 const itemService = {
-  getItems,
-  getTags,
+  getAllItems,
+  getAllTags,
   createItem,
 };
 

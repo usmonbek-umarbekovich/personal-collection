@@ -1,67 +1,16 @@
 import axios from 'axios';
+import { getPartialData } from './helpers';
 
 const API_URL = '/api/collections';
 
-const getCollections = async params => {
-  try {
-    const response = await axios.get(API_URL, { params });
-    return response.data;
-  } catch (error) {
-    return error.response;
-  }
-};
-
-const getOwnCollections = async (limit, skip, controller) => {
-  try {
-    const response = await axios.get(`${API_URL}/me`, {
-      params: { limit, skip },
-      signal: controller.signal,
-    });
-    return response.data;
-  } catch (error) {
-    return error.response;
-  }
-};
-
-const getCollectionTopics = async (limit, skip, controller) => {
-  try {
-    const response = await axios.get(`${API_URL}/topics`, {
-      params: { limit, skip },
-      signal: controller.signal,
-    });
-    return response.data;
-  } catch (error) {
-    return error.response;
-  }
-};
-
-const getCollectionItems = id => async (limit, skip, controller) => {
-  try {
-    const response = await axios.get(`${API_URL}/${id}/items`, {
-      params: { limit, skip },
-      signal: controller.signal,
-    });
-    return response.data;
-  } catch (error) {
-    return error.response;
-  }
-};
-
-const getCollectionTags = id => async (limit, skip, controller) => {
-  try {
-    const response = await axios.get(`${API_URL}/${id}/tags`, {
-      params: { limit, skip },
-      signal: controller.signal,
-    });
-    return response.data;
-  } catch (error) {
-    return error.response;
-  }
-};
+const getAllCollections = getPartialData(API_URL);
+const getAllTopics = getPartialData(`${API_URL}/all/topics`);
+const getCollectionTags = id => getPartialData(`${API_URL}/${id}/tags`);
+const getCollectionItems = id => getPartialData(`${API_URL}/${id}/items`);
 
 const getSingleCollection = async id => {
   try {
-    const response = await axios.get(`${API_URL}/single/${id}`);
+    const response = await axios.get(`${API_URL}/${id}`);
     return response.data;
   } catch (error) {
     return error.response;
@@ -87,12 +36,11 @@ const updateCollection = async (id, data) => {
 };
 
 const collectionService = {
-  getCollections,
+  getAllCollections,
+  getSingleCollection,
   getCollectionItems,
   getCollectionTags,
-  getCollectionTopics,
-  getOwnCollections,
-  getSingleCollection,
+  getAllTopics,
   createCollection,
   updateCollection,
 };
