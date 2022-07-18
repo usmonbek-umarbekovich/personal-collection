@@ -35,12 +35,21 @@ function Register() {
       lastName: '',
       email: '',
       password: '',
+      bio: '',
       avatar: null,
     },
     validationSchema: Yup.object({
-      firstName: Yup.string().required('First Name is required'),
-      lastName: Yup.string().required('Last Name is required'),
-      email: Yup.string().email().required('Email is required'),
+      firstName: Yup.string()
+        .max(20, 'First Name must be 20 characters at most')
+        .required('First Name is required'),
+      lastName: Yup.string()
+        .max(20, 'First Name must be 20 characters at most')
+        .required('Last Name is required'),
+      email: Yup.string()
+        .email()
+        .max(20, 'Email must be 30 characters at most')
+        .required('Email is required'),
+      bio: Yup.string().max(250, 'Bio must be 250 characters at most'),
       password: Yup.string().required('Password is required'),
       avatar: Yup.mixed(),
     }),
@@ -54,7 +63,8 @@ function Register() {
   if (user) return null;
 
   return (
-    <Container className="col-md-6 m-auto">
+    <Container className="col-md-6 m-auto py-5">
+      <h1 className="text-center mt-2 mb-4">Create an account</h1>
       <Form noValidate onSubmit={formik.handleSubmit}>
         <Row className="mb-3 gap-3 gap-lg-0">
           <Form.Group as={Col} lg="6" controlId="firstName">
@@ -85,6 +95,20 @@ function Register() {
             </Form.Control.Feedback>
           </Form.Group>
         </Row>
+        <Form.Group controlId="bio" className="mb-3">
+          <Form.Label className="fs-4">Bio</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows="3"
+            size="lg"
+            placeholder="Tell us something about you"
+            isInvalid={!!formik.errors.bio}
+            {...formik.getFieldProps('bio')}
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.bio}
+          </Form.Control.Feedback>
+        </Form.Group>
         <Form.Group controlId="email" className="mb-3">
           <Form.Label className="fs-4">Email Address</Form.Label>
           <Form.Control
