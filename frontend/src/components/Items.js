@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
 import useLazyLoad from '../hooks/useLazyLoad';
 import LoadingBalls from '../components/LoadingBalls';
 import { formatTime } from '../helpers';
@@ -8,9 +8,10 @@ import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 
-function Items({ callback, inCollection }) {
+function Items({ query, callback, span, showUser, showCollection, root = '' }) {
   const [skip, setSkip] = useState(0);
-  const [items, loading, hasMore] = useLazyLoad(5, skip, callback);
+  const params = useMemo(() => ({ skip, ...query }), [skip, query]);
+  const [items, loading, hasMore] = useLazyLoad(params, callback);
 
   const observer = useRef();
   const lastItemElement = useCallback(
@@ -20,16 +21,16 @@ function Items({ callback, inCollection }) {
 
       observer.current = new IntersectionObserver(entries => {
         if (entries[0].isIntersecting && hasMore) {
-          setSkip(prevSkip => prevSkip + 5);
+          setSkip(prevSkip => prevSkip + query.limit);
         }
       });
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore]
+    [loading, hasMore, query.limit]
   );
 
   return (
-    <Col lg={{ span: 8, order: 'first' }} className="py-lg-0 py-3">
+    <Col lg={{ span, order: 'first' }} className="py-lg-0 py-3">
       <Stack gap="5" className="lh-1">
         {items.map((item, index) => (
           <Stack
@@ -38,8 +39,8 @@ function Items({ callback, inCollection }) {
             className="align-items-center"
             ref={items.length === index + 1 ? lastItemElement : null}>
             <Stack className="justify-content-center">
-              {inCollection || (
-                <AuthorInfo user={item.collectionId.user} size="sm" />
+              {showUser && (
+                <AuthorInfo user={item.user} root={root} weight="bolder" />
               )}
               <p className="fs-4 fw-bold">{item.name}</p>
               {item.description && (
@@ -50,7 +51,7 @@ function Items({ callback, inCollection }) {
                 direction="horizontal"
                 className="align-items-start text-muted">
                 <p>{formatTime(item.createdAt, 'medium')}</p>
-                {inCollection || (
+                {showCollection && (
                   <>
                     <p>-</p>
                     <p>{item.collectionId.name}</p>
