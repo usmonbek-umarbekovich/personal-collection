@@ -11,7 +11,7 @@ import CreateCollectionPage from './pages/CreateCollectionPage';
 import EditCollectionPage from './pages/EditCollectionPage';
 import CreateItemPage from './pages/CreateItemPage';
 import EditItemPage from './pages/EditItemPage';
-import MyProfile from './pages/MyProfile';
+import UserProfile from './pages/UserProfile';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
@@ -21,9 +21,11 @@ function App() {
         <Navigation />
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="me" element={<MyProfile />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="users">
+            <Route path=":id" element={<UserProfile />} />
+          </Route>
           <Route path="collections">
             <Route path=":id" element={<SingleCollection />} />
           </Route>

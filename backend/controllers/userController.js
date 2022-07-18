@@ -1,61 +1,67 @@
-const passport = require('passport');
+const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
+const { notFoundError } = require('../customErrors');
 
 /**
- * @desc Register new user
- * @route POST /api/users/register
+ * @desc Get user data
+ * @route Get /api/users/:id
  * @access Public
  */
-const signup = (req, res, next) => {
-  const { firstName, lastName, email, password } = req.body;
-  const name = { first: firstName, last: lastName };
+const getSingleUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) notFoundError(res, 'User');
 
-  User.register(new User({ name, email }), password, (err, user) => {
-    if (err) {
-      res.status(401);
-      return next(err);
-    }
-
-    req.login(user, err => {
-      if (err) next(err);
-      res.json(user);
-    });
-  });
-};
+  res.status(200).json(user);
+});
 
 /**
- * @desc Login user
- * @route POST /api/users/login
+ * @desc Get user collections
+ * @route GET /api/users/:id/collections
  * @access Public
  */
-const login = (req, res, next) => {
-  passport.authenticate('local', (_, user, err) => {
-    if (err) {
-      res.status(401);
-      return next(err);
-    }
+const getUserCollections = asyncHandler(async (req, res) => {
+  const { limit, skip, ...sortBy } = req.query;
+  const { id } = req.params;
 
-    req.login(user, err => {
-      if (err) next(err);
-      res.json(user);
-    });
-  })(req, res, () => res.json(req.user));
-};
+  const user = await User.findById(id).populate({
+    path: 'collections',
+    options: {
+      skip,
+      limit,
+      sort: sortBy,
+    },
+  });
+
+  res.status(200).json(user.collections);
+});
 
 /**
- * @desc Logout user
- * @route POST /api/users/logout
- * @access Private
+ * @desc Get user items
+ * @route GET /api/users/:id/items
+ * @access Public
  */
-const logout = (req, res, next) => {
-  req.logout(err => {
-    if (err) next(err);
-    res.json({});
+const getUserItems = asyncHandler(async (req, res) => {
+  const { limit, skip, ...sortBy } = req.query;
+  const { id } = req.params;
+
+  const user = await User.findById(id).populate({
+    path: 'items',
+    populate: [
+      { path: 'collectionId', select: 'name' },
+      { path: 'tags', options: { limit: 3 } },
+    ],
+    options: {
+      skip,
+      limit,
+      sort: sortBy,
+    },
   });
-};
+
+  res.status(200).json(user.items);
+});
 
 module.exports = {
-  login,
-  logout,
-  signup,
+  getSingleUser,
+  getUserItems,
+  getUserCollections,
 };

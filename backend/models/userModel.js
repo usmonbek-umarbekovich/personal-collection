@@ -23,16 +23,29 @@ const schema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    picture: Buffer,
     active: {
       type: Boolean,
       default: true,
     },
+    bio: String,
+    picture: Buffer,
   },
   {
     timestamps: { createdAt: 'registrationTime' },
   }
 );
+
+schema.virtual('collections', {
+  ref: 'Collection',
+  localField: '_id',
+  foreignField: 'user',
+});
+
+schema.virtual('items', {
+  ref: 'Item',
+  localField: '_id',
+  foreignField: 'user',
+});
 
 schema.plugin(passportLocalMongoose, {
   usernameField: 'email',
