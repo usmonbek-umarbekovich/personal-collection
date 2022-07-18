@@ -7,13 +7,19 @@ const User = require('../models/userModel');
  * @access Public
  */
 const signup = (req, res, next) => {
-  const { firstName, lastName, email, password } = req.body;
-  const name = { first: firstName, last: lastName };
+  const { firstName, lastName, email, bio, avatar, password } = req.body;
 
-  User.register(new User({ name, email }), password, (err, user) => {
+  const userData = {
+    name: { first: firstName, last: lastName },
+    email,
+    bio,
+    avatar,
+  };
+
+  User.register(new User(userData), password, (err, user) => {
     if (err) {
+      if (err) next(err);
       res.status(401);
-      return next(err);
     }
 
     req.login(user, err => {

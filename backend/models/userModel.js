@@ -6,10 +6,12 @@ const schema = new mongoose.Schema(
     name: {
       first: {
         type: String,
+        maxLength: 20,
         required: [true, 'First Name is a required field'],
       },
       last: {
         type: String,
+        maxLength: 20,
         required: [true, 'Last Name is a required field'],
       },
     },
@@ -18,6 +20,7 @@ const schema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
+      maxLength: 30,
     },
     lastSeen: {
       type: Date,
@@ -27,8 +30,11 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    bio: String,
-    picture: Buffer,
+    bio: {
+      type: String,
+      maxLength: 250,
+    },
+    avatar: Buffer,
   },
   {
     timestamps: { createdAt: 'registrationTime' },
