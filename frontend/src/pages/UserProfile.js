@@ -24,9 +24,14 @@ function UserProfile() {
   const { user: me } = useUserInfo();
 
   useEffect(() => {
-    const userId = id === 'me' ? me._id : id;
+    let userId;
+    if (me && id === 'me') {
+      userId = me._id;
+    } else {
+      userId = id;
+    }
     userService.getSingleUser(userId).then(setUser);
-  }, [id, me._id]);
+  }, [id, me]);
 
   if (!user) return null;
 
