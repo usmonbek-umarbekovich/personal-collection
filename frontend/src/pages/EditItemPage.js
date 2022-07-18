@@ -67,12 +67,14 @@ function EditItemPage() {
       tags: [],
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Name is required'),
+      name: Yup.string()
+        .max(30, 'Name must be at most 30 characters')
+        .required('Name is required'),
       collectionId: Yup.string().required(
         'You must choose a collection for the item'
       ),
-      description: Yup.string(),
       tags: Yup.array(),
+      description: Yup.string(),
     }),
     onSubmit: (values, { setSubmitting }) => {
       itemService.createItem(values).then(() => {

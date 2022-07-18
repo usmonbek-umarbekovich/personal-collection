@@ -16,6 +16,7 @@ const schema = new mongoose.Schema(
     },
     name: {
       type: String,
+      maxLength: 30,
       required: true,
     },
     comments: [
@@ -48,6 +49,7 @@ const schema = new mongoose.Schema(
         ref: 'Tag',
       },
     ],
+    description: String,
     picture: Buffer,
   },
   { timestamps: true }

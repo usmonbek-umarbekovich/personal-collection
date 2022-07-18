@@ -38,9 +38,13 @@ function EditCollectionPage() {
       topic: '',
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Name is required'),
+      name: Yup.string()
+        .max(30, 'Name must be at most 30 characters')
+        .required('Name is required'),
+      topic: Yup.string()
+        .max(30, 'Topic name must be at most 30 characters')
+        .required('Please choose a topic for your collection'),
       description: Yup.string(),
-      topic: Yup.string().required('Please choose a topic for your collection'),
     }),
     onSubmit: (values, { setSubmitting }) => {
       collectionService.updateCollection(id, values).then(() => {

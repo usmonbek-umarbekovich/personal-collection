@@ -10,17 +10,19 @@ const schema = new mongoose.Schema(
     },
     name: {
       type: String,
+      maxLenght: 30,
       required: true,
     },
     topic: {
       type: String,
       lowercase: true,
+      maxLenght: 30,
       required: [true, 'Please choose a topic for your collection'],
     },
-    description: String,
     meta: {
       numItems: { type: Number, default: 0 },
     },
+    description: String,
   },
   { timestamps: true }
 );
