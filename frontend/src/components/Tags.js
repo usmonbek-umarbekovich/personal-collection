@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import useLazyLoad from '../hooks/useLazyLoad';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -6,18 +6,19 @@ import Button from 'react-bootstrap/Button';
 
 function Tags({ callback }) {
   const [skip, setSkip] = useState(0);
-  const [tags, loading, hasMore] = useLazyLoad(10, skip, callback);
+  const params = useMemo(() => ({ limit: 10, skip }), [skip]);
+  const [tags, loading, hasMore] = useLazyLoad(params, callback);
 
   useEffect(() => {
     if (loading) return;
-    if (hasMore) setSkip(prevSkip => prevSkip + 10);
-  }, [hasMore, loading]);
+    if (hasMore) setSkip(prevSkip => prevSkip + params.limit);
+  }, [hasMore, loading, params.limit]);
 
   return (
     <Col
       lg={{ span: 4, order: 'last' }}
       className="tags position-lg-sticky sticky-lg-top border-bottom py-lg-0 py-3"
-      style={{ top: 'calc(76px + 2.5rem)' }}>
+      style={{ top: 'calc(79px + 2.5rem)' }}>
       <Row className="g-3 row-cols-auto justify-content-lg-start justify-content-center">
         {tags.map(tag => (
           <Col key={tag._id}>
