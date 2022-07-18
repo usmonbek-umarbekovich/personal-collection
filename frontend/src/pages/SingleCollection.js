@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import collectionService from '../services/collectionService';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import collectionService from '../services/collectionService';
+import { formatTime } from '../helpers';
 import Items from '../components/Items';
 import Tags from '../components/Tags';
 import AuthorInfo from '../components/AuthorInfo';
@@ -9,6 +10,7 @@ import Row from 'react-bootstrap/Row';
 
 function SingleCollection() {
   const [collection, setCollection] = useState();
+  const itemQuery = useMemo(() => ({ limit: 6 }), []);
   const { id } = useParams();
 
   useEffect(() => {
@@ -22,9 +24,11 @@ function SingleCollection() {
       <section className="border-bottom py-lg-4 px-2">
         <Container fluid="md">
           <AuthorInfo
-            size="lg"
+            fontSize="lg"
+            picSize="md"
             user={collection.user}
-            createdAt={collection.createdAt}
+            description={formatTime(collection.createdAt, 'long')}
+            root="../.."
           />
           <h1 className="lh-base">{collection.name}</h1>
           {collection.description && (
@@ -37,8 +41,12 @@ function SingleCollection() {
           <Row className="justify-content-between align-items-start">
             <Tags callback={collectionService.getCollectionTags(id)} />
             <Items
-              inCollection={true}
+              span={8}
+              showUser={false}
+              showCollection={false}
+              query={itemQuery}
               callback={collectionService.getCollectionItems(id)}
+              root="../.."
             />
           </Row>
         </Container>
