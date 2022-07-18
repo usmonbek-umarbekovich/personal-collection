@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { formatTime } from '../helpers';
+import { timeDiff, truncate } from '../helpers';
 import useLazyLoad from '../hooks/useLazyLoad';
 import AuthorInfo from './AuthorInfo';
 import Stack from 'react-bootstrap/Stack';
@@ -16,6 +16,8 @@ function Collections({
   fill,
   query,
   topCollections,
+  maxWords = 15,
+  maxChars = 180,
   root = '',
 }) {
   // fill: true | false
@@ -57,9 +59,11 @@ function Collections({
                   <Link
                     className="text-reset"
                     to={`${root}/collections/${col._id}`}>
-                    <p className="fs-5 fw-bold">{col.name}</p>
+                    <p className="fs-5 fw-bold text-break">{col.name}</p>
                     {col.description && (
-                      <p className="fs-5 lh-sm">{col.description}</p>
+                      <p className="fs-5 lh-sm text-break">
+                        {truncate(col.description, maxWords, maxChars)}
+                      </p>
                     )}
                   </Link>
                 </Stack>
@@ -72,7 +76,14 @@ function Collections({
                     {col.meta.numItems > 1 ? 's' : ''}
                   </p>
                   <p>-</p>
-                  <p>{formatTime(col.createdAt, 'medium')}</p>
+                  <p>
+                    {timeDiff(
+                      col.createdAt,
+                      'item',
+                      topCollections ? 'medium' : 'long',
+                      true
+                    )}
+                  </p>
                 </Stack>
               </Stack>
             </Stack>

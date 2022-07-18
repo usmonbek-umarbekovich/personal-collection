@@ -39,7 +39,7 @@ const getSingleCollection = asyncHandler(async (req, res) => {
  * @access Public
  */
 const getCollectionItems = asyncHandler(async (req, res) => {
-  const { skip, limit } = req.query;
+  const { skip, limit, ...sortBy } = req.query;
   const { id } = req.params;
 
   const collection = await Collection.findById(id).populate({
@@ -52,7 +52,7 @@ const getCollectionItems = asyncHandler(async (req, res) => {
     options: {
       limit,
       skip,
-      sort: { createdAt: 'desc' },
+      sort: sortBy,
     },
   });
 
