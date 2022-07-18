@@ -8,6 +8,12 @@ const schema = new mongoose.Schema(
       ref: 'Collection',
       immutable: true,
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+      immutable: true,
+    },
     name: {
       type: String,
       required: true,

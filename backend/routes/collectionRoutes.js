@@ -1,12 +1,11 @@
 const express = require('express');
 const ensureLoggedIn = require('../middlewares/ensureLoggedIn');
 const {
-  getCollections,
-  getOwnCollections,
+  getAllCollections,
+  getSingleCollection,
   getCollectionItems,
   getCollectionTags,
-  getCollectionTopics,
-  getSingleCollection,
+  getAllTopics,
   createCollection,
   updateCollection,
   deleteCollection,
@@ -14,34 +13,17 @@ const {
 
 const router = express.Router();
 
-router
-  .route('/')
-  .get(getCollections)
-  .post(ensureLoggedIn, createCollection);
+router.route('/').get(getAllCollections).post(ensureLoggedIn, createCollection);
 
+router.get('/all/topics', getAllTopics);
+router.get('/:id/items', getCollectionItems);
+router.get('/:id/tags', getCollectionTags);
+
+// protected routes
 router
   .route('/:id')
+  .get(getSingleCollection)
   .put(ensureLoggedIn, updateCollection)
   .delete(ensureLoggedIn, deleteCollection);
-
-router
-  .route('/me')
-  .get(ensureLoggedIn, getOwnCollections);
-
-router
-  .route('/topics')
-  .get(getCollectionTopics);
-
-router
-  .route('/:id/items')
-  .get(getCollectionItems);
-
-router
-  .route('/:id/tags')
-  .get(getCollectionTags);
-
-router
-  .route('/single/:id')
-  .get(getSingleCollection);
 
 module.exports = router;

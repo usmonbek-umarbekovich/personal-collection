@@ -5,46 +5,29 @@ const Tag = require('../models/tagModel');
 const { notFoundError, notAuthorizedError } = require('../customErrors');
 
 /**
- * @desc Get items
- * @route GET /api/item
+ * @desc Get all items
+ * @route GET /api/items
  * @access Public
  */
-const getItems = asyncHandler(async (req, res) => {
-  const { limit, skip } = req.query;
+const getAllItems = asyncHandler(async (req, res) => {
+  const { limit, skip, ...sortBy } = req.query;
   const items = await Item.find({})
+    .sort(sortBy)
     .limit(limit)
     .skip(skip)
-    .populate({
-      path: 'collectionId',
-      select: 'name user',
-      populate: {
-        path: 'user',
-        select: 'name picture _id',
-      },
-    })
-    .populate({ path: 'tags', options: { limit: 3 } })
-    .sort({ createdAt: 'desc' });
+    .populate('collectionId', 'name')
+    .populate('user', '_id name picture')
+    .populate({ path: 'tags', options: { limit: 3 } });
 
   res.status(200).json(items);
 });
 
 /**
- * @desc Get tags
- * @route GET /api/item/tags/all
- * @access Public
- */
-const getTags = asyncHandler(async (req, res) => {
-  const { skip, limit } = req.query;
-  const tags = await Tag.find({}).limit(limit).skip(skip);
-  res.status(200).json(tags);
-});
-
-/**
  * @desc Get single collection item
- * @route GET /api/item/:id
+ * @route GET /api/items/:id
  * @access Public
  */
-const getItem = asyncHandler(async (req, res) => {
+const getSingleItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
@@ -52,8 +35,19 @@ const getItem = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc Get tags
+ * @route GET /api/items/all/tags
+ * @access Public
+ */
+const getAllTags = asyncHandler(async (req, res) => {
+  const { skip, limit } = req.query;
+  const tags = await Tag.find({}).limit(limit).skip(skip);
+  res.status(200).json(tags);
+});
+
+/**
  * @desc Create collection item
- * @route POST /api/item
+ * @route POST /api/items
  * @access Private
  */
 const createItem = asyncHandler(async (req, res) => {
@@ -74,7 +68,7 @@ const createItem = asyncHandler(async (req, res) => {
   );
   const tags = savedTags.concat(newTags).map(tag => tag._id);
 
-  const item = await Item.create({ ...req.body, tags });
+  const item = await Item.create({ ...req.body, user: req.user._id, tags });
   collection.meta.numItems++;
   await collection.save();
 
@@ -83,15 +77,14 @@ const createItem = asyncHandler(async (req, res) => {
 
 /**
  * @desc Update collection item
- * @route PUT /api/item/:id
+ * @route PUT /api/items/:id
  * @access Private
  */
 const updateItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
-  const userId = await item.populate('collectionId', 'user');
-  if (!userId.equals(req.user._id)) {
+  if (!item.user.equals(req.user._id)) {
     notAuthorizedError(res);
   }
 
@@ -105,20 +98,20 @@ const updateItem = asyncHandler(async (req, res) => {
 
 /**
  * @desc Delete collection item
- * @route DELETE /api/item/:id
+ * @route DELETE /api/items/:id
  * @access Private
  */
 const deleteItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
-  const collection = item.populate('collectionId');
-  if (!collection.user.equals(req.user._id)) {
+  if (!item.user.equals(req.user._id)) {
     notAuthorizedError(res);
   }
 
   await item.remove();
 
+  const collection = await Collection.findById(item.collectionId);
   await collection.update(
     { 'meta.numItems': collection.meta.numItems - 1 },
     { runValidators: true }
@@ -130,7 +123,7 @@ const deleteItem = asyncHandler(async (req, res) => {
 // LIKES
 /**
  * @desc Like or Unlike collection item
- * @route POST /api/item/:id
+ * @route POST /api/items/:id/likes
  * @access Private
  */
 const likeOrUnlikeItem = asyncHandler(async (req, res) => {
@@ -152,9 +145,9 @@ const likeOrUnlikeItem = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  getItem,
-  getItems,
-  getTags,
+  getAllItems,
+  getSingleItem,
+  getAllTags,
   createItem,
   updateItem,
   deleteItem,

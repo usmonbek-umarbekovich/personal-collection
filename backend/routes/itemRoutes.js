@@ -1,9 +1,9 @@
 const express = require('express');
 const ensureLoggedIn = require('../middlewares/ensureLoggedIn');
 const {
-  getItem,
-  getItems,
-  getTags,
+  getAllItems,
+  getSingleItem,
+  getAllTags,
   createItem,
   updateItem,
   deleteItem,
@@ -18,24 +18,16 @@ const {
 
 const router = express.Router();
 
-router
-  .route('/')
-  .get(getItems)
-  .post(ensureLoggedIn, createItem);
+router.route('/').get(getAllItems).post(ensureLoggedIn, createItem);
+
+router.get('/all/tags', getAllTags);
+router.post('/:id/likes', ensureLoggedIn, likeOrUnlikeItem);
 
 router
   .route('/:id')
-  .get(getItem)
+  .get(getSingleItem)
   .put(ensureLoggedIn, updateItem)
   .delete(ensureLoggedIn, deleteItem);
-
-router
-  .route('/:id/like')
-  .post(ensureLoggedIn, likeOrUnlikeItem);
-
-router
-  .route('/tags/all')
-  .get(getTags)
 
 // comment routes
 router

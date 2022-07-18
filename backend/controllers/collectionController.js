@@ -3,18 +3,34 @@ const Collection = require('../models/collectionModel');
 const { notFoundError, notAuthorizedError } = require('../customErrors');
 
 /**
- * @desc Get collections
- * @route GET /api/collections
+ * @desc Get all collections
+ * @route GET /api/collections/all
  * @access Public
  */
-const getCollections = asyncHandler(async (req, res) => {
-  const { limit, ...sortBy } = req.query;
+const getAllCollections = asyncHandler(async (req, res) => {
+  const { limit, skip, ...sortBy } = req.query;
   const collections = await Collection.find({})
     .sort(sortBy)
-    .limit(+limit)
+    .skip(skip)
+    .limit(limit)
     .populate('user', 'name picture _id');
 
   res.status(200).json(collections);
+});
+
+/**
+ * @desc Get single collection
+ * @route GET /api/collections/single/:id
+ * @access Public
+ */
+const getSingleCollection = asyncHandler(async (req, res) => {
+  const collection = await Collection.findById(req.params.id).populate(
+    'user',
+    '_id name picture'
+  );
+  if (!collection) notFoundError(res, 'Collection');
+
+  res.status(200).json(collection);
 });
 
 /**
@@ -29,14 +45,8 @@ const getCollectionItems = asyncHandler(async (req, res) => {
   const collection = await Collection.findById(id).populate({
     path: 'items',
     populate: [
-      {
-        path: 'collectionId',
-        select: 'name user',
-        populate: {
-          path: 'user',
-          select: 'name picture _id',
-        },
-      },
+      { path: 'collectionId', select: 'name' },
+      { path: 'user', select: '_id name picture' },
       { path: 'tags', options: { limit: 3 } },
     ],
     options: {
@@ -82,11 +92,11 @@ const getCollectionTags = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc Get collection topics
+ * @desc Get all topics
  * @route GET /api/collections/topics
  * @access Public
  */
-const getCollectionTopics = asyncHandler(async (req, res) => {
+const getAllTopics = asyncHandler(async (req, res) => {
   const { skip, limit } = req.query;
 
   let topics = await Collection.find({})
@@ -96,35 +106,6 @@ const getCollectionTopics = asyncHandler(async (req, res) => {
 
   topics = topics.map(t => t.topic);
   res.status(200).json(topics);
-});
-
-/**
- * @desc Get user's collections
- * @route Get /api/collections/me
- * @access Private
- */
-const getOwnCollections = asyncHandler(async (req, res) => {
-  const { skip, limit } = req.query;
-  const collections = await Collection.where('user')
-    .equals(req.user._id)
-    .limit(limit)
-    .skip(skip);
-  res.status(200).json(collections);
-});
-
-/**
- * @desc Get single collection
- * @route GET /api/collections/single/:id
- * @access Public
- */
-const getSingleCollection = asyncHandler(async (req, res) => {
-  const collection = await Collection.findById(req.params.id).populate(
-    'user',
-    '_id name picture'
-  );
-  if (!collection) notFoundError(res, 'Collection');
-
-  res.status(200).json(collection);
 });
 
 /**
@@ -186,12 +167,11 @@ const deleteCollection = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  getCollections,
-  getOwnCollections,
+  getAllCollections,
+  getSingleCollection,
   getCollectionItems,
   getCollectionTags,
-  getCollectionTopics,
-  getSingleCollection,
+  getAllTopics,
   createCollection,
   updateCollection,
   deleteCollection,
