@@ -1,25 +1,40 @@
-import { getFullName, formatTime } from '../helpers';
+import { getFullName } from '../helpers';
+import { Link } from 'react-router-dom';
 import Stack from 'react-bootstrap/Stack';
 import Image from 'react-bootstrap/Image';
 
-function AuthorInfo({ user, createdAt, size }) {
-  const pictureSize = { lg: '3rem', sm: '1.75rem' };
-  const nameFont = { lg: 'fs-5', sm: 'fw-bolder' };
+function AuthorInfo({
+  user,
+  description,
+  fontSize = 'sm',
+  picSize = 'sm',
+  weight = 'normal',
+  direction = 'horizontal',
+  root = '',
+}) {
+  const pictureSize = { lg: '4.5rem', md: '3rem', sm: '1.75rem' };
+  const nameSize = { lg: 'fs-5', sm: 'fs-6' };
+  const alignItems = {
+    vertical: 'align-items-start',
+    horizontal: 'align-items-center',
+  };
 
   return (
-    <Stack gap="2" direction="horizontal" className="align-items-center py-2">
+    <Stack gap="2" direction={direction} className={`${alignItems} py-2`}>
       <div
-        style={{ width: pictureSize[size], height: pictureSize[size] }}
+        style={{ width: pictureSize[picSize], height: pictureSize[picSize] }}
         className="bg-secondary rounded-circle">
         {user.picture && (
           <Image src={user.picture} alt={getFullName(user.name)} />
         )}
       </div>
       <Stack className="justify-content-center">
-        <p className={`${nameFont[size]} m-0`}>{getFullName(user.name)}</p>
-        {createdAt && (
-          <p className="text-muted m-0">{formatTime(createdAt, 'long')}</p>
-        )}
+        <Link to={`${root}/users/${user._id}`} className="text-reset">
+          <p className={`${nameSize[fontSize]} fw-${weight} m-0`}>
+            {getFullName(user.name)}
+          </p>
+        </Link>
+        {description && <p className="text-muted m-0">{description}</p>}
       </Stack>
     </Stack>
   );
