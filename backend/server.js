@@ -49,9 +49,10 @@ app.use(passport.session());
 
 configurePassport(passport);
 
+app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/collections', require('./routes/collectionRoutes'));
-app.use('/api/item', require('./routes/itemRoutes'));
+app.use('/api/items', require('./routes/itemRoutes'));
 
 // use static files [production]
 if (process.env.NODE_ENV === 'production') {
