@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const useTagGet = (limit, skip, callback) => {
+const useLazyLoad = (params, callback) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
@@ -10,7 +10,7 @@ const useTagGet = (limit, skip, callback) => {
     setLoading(true);
 
     const controller = new AbortController();
-    callback(limit, skip, controller)
+    callback(params, controller)
       .then(currData => {
         setData(prevData => prevData.concat(currData));
         setHasMore(currData.length > 0);
@@ -21,9 +21,9 @@ const useTagGet = (limit, skip, callback) => {
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [limit, skip, callback]);
+  }, [params, callback]);
 
   return [data, loading, hasMore];
 };
 
-export default useTagGet;
+export default useLazyLoad;

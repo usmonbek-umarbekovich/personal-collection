@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import CreatableSelect from 'react-select/creatable';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CreatableSelect from 'react-select/creatable';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -14,10 +14,10 @@ import Spinner from 'react-bootstrap/Spinner';
 
 function CreateCollectionPage() {
   const [skip, setSkip] = useState(0);
+  const params = useMemo(() => ({ limit: 5, skip }), [skip]);
   let [savedTopics, loading, hasMore] = useLazyLoad(
-    5,
-    skip,
-    collectionService.getCollectionTopics
+    params,
+    collectionService.getAllTopics
   );
 
   savedTopics = [...new Set(savedTopics)].map(topic => {

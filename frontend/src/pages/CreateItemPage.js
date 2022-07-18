@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { useUserInfo } from '../contexts/userInfoContext';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import itemService from '../services/itemService';
-import collectionService from '../services/collectionService';
+import userService from '../services/userService';
 import useLazyLoad from '../hooks/useLazyLoad';
 import { capitalize } from '../helpers';
 import Container from 'react-bootstrap/Container';
@@ -17,16 +17,19 @@ import Spinner from 'react-bootstrap/Spinner';
 function CreateItemPage() {
   const [tagSkip, setTagSkip] = useState(0);
   const [colSkip, setColSkip] = useState(0);
+  const tagParams = useMemo(() => ({ limit: 10, skip: tagSkip }), [tagSkip]);
+  const colParams = useMemo(() => ({ limit: 5, skip: colSkip }), [colSkip]);
+
+  const { user } = useUserInfo();
+  const navigate = useNavigate();
 
   let [savedTags, tagLoading, tagHasMore] = useLazyLoad(
-    10,
-    tagSkip,
-    itemService.getTags
+    tagParams,
+    itemService.getAllTags
   );
   let [savedCollections, colLoading, colHasMore] = useLazyLoad(
-    5,
-    colSkip,
-    collectionService.getOwnCollections
+    colParams,
+    userService.getUserCollections(user._id)
   );
 
   savedTags = savedTags.map(tag => {
@@ -41,9 +44,6 @@ function CreateItemPage() {
       label: capitalize(col.name),
     };
   });
-
-  const { user } = useUserInfo();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (tagLoading) return;

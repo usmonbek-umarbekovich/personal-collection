@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUserInfo } from '../contexts/userInfoContext';
@@ -14,10 +14,10 @@ import Spinner from 'react-bootstrap/Spinner';
 
 function EditCollectionPage() {
   const [skip, setSkip] = useState(0);
+  const params = useMemo(() => ({ limit: 5, skip }), [skip]);
   let [savedTopics, loading, hasMore] = useLazyLoad(
-    5,
-    skip,
-    collectionService.getCollectionTopics
+    params,
+    collectionService.getAllTopics
   );
 
   savedTopics = [...new Set(savedTopics)].map(topic => {
