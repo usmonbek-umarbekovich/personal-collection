@@ -1,4 +1,5 @@
 import { useUserInfo } from '../contexts/userInfoContext';
+import collectionService from '../services/collectionService';
 import itemService from '../services/itemService';
 import Showcase from '../components/Showcase';
 import Collections from '../components/Collections';
@@ -13,12 +14,29 @@ function Dashboard() {
   return (
     <>
       {!user && <Showcase />}
-      <Collections />
+      <section className="border-bottom pt-lg-5 py-4 px-2">
+        <Container fluid="md">
+          <Collections
+            fill={false}
+            indexes={true}
+            showUser={true}
+            topCollections={true}
+            query={{ 'meta.numItems': 'desc', limit: 6 }}
+            callback={collectionService.getAllCollections}
+          />
+        </Container>
+      </section>
       <main className="py-lg-5 px-2">
         <Container fluid="md">
           <Row className="justify-content-between align-items-start">
-            <Tags callback={itemService.getTags} />
-            <Items callback={itemService.getItems} />
+            <Tags callback={itemService.getAllTags} />
+            <Items
+              showUser={true}
+              showCollection={true}
+              span={8}
+              query={{ limit: 6 }}
+              callback={itemService.getAllItems}
+            />
           </Row>
         </Container>
       </main>
