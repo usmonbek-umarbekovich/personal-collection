@@ -69,7 +69,7 @@ function Navigation() {
                         <Nav.Link
                           eventKey="me"
                           as={NavLink}
-                          to="/me"
+                          to="/users/me"
                           className="p-0 text-dark fs-5">
                           Profile
                         </Nav.Link>
