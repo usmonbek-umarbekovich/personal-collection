@@ -1,9 +1,10 @@
 import axios from 'axios';
+import { makeAuthRequest } from './helpers';
 
 const API_URL = '/api/auth';
 
-const register = makeRequest('signup');
-const login = makeRequest('login');
+const register = makeAuthRequest(`${API_URL}/signup`);
+const login = makeAuthRequest(`${API_URL}/login`);
 
 const logout = async () => {
   try {
@@ -12,26 +13,6 @@ const logout = async () => {
     return error.response;
   }
 };
-
-/**
- * @desc Helper function for login and signup
- */
-function makeRequest(endpoint) {
-  let controller;
-
-  return async userData => {
-    try {
-      if (controller) controller.abort();
-
-      controller = new AbortController();
-      return await axios.post(`${API_URL}/${endpoint}`, userData, {
-        signal: controller.signal,
-      });
-    } catch (error) {
-      return error.response;
-    }
-  };
-}
 
 const authService = {
   login,
