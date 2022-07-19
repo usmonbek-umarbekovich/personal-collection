@@ -62,6 +62,7 @@ function Navigation() {
                         }
                         onBlur={e => handleBlur(e, 'create')}
                         aria-controls="create"
+                        title="Create"
                         aria-expanded={open.create}
                         style={{ width: '2.75rem', height: '2.75rem' }}
                         className="d-flex rounded-circle p-1">
@@ -100,6 +101,7 @@ function Navigation() {
                           })
                         }
                         onBlur={e => handleBlur(e, 'avatar')}
+                        title="Profile"
                         aria-controls="avatar"
                         aria-expanded={open.avatar}
                         style={{ width: '2.75rem', height: '2.75rem' }}
@@ -121,7 +123,7 @@ function Navigation() {
                           className="position-absolute top-100 end-0 mt-2">
                           <ListGroup.Item action className="p-0">
                             <NavLink
-                              to="users/me"
+                              to={`users/${user._id}`}
                               className="d-block text-reset fs-5 px-5 py-2">
                               Profile
                             </NavLink>
