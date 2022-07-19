@@ -23,17 +23,17 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="items/create" element={<CreateItemPage />} />
+          <Route path="collections/create" element={<CreateCollectionPage />} />
           <Route path="users">
             <Route path=":id" element={<UserProfile />} />
           </Route>
           <Route path="collections">
             <Route path=":id" element={<SingleCollection />} />
           </Route>
-          <Route path="collections/create" element={<CreateCollectionPage />} />
           <Route path="collections/edit">
             <Route path=":id" element={<EditCollectionPage />} />
           </Route>
-          <Route path="items/create" element={<CreateItemPage />} />
           <Route path="items/edit">
             <Route path=":id" element={<EditItemPage />} />
           </Route>
