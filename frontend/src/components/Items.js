@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import useLazyLoad from '../hooks/useLazyLoad';
-import LoadingBalls from '../components/LoadingBalls';
+import useObserver from '../hooks/useObserver';
 import { timeDiff, truncate } from '../helpers';
+import LoadingBalls from './LoadingBalls';
 import AuthorInfo from './AuthorInfo';
 import Stack from 'react-bootstrap/Stack';
 import Col from 'react-bootstrap/Col';
@@ -19,31 +18,7 @@ function Items({
   maxChars = 180,
   root = '',
 }) {
-  const [skip, setSkip] = useState(0);
-  const params = useMemo(() => ({ skip, ...query }), [skip, query]);
-  const [items, loading, hasMore, setItems] = useLazyLoad(params, callback);
-
-  useEffect(() => {
-    setSkip(0);
-    setItems([]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
-
-  const observer = useRef();
-  const lastItemElement = useCallback(
-    node => {
-      if (loading) return;
-      if (observer.current) observer.current.disconnect();
-
-      observer.current = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting && hasMore) {
-          setSkip(prevSkip => prevSkip + query.limit);
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [loading, hasMore, query.limit]
-  );
+  const [items, lastItemElement, loading] = useObserver(query, callback);
 
   return (
     <Col lg={{ span, order: 'first' }} className="py-lg-0 py-3">

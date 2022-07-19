@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useUserInfo } from '../contexts/userInfoContext';
+import { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import { getFullName, timeDiff } from '../helpers';
 import userService from '../services/userService';
 import Items from '../components/Items';
@@ -17,26 +16,26 @@ import { FaBan, FaCheck } from 'react-icons/fa';
 
 function UserProfile() {
   const [user, setUser] = useState();
-  const navigate = useNavigate();
   const { id } = useParams();
-  const { user: me } = useUserInfo();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const itemQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), [id]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const colQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), [id]);
+  const [itemQuery, setItemQuery] = useState({ createdAt: 'desc', limit: 6 });
+  const [colQuery, setColQuery] = useState({ createdAt: 'desc', limit: 6 });
+  const itemCallback = useCallback(
+    async (params, controller) => {
+      return userService.getUserItems(id)(params, controller);
+    },
+    [id]
+  );
+  const colCallback = useCallback(
+    async (params, controller) => {
+      return userService.getUserCollections(id)(params, controller);
+    },
+    [id]
+  );
 
   useEffect(() => {
-    if (!me) navigate('/login');
-  }, [me, navigate]);
-
-  useEffect(() => {
-    let userId;
-    if (me && id === 'me') userId = me._id;
-    else userId = id;
-
-    userService.getSingleUser(userId).then(setUser);
-  }, [id, me]);
+    userService.getSingleUser(id).then(setUser);
+  }, [id]);
 
   if (!user) return null;
 
@@ -64,11 +63,11 @@ function UserProfile() {
               </div>
               <div className="d-lg-none position-absolute top-0 end-0 mt-4">
                 {user.active ? (
-                  <Button variant="outline-danger">
+                  <Button variant="outline-danger" title="Block the user">
                     <FaBan className="fs-5" />
                   </Button>
                 ) : (
-                  <Button variant="outline-success">
+                  <Button variant="outline-success" title="Unblock the user">
                     <FaCheck className="fs-5" />
                   </Button>
                 )}
@@ -90,7 +89,10 @@ function UserProfile() {
                 </Button>
               )}
             </Stack>
-            <Tabs defaultActiveKey="collections" className="fs-5 pt-5">
+            <Tabs
+              mountOnEnter={true}
+              className="fs-5 pt-5"
+              defaultActiveKey="collections">
               <Tab eventKey="collections" title="Collections">
                 <div className="mt-4">
                   <Collections
@@ -98,7 +100,7 @@ function UserProfile() {
                     fill={true}
                     showUser={false}
                     query={colQuery}
-                    callback={userService.getUserCollections(user._id)}
+                    callback={colCallback}
                     root="../.."
                   />
                 </div>
@@ -111,7 +113,7 @@ function UserProfile() {
                     showUser={false}
                     span={12}
                     query={itemQuery}
-                    callback={userService.getUserItems(user._id)}
+                    callback={itemCallback}
                     root="../.."
                   />
                 </Row>
