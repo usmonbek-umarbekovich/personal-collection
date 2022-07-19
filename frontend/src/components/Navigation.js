@@ -1,15 +1,35 @@
-import { NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useUserInfo } from '../contexts/userInfoContext';
+import { getFullName } from '../helpers';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Collapse from 'react-bootstrap/Collapse';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
+import Image from 'react-bootstrap/Image';
+import { FaUser, FaPlus } from 'react-icons/fa';
 
 function Navigation() {
+  const [open, setOpen] = useState({ avatar: false, create: false });
   const { user, logoutUser } = useUserInfo();
+  const location = useLocation();
+
+  useEffect(() => {
+    setOpen({ avatar: false, create: false });
+  }, [location]);
+
+  const handleBlur = (e, element) => {
+    if (!e.relatedTarget || !e.relatedTarget.closest(`#${element}`)) {
+      return setOpen({
+        ...open,
+        [element]: false,
+      });
+    }
+  };
 
   return (
     <header style={{ marginTop: '79px' }}>
@@ -29,62 +49,93 @@ function Navigation() {
             <Stack
               gap="3"
               className="align-items-md-center flex-md-row-reverse">
-              <Nav as="ul" className="align-items-md-center">
+              <Nav as="ul" className="d-flex align-items-md-center">
                 {user ? (
-                  <>
-                    <NavDropdown
-                      title="Create"
-                      id="create"
-                      as="ul"
-                      active
-                      className="fs-4 px-0">
-                      <NavDropdown.Item as="li">
-                        <Nav.Link
-                          eventKey="collection"
-                          as={NavLink}
-                          to="/collections/create"
-                          className="p-0 text-dark fs-5">
-                          Collection
-                        </Nav.Link>
-                      </NavDropdown.Item>
-                      <NavDropdown.Divider />
-                      <NavDropdown.Item as="li">
-                        <Nav.Link
-                          eventKey="item"
-                          as={NavLink}
-                          to="/items/create"
-                          className="p-0 text-dark fs-5">
-                          Item
-                        </Nav.Link>
-                      </NavDropdown.Item>
-                    </NavDropdown>
+                  <Stack direction="horizontal" gap="3">
+                    <div className="position-relative">
+                      <Button
+                        onClick={() =>
+                          setOpen({
+                            create: !open.create,
+                            avatar: false,
+                          })
+                        }
+                        onBlur={e => handleBlur(e, 'create')}
+                        aria-controls="create"
+                        aria-expanded={open.create}
+                        style={{ width: '2.75rem', height: '2.75rem' }}
+                        className="d-flex rounded-circle p-1">
+                        <FaPlus className="m-auto fs-4" />
+                      </Button>
+                      <Collapse in={open.create} timeout={10}>
+                        <ListGroup
+                          id="create"
+                          variant="light"
+                          className="position-absolute top-100 end-0 mt-2">
+                          <ListGroup.Item action className="text-nowrap p-0">
+                            <NavLink
+                              to="collections/create"
+                              className="d-block text-reset fs-5 px-4 py-2">
+                              Create Collection
+                            </NavLink>
+                          </ListGroup.Item>
+                          <ListGroup.Item action className="text-nowrap p-0">
+                            <NavLink
+                              to="items/create"
+                              className="d-block text-reset fs-5 px-4 py-2">
+                              Add Item
+                            </NavLink>
+                          </ListGroup.Item>
+                        </ListGroup>
+                      </Collapse>
+                    </div>
 
-                    <NavDropdown
-                      title="Profile"
-                      id="profile"
-                      as="ul"
-                      active
-                      className="fs-4 px-0 ps-md-3">
-                      <NavDropdown.Item as="li">
-                        <Nav.Link
-                          eventKey="me"
-                          as={NavLink}
-                          to="/users/me"
-                          className="p-0 text-dark fs-5">
-                          Profile
-                        </Nav.Link>
-                      </NavDropdown.Item>
-                      <NavDropdown.Divider />
-                      <NavDropdown.Item
-                        as={Button}
-                        variant="light"
-                        eventKey="logout"
-                        className="fs-5"
-                        onClick={logoutUser}>
-                        Logout
-                      </NavDropdown.Item>
-                    </NavDropdown>
-                  </>
+                    <div className="position-relative">
+                      <Button
+                        variant="secondary"
+                        onClick={() =>
+                          setOpen({
+                            avatar: !open.avatar,
+                            create: false,
+                          })
+                        }
+                        onBlur={e => handleBlur(e, 'avatar')}
+                        aria-controls="avatar"
+                        aria-expanded={open.avatar}
+                        style={{ width: '2.75rem', height: '2.75rem' }}
+                        className="d-flex rounded-circle p-1">
+                        {user?.avatar ? (
+                          <Image
+                            fluid
+                            src={user.avatar}
+                            alt={getFullName(user.name)}
+                          />
+                        ) : (
+                          <FaUser className="m-auto fs-4" />
+                        )}
+                      </Button>
+                      <Collapse in={open.avatar} timeout={10}>
+                        <ListGroup
+                          id="avatar"
+                          variant="light"
+                          className="position-absolute top-100 end-0 mt-2">
+                          <ListGroup.Item action className="p-0">
+                            <NavLink
+                              to="users/me"
+                              className="d-block text-reset fs-5 px-5 py-2">
+                              Profile
+                            </NavLink>
+                          </ListGroup.Item>
+                          <ListGroup.Item
+                            action
+                            onClick={logoutUser}
+                            className="fs-5 px-5">
+                            Logout
+                          </ListGroup.Item>
+                        </ListGroup>
+                      </Collapse>
+                    </div>
+                  </Stack>
                 ) : (
                   <>
                     <Nav.Item as="li" className="me-2">

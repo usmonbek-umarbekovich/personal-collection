@@ -25,7 +25,7 @@ function AuthorInfo({
         style={{ width: pictureSize[picSize], height: pictureSize[picSize] }}
         className="bg-secondary rounded-circle">
         {user.picture && (
-          <Image src={user.picture} alt={getFullName(user.name)} />
+          <Image src={user.avatar} alt={getFullName(user.name)} />
         )}
       </div>
       <Stack className="justify-content-center">
