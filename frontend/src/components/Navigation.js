@@ -67,7 +67,7 @@ function Navigation() {
                         className="d-flex rounded-circle p-1">
                         <FaPlus className="m-auto fs-4" />
                       </Button>
-                      <Collapse in={open.create} timeout={10}>
+                      <Collapse in={open.create} timeout={200}>
                         <ListGroup
                           id="create"
                           variant="light"
@@ -114,7 +114,7 @@ function Navigation() {
                           <FaUser className="m-auto fs-4" />
                         )}
                       </Button>
-                      <Collapse in={open.avatar} timeout={10}>
+                      <Collapse in={open.avatar} timeout={200}>
                         <ListGroup
                           id="avatar"
                           variant="light"
