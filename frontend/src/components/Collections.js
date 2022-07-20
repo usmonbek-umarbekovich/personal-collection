@@ -34,59 +34,61 @@ function Collections({
           <FaCheckDouble className="fs-5" /> Top Largest Collections
         </h2>
       )}
-      <Row as="ul" className="g-4 px-0">
-        {collections.map((col, index) => (
-          <Col
-            key={col._id}
-            {...columns}
-            className="lh-1"
-            ref={collections.length === index + 1 ? lastColElement : null}>
-            <Stack direction="horizontal" className="align-items-start gap-3">
-              {indexes && (
-                <p className="fs-3 fw-bold text-secondary opacity-75 mt-1">
-                  0{index + 1}
-                </p>
-              )}
-              <Stack>
-                {showUser && (
-                  <AuthorInfo user={col.user} weight="bolder" root={root} />
+      <Stack>
+        <Row as="ul" className="g-4 px-0">
+          {collections.map((col, index) => (
+            <Col
+              key={col._id}
+              {...columns}
+              className="lh-1"
+              ref={collections.length === index + 1 ? lastColElement : null}>
+              <Stack direction="horizontal" className="align-items-start gap-3">
+                {indexes && (
+                  <p className="fs-3 fw-bold text-secondary opacity-75 mt-1">
+                    0{index + 1}
+                  </p>
                 )}
                 <Stack>
-                  <Link
-                    className="text-reset"
-                    to={`${root}/collections/${col._id}`}>
-                    <p className="fs-5 fw-bold text-break">{col.name}</p>
-                    {col.description && (
-                      <p className="fs-5 lh-sm text-break">
-                        {truncate(col.description, maxWords, maxChars)}
-                      </p>
-                    )}
-                  </Link>
-                </Stack>
-                <Stack
-                  gap="2"
-                  direction="horizontal"
-                  className="align-items-start text-muted">
-                  <p>
-                    <Badge bg="info">{col.meta.numItems}</Badge> item
-                    {col.meta.numItems > 1 ? 's' : ''}
-                  </p>
-                  <p>-</p>
-                  <p>
-                    {timeDiff(
-                      col.createdAt,
-                      'item',
-                      topCollections ? 'medium' : 'long',
-                      true
-                    )}
-                  </p>
+                  {showUser && (
+                    <AuthorInfo user={col.user} weight="bolder" root={root} />
+                  )}
+                  <Stack>
+                    <Link
+                      className="text-reset"
+                      to={`${root}/collections/${col._id}`}>
+                      <p className="fs-5 fw-bold text-break">{col.name}</p>
+                      {col.description && (
+                        <p className="fs-5 lh-sm text-break">
+                          {truncate(col.description, maxWords, maxChars)}
+                        </p>
+                      )}
+                    </Link>
+                  </Stack>
+                  <Stack
+                    gap="2"
+                    direction="horizontal"
+                    className="align-items-start text-muted">
+                    <p>
+                      <Badge bg="info">{col.meta.numItems}</Badge> item
+                      {col.meta.numItems > 1 ? 's' : ''}
+                    </p>
+                    <p>-</p>
+                    <p>
+                      {timeDiff(
+                        col.createdAt,
+                        'item',
+                        topCollections ? 'medium' : 'long',
+                        true
+                      )}
+                    </p>
+                  </Stack>
                 </Stack>
               </Stack>
-            </Stack>
-          </Col>
-        ))}
-        {loading && <LoadingBalls />}
-      </Row>
+            </Col>
+          ))}
+        </Row>
+        {!topCollections && loading && <LoadingBalls />}
+      </Stack>
     </div>
   );
 }
