@@ -23,10 +23,22 @@ textarea {
   .tags {
     border-bottom: none !important;
   }
+
+  #create,
+  #avatar {
+    left: unset;
+    right: 0;
+  }
 }
 
 @media (max-width: 992px) {
   .user-sidebar {
     border-left: none !important;
+  }
+
+  #create,
+  #avatar {
+    left: 0;
+    right: unset;
   }
 }

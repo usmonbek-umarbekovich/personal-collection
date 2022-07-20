@@ -72,7 +72,7 @@ function Navigation() {
                         <ListGroup
                           id="create"
                           variant="light"
-                          className="position-absolute top-100 end-0 mt-2">
+                          className="position-absolute top-100 mt-2">
                           <ListGroup.Item action className="text-nowrap p-0">
                             <NavLink
                               to="collections/create"
@@ -120,7 +120,7 @@ function Navigation() {
                         <ListGroup
                           id="avatar"
                           variant="light"
-                          className="position-absolute top-100 end-0 mt-2">
+                          className="position-absolute top-100 mt-2">
                           <ListGroup.Item action className="p-0">
                             <NavLink
                               to={`users/${user._id}`}
