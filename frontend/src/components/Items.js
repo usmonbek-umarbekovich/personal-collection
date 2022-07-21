@@ -34,12 +34,16 @@ function Items({
               {showUser && (
                 <AuthorInfo user={item.user} root={root} weight="bolder" />
               )}
-              <p className="fs-4 fw-bold text-break">{item.name}</p>
-              {item.description && (
-                <p className="fs-5 lh-sm text-break">
-                  {truncate(item.description, maxWords, maxChars)}
-                </p>
-              )}
+              <Stack>
+                <Link className="text-reset" to={`${root}/items/${item._id}`}>
+                  <p className="fs-4 fw-bold text-break">{item.name}</p>
+                  {item.description && (
+                    <p className="fs-5 lh-sm text-break">
+                      {truncate(item.description, maxWords, maxChars)}
+                    </p>
+                  )}
+                </Link>
+              </Stack>
               <Stack
                 gap="2"
                 direction="horizontal"
