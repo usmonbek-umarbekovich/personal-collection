@@ -10,6 +10,12 @@ textarea {
   resize: none;
 }
 
+#comment-form input,
+#comment-form button {
+  border: none;
+  box-shadow: none;
+}
+
 @media (min-width: 992px) {
   .search-form {
     width: 25%;
