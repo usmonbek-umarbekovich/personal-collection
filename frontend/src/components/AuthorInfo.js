@@ -24,7 +24,7 @@ function AuthorInfo({
       <div
         style={{ width: pictureSize[picSize], height: pictureSize[picSize] }}
         className="bg-secondary rounded-circle">
-        {user.picture && (
+        {user.avatar && (
           <Image src={user.avatar} alt={getFullName(user.name)} />
         )}
       </div>

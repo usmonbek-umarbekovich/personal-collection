@@ -74,7 +74,7 @@ function UserProfile() {
               </div>
             </div>
           </Col>
-          <Col as="section" lg={8} className="py-lg-5 mt-lg-5 pe-lg-5">
+          <Col as="section" lg={8} className="py-lg-5 pb-4 mt-lg-3 pe-lg-5">
             <Stack
               direction="horizontal"
               className="align-items-center justify-content-between d-lg-flex d-none">

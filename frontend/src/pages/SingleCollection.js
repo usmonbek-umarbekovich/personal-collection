@@ -21,7 +21,7 @@ function SingleCollection() {
 
   return (
     <main>
-      <section className="border-bottom py-lg-4 px-2">
+      <section className="border-bottom py-lg-5 px-2 pt-4">
         <Container fluid="md">
           <AuthorInfo
             fontSize="lg"
@@ -36,7 +36,7 @@ function SingleCollection() {
           )}
         </Container>
       </section>
-      <section className="py-lg-5 px-2">
+      <section className="py-lg-5 px-2 pb-4">
         <Container fluid="md">
           <Row className="justify-content-between align-items-start">
             <Tags callback={collectionService.getCollectionTags(id)} />

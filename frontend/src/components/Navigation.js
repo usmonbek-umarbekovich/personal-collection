@@ -121,17 +121,17 @@ function Navigation() {
                           id="avatar"
                           variant="light"
                           className="position-absolute top-100 mt-2">
-                          <ListGroup.Item action className="p-0">
+                          <ListGroup.Item action className="text-nowrap p-0">
                             <NavLink
                               to={`users/${user._id}`}
-                              className="d-block text-reset fs-5 px-5 py-2">
-                              Profile
+                              className="d-block text-reset fs-5 px-4 py-2">
+                              {getFullName(user.name)}
                             </NavLink>
                           </ListGroup.Item>
                           <ListGroup.Item
                             action
                             onClick={logoutUser}
-                            className="fs-5 px-5">
+                            className="fs-5 px-4 text-nowrap">
                             Logout
                           </ListGroup.Item>
                         </ListGroup>

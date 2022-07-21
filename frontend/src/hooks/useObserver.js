@@ -29,7 +29,7 @@ const useObserver = (query, callback, { once = false } = {}) => {
     [loading, hasMore, query.limit, once]
   );
 
-  return [data, lastElement, loading];
+  return [data, lastElement, loading, setData];
 };
 
 export default useObserver;
