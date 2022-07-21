@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Item = require('../models/itemModel');
+const User = require('../models/userModel');
 const mongoose = require('mongoose');
 const { notFoundError, notAuthorizedError } = require('../customErrors');
 
@@ -53,7 +54,8 @@ const createComment = asyncHandler(async (req, res) => {
   item.comments.push(newComment);
   await item.save();
 
-  res.status(200).json(newComment);
+  const user = await User.findById(req.user._id).select('_id name avatar');
+  res.status(200).json({ ...newComment._doc, user });
 });
 
 /**

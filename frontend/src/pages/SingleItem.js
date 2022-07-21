@@ -36,7 +36,7 @@ function SingleItem() {
               <p className="text-secondary fs-4">{item.description}</p>
             )}
           </Col>
-          <Col as="section" lg={5} className="border my-lg-5 pt-lg-1 px-0">
+          <Col as="section" lg={5} className="border my-lg-5 pt-lg-2 px-0">
             <Comments
               itemId={item._id}
               query={commentQuery}
