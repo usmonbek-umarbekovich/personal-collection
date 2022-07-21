@@ -1,21 +1,13 @@
 import axios from 'axios';
-import { getPartialData } from './helpers';
+import { getById, getPartialData } from './helpers';
 
 const API_URL = '/api/collections';
 
+const getSingleCollection = getById(API_URL);
 const getAllCollections = getPartialData(API_URL);
 const getAllTopics = getPartialData(`${API_URL}/all/topics`);
 const getCollectionTags = id => getPartialData(`${API_URL}/${id}/tags`);
 const getCollectionItems = id => getPartialData(`${API_URL}/${id}/items`);
-
-const getSingleCollection = async id => {
-  try {
-    const response = await axios.get(`${API_URL}/${id}`);
-    return response.data;
-  } catch (error) {
-    return error.response;
-  }
-};
 
 const createCollection = async data => {
   try {

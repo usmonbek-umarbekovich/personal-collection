@@ -1,5 +1,14 @@
 import axios from 'axios';
 
+const getById = url => async id => {
+  try {
+    const response = await axios.get(`${url}/${id}`);
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const getPartialData = url => async (params, controller) => {
   try {
     const response = await axios.get(url, {
@@ -32,4 +41,4 @@ const makeAuthRequest = url => {
   };
 };
 
-export { getPartialData, makeAuthRequest };
+export { getById, getPartialData, makeAuthRequest };
