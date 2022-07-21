@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import SingleCollection from './pages/SingleCollection';
+import SingleItem from './pages/SingleItem';
 import CreateCollectionPage from './pages/CreateCollectionPage';
 import EditCollectionPage from './pages/EditCollectionPage';
 import CreateItemPage from './pages/CreateItemPage';
@@ -30,6 +31,9 @@ function App() {
           </Route>
           <Route path="collections">
             <Route path=":id" element={<SingleCollection />} />
+          </Route>
+          <Route path="items">
+            <Route path=":id" element={<SingleItem />} />
           </Route>
           <Route path="collections/edit">
             <Route path=":id" element={<EditCollectionPage />} />

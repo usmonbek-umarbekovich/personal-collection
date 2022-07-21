@@ -1,10 +1,12 @@
 import axios from 'axios';
-import { getPartialData } from './helpers';
+import { getById, getPartialData } from './helpers';
 
 const API_URL = '/api/items';
 
+const getSingleItem = getById(API_URL);
 const getAllItems = getPartialData(API_URL);
 const getAllTags = getPartialData(`${API_URL}/all/tags`);
+const getComments = id => getPartialData(`${API_URL}/${id}/comments`);
 
 const createItem = async data => {
   try {
@@ -15,10 +17,22 @@ const createItem = async data => {
   }
 };
 
+const createComment = async (id, data) => {
+  try {
+    const response = await axios.post(`${API_URL}/${id}/comments`, data);
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const itemService = {
+  getSingleItem,
   getAllItems,
   getAllTags,
+  getComments,
   createItem,
+  createComment,
 };
 
 export default itemService;
