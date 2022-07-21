@@ -1,22 +1,38 @@
 const asyncHandler = require('express-async-handler');
 const Item = require('../models/itemModel');
-const { notFoundError } = require('../customErrors');
+const mongoose = require('mongoose');
+const { notFoundError, notAuthorizedError } = require('../customErrors');
 
 /**
  * @desc Get item comments
- * @route GET /api/item/:id/comments
+ * @route GET /api/items/:id/comments
  * @access Public
  */
 const getComments = asyncHandler(async (req, res) => {
-  const item = await Item.findById(req.params.id);
-  if (!item) notFoundError(res, 'Item');
+  const { skip, limit } = req.query;
+  const { id } = req.params;
 
-  res.status(200).json(item.comments);
+  const comments = await Item.aggregate()
+    .match({ _id: new mongoose.Types.ObjectId(id) })
+    .unwind('comments')
+    .lookup({
+      from: 'users',
+      localField: 'comments.user',
+      foreignField: '_id',
+      as: 'comments.user',
+    })
+    .unwind('comments.user')
+    .replaceRoot('comments')
+    .sort({ date: 'desc' })
+    .skip(+skip)
+    .limit(+limit);
+
+  res.status(200).json(comments);
 });
 
 /**
  * @desc Create new comment
- * @route POST /api/item/:id/comments
+ * @route POST /api/items/:id/comments
  * @access Private
  */
 const createComment = asyncHandler(async (req, res) => {
@@ -24,64 +40,60 @@ const createComment = asyncHandler(async (req, res) => {
   if (!item) notFoundError(res, 'Item');
 
   const userCommented = item.comments.find(com => {
-    return com.user.valueOf() === req.user._id.valueOf();
+    return com.user.equals(req.user._id);
   });
   if (userCommented) {
     throw new Error('You have already commented on this item');
   }
 
-  const newComment = {
+  const newComment = await item.comments.create({
     user: req.user._id,
-    body: req.body.comment,
-  };
+    ...req.body,
+  });
   item.comments.push(newComment);
   await item.save();
 
-  res.status(200).json(item.comments[item.comments.length - 1]);
+  res.status(200).json(newComment);
 });
 
 /**
  * @desc Update comment
- * @route PUT /api/item/:id/comments
+ * @route PUT /api/items/:itemId/comments/:commentId
  * @access Private
  */
 const updateComment = asyncHandler(async (req, res) => {
-  const item = await Item.findById(req.params.id);
+  const { itemId, commentId } = req.params;
+
+  const item = await Item.findById(itemId);
   if (!item) notFoundError(res, 'Item');
 
-  const commentIndex = item.comments.findIndex(com => {
-    return com.user.valueOf() === req.user._id.valueOf();
-  });
-  if (commentIndex < 0) {
-    throw new Error("You don't have a comment on this item yet");
-  }
+  const comment = item.comments.id(commentId);
+  if (!comment.user.equals(req.user._id)) notAuthorizedError(res);
 
-  Object.assign(item.comments[commentIndex], { body: req.body.comment });
+  Object.assign(comment, req.body);
   await item.save();
 
-  res.status(200).json(item.comments[commentIndex]);
+  res.status(200).json(comment);
 });
 
 /**
  * @desc Delete comment
- * @route DELETE /api/item/:id/comments
+ * @route DELETE /api/items/:itemId/comments/commentId
  * @access Private
  */
 const deleteComment = asyncHandler(async (req, res) => {
-  const item = await Item.findById(req.params.id);
+  const { itemId, commentId } = req.params;
+
+  const item = await Item.findById(itemId);
   if (!item) notFoundError(res, 'Item');
 
-  const commentIndex = item.comments.findIndex(com => {
-    return com.user.valueOf() === req.user._id.valueOf();
-  });
-  if (commentIndex < 0) {
-    throw new Error("You don't have a comment on this item yet");
-  }
+  const comment = item.comments.id(commentId);
+  if (!comment.user.equals(req.user._id)) notAuthorizedError(res);
 
-  item.comments.splice(commentIndex, 1);
+  comment.remove();
   await item.save();
 
-  res.status(200).json({ message: 'The comment has been deleted' });
+  res.status(200).json({ id: commentId });
 });
 
 module.exports = {
