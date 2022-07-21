@@ -16,7 +16,7 @@ const getAllItems = asyncHandler(async (req, res) => {
     .limit(limit)
     .skip(skip)
     .populate('collectionId', 'name')
-    .populate('user', '_id name picture')
+    .populate('user', '_id name avatar')
     .populate({ path: 'tags', options: { limit: 3 } });
 
   res.status(200).json(items);
@@ -28,7 +28,9 @@ const getAllItems = asyncHandler(async (req, res) => {
  * @access Public
  */
 const getSingleItem = asyncHandler(async (req, res) => {
-  const item = await Item.findById(req.params.id);
+  const item = await Item.findById(req.params.id)
+    .select('-comments')
+    .populate('user', '_id name avatar');
   if (!item) notFoundError(res, 'Item');
 
   res.status(200).json(item);

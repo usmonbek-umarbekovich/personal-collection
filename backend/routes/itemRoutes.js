@@ -33,7 +33,10 @@ router
 router
   .route('/:id/comments')
   .get(getComments)
-  .post(ensureLoggedIn, createComment)
+  .post(ensureLoggedIn, createComment);
+
+router
+  .route('/:itemId/comments/:commentId')
   .put(ensureLoggedIn, updateComment)
   .delete(ensureLoggedIn, deleteComment);
 
