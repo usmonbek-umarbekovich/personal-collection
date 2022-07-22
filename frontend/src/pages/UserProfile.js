@@ -49,7 +49,7 @@ function UserProfile() {
             className="user-sidebar border-start py-lg-5 ps-lg-4 pt-4">
             <div className="position-relative">
               <div
-                style={{ top: 'calc(79px + 3rem)' }}
+                style={{ top: 'calc(var(--nav-height) + 3rem)' }}
                 className="position-lg-sticky sticky-lg-top">
                 <AuthorInfo
                   fontSize="lg"
@@ -57,6 +57,7 @@ function UserProfile() {
                   weight="bolder"
                   direction="vertical"
                   user={user}
+                  linkDisabled={true}
                   description={timeDiff(user.lastSeen, 'user', 'long')}
                 />
                 {user.bio && <p className="mt-3 fs-5 text-muted">{user.bio}</p>}
@@ -94,7 +95,7 @@ function UserProfile() {
               className="fs-5 pt-5"
               defaultActiveKey="collections">
               <Tab eventKey="collections" title="Collections">
-                <div className="mt-4">
+                <div className="mt-4" as="section">
                   <Collections
                     indexes={false}
                     fill={true}
@@ -106,17 +107,16 @@ function UserProfile() {
                 </div>
               </Tab>
               <Tab eventKey="items" title="Latest Items">
-                <Row className="mt-4" as="section">
+                <div className="mt-4 py-lg-0 py-3" as="section">
                   <Items
                     inCollection={true}
                     showCollection={true}
                     showUser={false}
-                    span={12}
                     query={itemQuery}
                     callback={itemCallback}
                     root="../.."
                   />
-                </Row>
+                </div>
               </Tab>
             </Tabs>
           </Col>

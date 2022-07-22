@@ -7,6 +7,7 @@ import Tags from '../components/Tags';
 import AuthorInfo from '../components/AuthorInfo';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 function SingleCollection() {
   const [collection, setCollection] = useState();
@@ -39,15 +40,21 @@ function SingleCollection() {
       <section className="py-lg-5 px-2 pb-4">
         <Container fluid="md">
           <Row className="justify-content-between align-items-start">
-            <Tags callback={collectionService.getCollectionTags(id)} />
-            <Items
-              span={8}
-              showUser={false}
-              showCollection={false}
-              query={itemQuery}
-              callback={collectionService.getCollectionItems(id)}
-              root="../.."
-            />
+            <Col
+              lg={{ span: 4, order: 'last' }}
+              className="tags position-lg-sticky sticky-lg-top border-bottom py-lg-0 py-3"
+              style={{ top: 'calc(var(--nav-height) + 2.5rem)' }}>
+              <Tags callback={collectionService.getCollectionTags(id)} />
+            </Col>
+            <Col lg={{ span: 8, order: 'first' }} className="py-lg-0 py-3">
+              <Items
+                showUser={false}
+                showCollection={false}
+                query={itemQuery}
+                callback={collectionService.getCollectionItems(id)}
+                root="../.."
+              />
+            </Col>
           </Row>
         </Container>
       </section>
