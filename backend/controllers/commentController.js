@@ -9,7 +9,7 @@ const { notFoundError, notAuthorizedError } = require('../customErrors');
  * @route GET /api/items/:id/comments
  * @access Public
  */
-const getComments = asyncHandler(async (req, res) => {
+const getItemComments = asyncHandler(async (req, res) => {
   const { skip, limit } = req.query;
   const { id } = req.params;
 
@@ -99,7 +99,7 @@ const deleteComment = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  getComments,
+  getItemComments,
   createComment,
   updateComment,
   deleteComment,

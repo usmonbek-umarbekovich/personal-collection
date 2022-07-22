@@ -5,7 +5,7 @@ const API_URL = '/api/collections';
 
 const getSingleCollection = getById(API_URL);
 const getAllCollections = getPartialData(API_URL);
-const getAllTopics = getPartialData(`${API_URL}/all/topics`);
+const getAllTopics = getPartialData(`${API_URL}/topics/all`);
 const getCollectionTags = id => getPartialData(`${API_URL}/${id}/tags`);
 const getCollectionItems = id => getPartialData(`${API_URL}/${id}/items`);
 

@@ -13,9 +13,7 @@ function Showcase() {
           direction="horizontal"
           className="align-items-center justify-content-center justify-content-md-between">
           <div>
-            <h1 className="fw-semibold" style={{ fontSize: '3rem' }}>
-              Stay Curious
-            </h1>
+            <h1 className="fw-bolder display-1">Stay Curious</h1>
             <p className="fs-4 my-4">Store your item the right way</p>
             <Link to="/register">
               <Button variant="dark" size="lg" className="rounded-pill">

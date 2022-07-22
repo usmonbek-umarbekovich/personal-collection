@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.route('/').get(getAllCollections).post(ensureLoggedIn, createCollection);
 
-router.get('/all/topics', getAllTopics);
+router.get('/topics/all', getAllTopics);
 router.get('/:id/items', getCollectionItems);
 router.get('/:id/tags', getCollectionTags);
 

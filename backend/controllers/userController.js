@@ -23,14 +23,16 @@ const getUserCollections = asyncHandler(async (req, res) => {
   const { limit, skip, ...sortBy } = req.query;
   const { id } = req.params;
 
-  const user = await User.findById(id).populate({
-    path: 'collections',
-    options: {
-      skip,
-      limit,
-      sort: sortBy,
-    },
-  });
+  const user = await User.findById(id)
+    .select('collections')
+    .populate({
+      path: 'collections',
+      options: {
+        skip,
+        limit,
+        sort: sortBy,
+      },
+    });
 
   res.status(200).json(user.collections);
 });
@@ -44,18 +46,20 @@ const getUserItems = asyncHandler(async (req, res) => {
   const { limit, skip, ...sortBy } = req.query;
   const { id } = req.params;
 
-  const user = await User.findById(id).populate({
-    path: 'items',
-    populate: [
-      { path: 'collectionId', select: 'name' },
-      { path: 'tags', options: { limit: 3 } },
-    ],
-    options: {
-      skip,
-      limit,
-      sort: sortBy,
-    },
-  });
+  const user = await User.findById(id)
+    .select('items')
+    .populate({
+      path: 'items',
+      populate: [
+        { path: 'collectionId', select: 'name' },
+        { path: 'tags', options: { limit: 3 } },
+      ],
+      options: {
+        skip,
+        limit,
+        sort: sortBy,
+      },
+    });
 
   res.status(200).json(user.items);
 });

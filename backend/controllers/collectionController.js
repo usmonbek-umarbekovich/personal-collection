@@ -13,7 +13,7 @@ const getAllCollections = asyncHandler(async (req, res) => {
     .sort(sortBy)
     .skip(skip)
     .limit(limit)
-    .populate('user', 'name picture _id');
+    .populate('user', 'name avatar _id');
 
   res.status(200).json(collections);
 });
@@ -26,7 +26,7 @@ const getAllCollections = asyncHandler(async (req, res) => {
 const getSingleCollection = asyncHandler(async (req, res) => {
   const collection = await Collection.findById(req.params.id).populate(
     'user',
-    '_id name picture'
+    '_id name avatar'
   );
   if (!collection) notFoundError(res, 'Collection');
 
@@ -42,19 +42,21 @@ const getCollectionItems = asyncHandler(async (req, res) => {
   const { skip, limit, ...sortBy } = req.query;
   const { id } = req.params;
 
-  const collection = await Collection.findById(id).populate({
-    path: 'items',
-    populate: [
-      { path: 'collectionId', select: 'name' },
-      { path: 'user', select: '_id name picture' },
-      { path: 'tags', options: { limit: 3 } },
-    ],
-    options: {
-      limit,
-      skip,
-      sort: sortBy,
-    },
-  });
+  const collection = await Collection.findById(id)
+    .select('items')
+    .populate({
+      path: 'items',
+      populate: [
+        { path: 'collectionId', select: 'name' },
+        { path: 'user', select: '_id name avatar' },
+        { path: 'tags', options: { limit: 3 } },
+      ],
+      options: {
+        limit,
+        skip,
+        sort: sortBy,
+      },
+    });
 
   res.status(200).json(collection.items);
 });
@@ -68,15 +70,17 @@ const getCollectionTags = asyncHandler(async (req, res) => {
   const { skip, limit } = req.query;
   const { id } = req.params;
 
-  const collection = await Collection.findById(id).populate({
-    path: 'items',
-    select: 'tags',
-    populate: {
-      path: 'tags',
-      select: 'name',
-    },
-    options: { limit, skip },
-  });
+  const collection = await Collection.findById(id)
+    .select('items')
+    .populate({
+      path: 'items',
+      select: 'tags',
+      populate: {
+        path: 'tags',
+        select: 'name',
+      },
+      options: { limit, skip },
+    });
 
   const seen = new Set();
   const tags = collection.items

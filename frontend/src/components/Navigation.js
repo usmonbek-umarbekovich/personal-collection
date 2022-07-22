@@ -32,7 +32,7 @@ function Navigation() {
   };
 
   return (
-    <header style={{ marginTop: '79px' }}>
+    <header style={{ marginTop: 'var(--nav-height)' }}>
       <Navbar
         collapseOnSelect
         fixed="top"
