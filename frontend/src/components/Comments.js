@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { timeDiff } from '../helpers';
+import { useUserInfo } from '../contexts/userInfoContext';
 import itemService from '../services/itemService';
+import userService from '../services/userService';
 import useObserver from '../hooks/useObserver';
 import AuthorInfo from '../components/AuthorInfo';
 import LoadingBalls from '../components/LoadingBalls';
@@ -10,11 +12,17 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 
 function Comments({ itemId, query, callback }) {
+  const [user, setUser] = useState();
   const [comment, setComment] = useState('');
   const [comments, lastCommentElement, loading, setComments] = useObserver(
     query,
     callback
   );
+
+  const { _id } = useUserInfo().user;
+  useEffect(() => {
+    userService.getSingleUser(_id).then(setUser);
+  }, [_id]);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -30,11 +38,38 @@ function Comments({ itemId, query, callback }) {
   };
 
   return (
-    <div>
-      <Stack className="ps-lg-3 overflow-auto" style={{ height: '70vh' }}>
+    <>
+      {user && (
+        <Form
+          id="comment-form"
+          className="order-lg-last"
+          onSubmit={handleSubmit}>
+          <InputGroup className="border-top border-bottom">
+            <div className="ps-3 pe-1">
+              <AuthorInfo user={user} justPicture={true} />
+            </div>
+            <Form.Control
+              className="ps-1"
+              placeholder="Add a comment..."
+              aria-label="Add a comment"
+              aria-describedby="btn-comment"
+              value={comment}
+              onChange={e => setComment(e.target.value)}
+            />
+            <Button
+              id="btn-comment"
+              disabled={!comment}
+              className="bg-white text-primary fw-bolder ps-0">
+              post
+            </Button>
+          </InputGroup>
+        </Form>
+      )}
+      <Stack className="px-3 pt-2 overflow-auto order-lg-first">
         {comments.map((comment, index) => (
           <Stack
             key={comment._id}
+            className="flex-grow-0"
             ref={comments.length === index + 1 ? lastCommentElement : null}>
             <AuthorInfo
               weight="bolder"
@@ -47,24 +82,7 @@ function Comments({ itemId, query, callback }) {
         ))}
         {loading && <LoadingBalls />}
       </Stack>
-      <Form id="comment-form" onSubmit={handleSubmit} className="mt-2">
-        <InputGroup className="border-top py-1 ps-lg-3">
-          <Form.Control
-            placeholder="Add a comment..."
-            aria-label="Add a comment"
-            aria-describedby="btn-comment"
-            value={comment}
-            onChange={e => setComment(e.target.value)}
-          />
-          <Button
-            id="btn-comment"
-            disabled={!comment}
-            className="bg-white text-primary fw-bolder ps-0">
-            post
-          </Button>
-        </InputGroup>
-      </Form>
-    </div>
+    </>
   );
 }
 export default Comments;
