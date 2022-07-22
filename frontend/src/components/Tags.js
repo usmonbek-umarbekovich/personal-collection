@@ -15,20 +15,15 @@ function Tags({ callback }) {
   }, [hasMore, loading, params.limit]);
 
   return (
-    <Col
-      lg={{ span: 4, order: 'last' }}
-      className="tags position-lg-sticky sticky-lg-top border-bottom py-lg-0 py-3"
-      style={{ top: 'calc(79px + 2.5rem)' }}>
-      <Row className="g-3 row-cols-auto justify-content-lg-start justify-content-center">
-        {tags.map(tag => (
-          <Col key={tag._id}>
-            <Button variant="secondary" className="fw-bolder">
-              {tag.name}
-            </Button>
-          </Col>
-        ))}
-      </Row>
-    </Col>
+    <Row className="g-3 row-cols-auto justify-content-lg-start justify-content-center">
+      {tags.map(tag => (
+        <Col key={tag._id}>
+          <Button variant="secondary" className="fw-bolder">
+            {tag.name}
+          </Button>
+        </Col>
+      ))}
+    </Row>
   );
 }
 export default Tags;
