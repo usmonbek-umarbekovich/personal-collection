@@ -29,7 +29,7 @@ const getAllItems = asyncHandler(async (req, res) => {
  */
 const getSingleItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id)
-    .select('-comments')
+    .select('-comments -tags')
     .populate('user', '_id name avatar');
   if (!item) notFoundError(res, 'Item');
 
@@ -45,6 +45,21 @@ const getAllTags = asyncHandler(async (req, res) => {
   const { skip, limit } = req.query;
   const tags = await Tag.find({}).limit(limit).skip(skip);
   res.status(200).json(tags);
+});
+
+/**
+ * @desc Get item tags
+ * @route GET /api/items/:id/tags
+ * @access Public
+ */
+const getItemTags = asyncHandler(async (req, res) => {
+  const { skip, limit } = req.query;
+  const item = await Item.findById(req.params.id).select('tags').populate({
+    path: 'tags',
+    options: { skip, limit },
+  });
+
+  res.status(200).json(item.tags);
 });
 
 /**
@@ -150,6 +165,7 @@ module.exports = {
   getAllItems,
   getSingleItem,
   getAllTags,
+  getItemTags,
   createItem,
   updateItem,
   deleteItem,

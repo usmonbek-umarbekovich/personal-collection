@@ -4,13 +4,14 @@ const {
   getAllItems,
   getSingleItem,
   getAllTags,
+  getItemTags,
   createItem,
   updateItem,
   deleteItem,
   likeOrUnlikeItem,
 } = require('../controllers/itemController');
 const {
-  getComments,
+  getItemComments,
   createComment,
   updateComment,
   deleteComment,
@@ -20,7 +21,8 @@ const router = express.Router();
 
 router.route('/').get(getAllItems).post(ensureLoggedIn, createItem);
 
-router.get('/all/tags', getAllTags);
+router.get('/tags/all', getAllTags);
+router.get('/:id/tags', getItemTags);
 router.post('/:id/likes', ensureLoggedIn, likeOrUnlikeItem);
 
 router
@@ -32,7 +34,7 @@ router
 // comment routes
 router
   .route('/:id/comments')
-  .get(getComments)
+  .get(getItemComments)
   .post(ensureLoggedIn, createComment);
 
 router

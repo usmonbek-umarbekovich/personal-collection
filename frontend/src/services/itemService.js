@@ -5,8 +5,9 @@ const API_URL = '/api/items';
 
 const getSingleItem = getById(API_URL);
 const getAllItems = getPartialData(API_URL);
-const getAllTags = getPartialData(`${API_URL}/all/tags`);
-const getComments = id => getPartialData(`${API_URL}/${id}/comments`);
+const getAllTags = getPartialData(`${API_URL}/tags/all`);
+const getItemTags = id => getPartialData(`${API_URL}/${id}/tags`);
+const getItemComments = id => getPartialData(`${API_URL}/${id}/comments`);
 
 const createItem = async data => {
   try {
@@ -30,7 +31,8 @@ const itemService = {
   getSingleItem,
   getAllItems,
   getAllTags,
-  getComments,
+  getItemTags,
+  getItemComments,
   createItem,
   createComment,
 };
