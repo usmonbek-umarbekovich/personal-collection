@@ -1,3 +1,7 @@
+:root {
+  --nav-height: 4.7rem;
+}
+
 li {
   list-style: none;
 }
@@ -35,6 +39,10 @@ textarea {
     left: unset;
     right: 0;
   }
+
+  #comment-form .input-group {
+    border-bottom: none !important;
+  }
 }
 
 @media (max-width: 992px) {
@@ -46,5 +54,9 @@ textarea {
   #avatar {
     left: 0;
     right: unset;
+  }
+
+  #comment-form .input-group {
+    border-top: none !important;
   }
 }
