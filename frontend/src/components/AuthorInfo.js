@@ -6,6 +6,8 @@ import Image from 'react-bootstrap/Image';
 function AuthorInfo({
   user,
   description,
+  justPicture = false,
+  linkDisabled = false,
   fontSize = 'sm',
   picSize = 'sm',
   weight = 'normal',
@@ -28,14 +30,18 @@ function AuthorInfo({
           <Image src={user.avatar} alt={getFullName(user.name)} />
         )}
       </div>
-      <Stack className="justify-content-center">
-        <Link to={`${root}/users/${user._id}`} className="text-reset">
-          <p className={`${nameSize[fontSize]} fw-${weight} m-0`}>
-            {getFullName(user.name)}
-          </p>
-        </Link>
-        {description && <p className="text-muted m-0">{description}</p>}
-      </Stack>
+      {justPicture || (
+        <Stack className="justify-content-center">
+          <Link
+            to={`${root}/users/${user._id}`}
+            className={`text-reset ${linkDisabled ? 'pe-none' : ''}`}>
+            <p className={`${nameSize[fontSize]} fw-${weight} m-0`}>
+              {getFullName(user.name)}
+            </p>
+          </Link>
+          {description && <p className="text-muted m-0">{description}</p>}
+        </Stack>
+      )}
     </Stack>
   );
 }
