@@ -12,17 +12,18 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 
 function Comments({ itemId, query, callback }) {
-  const [user, setUser] = useState();
+  const [currUser, setCurrUser] = useState();
   const [comment, setComment] = useState('');
   const [comments, lastCommentElement, loading, setComments] = useObserver(
     query,
     callback
   );
 
-  const { _id } = useUserInfo().user;
+  const { user } = useUserInfo();
   useEffect(() => {
-    userService.getSingleUser(_id).then(setUser);
-  }, [_id]);
+    if (!user) return;
+    userService.getSingleUser(user._id).then(setCurrUser);
+  }, [user]);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -39,14 +40,14 @@ function Comments({ itemId, query, callback }) {
 
   return (
     <>
-      {user && (
+      {currUser && (
         <Form
           id="comment-form"
           className="order-lg-last"
           onSubmit={handleSubmit}>
           <InputGroup className="border-top border-bottom">
             <div className="ps-3 pe-1">
-              <AuthorInfo user={user} justPicture={true} />
+              <AuthorInfo user={currUser} justPicture={true} />
             </div>
             <Form.Control
               className="ps-1"

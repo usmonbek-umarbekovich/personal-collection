@@ -50,7 +50,7 @@ function UserProfile() {
             <div className="position-relative">
               <div
                 style={{ top: 'calc(var(--nav-height) + 3rem)' }}
-                className="position-lg-sticky sticky-lg-top">
+                className="sticky-lg-top">
                 <AuthorInfo
                   fontSize="lg"
                   picSize="lg"

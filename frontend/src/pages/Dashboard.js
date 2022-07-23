@@ -36,7 +36,7 @@ function Dashboard() {
           <Row className="justify-content-between align-items-start">
             <Col
               lg={{ span: 4, order: 'last' }}
-              className="tags position-lg-sticky sticky-lg-top border-bottom py-lg-0 py-3"
+              className="tags sticky-lg-top border-bottom py-lg-0 py-3"
               style={{ top: 'calc(var(--nav-height) + 2.5rem)' }}>
               <Tags callback={itemService.getAllTags} />
             </Col>

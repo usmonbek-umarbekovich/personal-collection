@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
+const Item = require('../models/itemModel');
 const { notFoundError } = require('../customErrors');
 
 /**
@@ -64,8 +65,27 @@ const getUserItems = asyncHandler(async (req, res) => {
   res.status(200).json(user.items);
 });
 
+/**
+ * @desc Get user items
+ * @route GET /api/users/:id/comment
+ * @access Public
+ */
+const getUserComment = asyncHandler(async (req, res) => {
+  const { itemId } = req.query;
+  const { id } = req.params;
+
+  const item = await Item.findById(itemId)
+    .select('comments')
+    .where('comments')
+    .elemMatch({ user: id })
+    .populate('comments.0.user', '_id name avatar');
+
+  res.status(200).json(item.comments[0]);
+}, []);
+
 module.exports = {
   getSingleUser,
   getUserItems,
+  getUserComment,
   getUserCollections,
 };

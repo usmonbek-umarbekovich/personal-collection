@@ -52,7 +52,7 @@ function SingleItem() {
               className="border sticky-lg-top"
               style={{
                 top: 'calc(var(--nav-height) + 1.75rem)',
-                height: 'calc(100vh - var(--nav-height) - 3rem)',
+                maxHeight: 'calc(100vh - var(--nav-height) - 3rem)',
               }}>
               <Comments
                 itemId={item._id}
