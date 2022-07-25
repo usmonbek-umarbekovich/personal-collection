@@ -1,35 +1,17 @@
-import { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { getFullName } from '../helpers';
+import CollapseContent from './CollapseContent';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Collapse from 'react-bootstrap/Collapse';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
-import Image from 'react-bootstrap/Image';
 import { FaUser, FaPlus } from 'react-icons/fa';
 
 function Navigation() {
-  const [open, setOpen] = useState({ avatar: false, create: false });
   const { user, logoutUser } = useUserInfo();
-  const location = useLocation();
-
-  useEffect(() => {
-    setOpen({ avatar: false, create: false });
-  }, [location]);
-
-  const handleBlur = (e, element) => {
-    if (!e.relatedTarget || !e.relatedTarget.closest(`#${element}`)) {
-      return setOpen({
-        ...open,
-        [element]: false,
-      });
-    }
-  };
 
   return (
     <header style={{ marginTop: 'var(--nav-height)' }}>
@@ -52,91 +34,47 @@ function Navigation() {
               <Nav as="ul" className="d-flex align-items-md-center">
                 {user ? (
                   <Stack direction="horizontal" gap="3">
-                    <div className="position-relative">
-                      <Button
-                        onClick={() =>
-                          setOpen({
-                            create: !open.create,
-                            avatar: false,
-                          })
-                        }
-                        onBlur={e => handleBlur(e, 'create')}
-                        aria-controls="create"
-                        title="Create"
-                        aria-expanded={open.create}
-                        style={{ width: '2.75rem', height: '2.75rem' }}
-                        className="d-flex rounded-circle p-1">
-                        <FaPlus className="m-auto fs-4" />
-                      </Button>
-                      <Collapse in={open.create} timeout={200}>
-                        <ListGroup
-                          id="create"
-                          variant="light"
-                          className="position-absolute top-100 mt-2">
-                          <ListGroup.Item action className="text-nowrap p-0">
-                            <NavLink
-                              to="collections/create"
-                              className="d-block text-reset fs-5 px-4 py-2">
-                              Create Collection
-                            </NavLink>
-                          </ListGroup.Item>
-                          <ListGroup.Item action className="text-nowrap p-0">
-                            <NavLink
-                              to="items/create"
-                              className="d-block text-reset fs-5 px-4 py-2">
-                              Add Item
-                            </NavLink>
-                          </ListGroup.Item>
-                        </ListGroup>
-                      </Collapse>
-                    </div>
+                    <CollapseContent
+                      controlId="create"
+                      Icon={FaPlus}
+                      btnProps={{ title: 'Create' }}>
+                      <ListGroup.Item action className="text-nowrap p-0">
+                        <NavLink
+                          to="collections/create"
+                          className="d-block text-reset fs-5 px-4 py-2">
+                          Create Collection
+                        </NavLink>
+                      </ListGroup.Item>
+                      <ListGroup.Item action className="text-nowrap p-0">
+                        <NavLink
+                          to="items/create"
+                          className="d-block text-reset fs-5 px-4 py-2">
+                          Add Item
+                        </NavLink>
+                      </ListGroup.Item>
+                    </CollapseContent>
 
-                    <div className="position-relative">
-                      <Button
-                        variant="secondary"
-                        onClick={() =>
-                          setOpen({
-                            avatar: !open.avatar,
-                            create: false,
-                          })
-                        }
-                        onBlur={e => handleBlur(e, 'avatar')}
-                        title="Profile"
-                        aria-controls="avatar"
-                        aria-expanded={open.avatar}
-                        style={{ width: '2.75rem', height: '2.75rem' }}
-                        className="d-flex rounded-circle p-1">
-                        {user?.avatar ? (
-                          <Image
-                            fluid
-                            src={user.avatar}
-                            alt={getFullName(user.name)}
-                          />
-                        ) : (
-                          <FaUser className="m-auto fs-4" />
-                        )}
-                      </Button>
-                      <Collapse in={open.avatar} timeout={200}>
-                        <ListGroup
-                          id="avatar"
-                          variant="light"
-                          className="position-absolute top-100 mt-2">
-                          <ListGroup.Item action className="text-nowrap p-0">
-                            <NavLink
-                              to={`users/${user._id}`}
-                              className="d-block text-reset fs-5 px-4 py-2">
-                              {getFullName(user.name)}
-                            </NavLink>
-                          </ListGroup.Item>
-                          <ListGroup.Item
-                            action
-                            onClick={logoutUser}
-                            className="fs-5 px-4 text-nowrap">
-                            Logout
-                          </ListGroup.Item>
-                        </ListGroup>
-                      </Collapse>
-                    </div>
+                    <CollapseContent
+                      controlId="avatar"
+                      Icon={FaUser}
+                      btnProps={{
+                        variant: 'secondary',
+                        title: 'Profile',
+                      }}>
+                      <ListGroup.Item action className="text-nowrap p-0">
+                        <NavLink
+                          to={`users/${user._id}`}
+                          className="d-block text-reset fs-5 px-4 py-2">
+                          {getFullName(user.name)}
+                        </NavLink>
+                      </ListGroup.Item>
+                      <ListGroup.Item
+                        action
+                        onClick={logoutUser}
+                        className="fs-5 px-4 text-nowrap">
+                        Logout
+                      </ListGroup.Item>
+                    </CollapseContent>
                   </Stack>
                 ) : (
                   <>
@@ -176,4 +114,5 @@ function Navigation() {
     </header>
   );
 }
+
 export default Navigation;
