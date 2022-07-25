@@ -13,7 +13,7 @@ import Button from 'react-bootstrap/Button';
 
 function Comments({ itemId, query, callback }) {
   const [currUser, setCurrUser] = useState();
-  const [comment, setComment] = useState('');
+  const [newComment, setNewComment] = useState('');
   const [comments, lastCommentElement, loading, setComments] = useObserver(
     query,
     callback
@@ -27,15 +27,15 @@ function Comments({ itemId, query, callback }) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    if (!comment) return;
+    if (!newComment) return;
 
     itemService
-      .createComment(itemId, { body: comment })
+      .createComment(itemId, { body: newComment })
       .then(response => {
         if (response.statusText !== 'OK') return;
         setComments(prevComments => [response.data, ...prevComments]);
       })
-      .finally(() => setComment(''));
+      .finally(() => setNewComment(''));
   };
 
   return (
@@ -54,12 +54,12 @@ function Comments({ itemId, query, callback }) {
               placeholder="Add a comment..."
               aria-label="Add a comment"
               aria-describedby="btn-comment"
-              value={comment}
-              onChange={e => setComment(e.target.value)}
+              value={newComment}
+              onChange={e => setNewComment(e.target.value)}
             />
             <Button
               id="btn-comment"
-              disabled={!comment}
+              disabled={!newComment}
               className="bg-white text-primary fw-bolder ps-0">
               post
             </Button>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const getById = url => async id => {
+const getById = url => async (id) => {
   try {
     const response = await axios.get(`${url}/${id}`);
     return response.data;

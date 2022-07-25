@@ -12,19 +12,35 @@ const { notFoundError, notAuthorizedError } = require('../customErrors');
 const getItemComments = asyncHandler(async (req, res) => {
   const { skip, limit } = req.query;
   const { id } = req.params;
+  const userId = req.user && new mongoose.Types.ObjectId(req.user._id);
 
   const comments = await Item.aggregate()
     .match({ _id: new mongoose.Types.ObjectId(id) })
+    .project('user comments')
     .unwind('comments')
+    .addFields({
+      'comments.priority': {
+        $indexOfArray: [[userId, '$user'], '$comments.user'],
+      },
+    })
     .lookup({
       from: 'users',
       localField: 'comments.user',
       foreignField: '_id',
       as: 'comments.user',
+      pipeline: [
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            avatar: 1,
+          },
+        },
+      ],
     })
     .unwind('comments.user')
     .replaceRoot('comments')
-    .sort({ date: 'desc' })
+    .sort('-priority -date')
     .skip(+skip)
     .limit(+limit);
 
