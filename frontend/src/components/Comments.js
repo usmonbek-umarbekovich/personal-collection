@@ -11,7 +11,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 
-function Comments({ itemId, query, callback }) {
+function Comments({ itemId, authorId, query, callback }) {
   const [currUser, setCurrUser] = useState();
   const [newComment, setNewComment] = useState('');
   const [comments, lastCommentElement, loading, setComments] = useObserver(
@@ -33,7 +33,18 @@ function Comments({ itemId, query, callback }) {
       .createComment(itemId, { body: newComment })
       .then(response => {
         if (response.statusText !== 'OK') return;
-        setComments(prevComments => [response.data, ...prevComments]);
+        setComments(prevComments => {
+          const isAuthor = response.data.user._id === authorId;
+          if (isAuthor) return [response.data, ...prevComments];
+
+          const authorHasComment =
+            prevComments.length > 0 && prevComments[0].user._id === authorId;
+          if (!authorHasComment) {
+            return [response.data, ...prevComments];
+          }
+
+          return [prevComments[0], response.data, ...prevComments.slice(1)];
+        });
       })
       .finally(() => setNewComment(''));
   };

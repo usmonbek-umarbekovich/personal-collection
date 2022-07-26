@@ -56,6 +56,7 @@ function SingleItem() {
               }}>
               <Comments
                 itemId={item._id}
+                authorId={item.user._id}
                 query={commentQuery}
                 callback={itemService.getItemComments(id)}
               />
