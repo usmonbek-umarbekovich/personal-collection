@@ -47,7 +47,7 @@ function UserProfile() {
             as="aside"
             lg={{ span: 4, order: 'last' }}
             className="user-sidebar border-start py-lg-5 ps-lg-4 pt-4">
-            <div className="position-relative">
+            <div className="position-relative h-100">
               <div
                 style={{ top: 'calc(var(--nav-height) + 3rem)' }}
                 className="sticky-lg-top">
