@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { useFormik } from 'formik';
@@ -12,7 +12,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
-function CreateCollectionPage() {
+function ManageCollection({ action, handleSubmit }) {
   const [skip, setSkip] = useState(0);
   const params = useMemo(() => ({ limit: 5, skip }), [skip]);
   let [savedTopics, loading, hasMore] = useLazyLoad(
@@ -29,15 +29,16 @@ function CreateCollectionPage() {
 
   const { user } = useUserInfo();
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (!user) navigate('/login');
+  }, [user, navigate]);
 
   useEffect(() => {
     if (loading) return;
     if (hasMore) setSkip(prevSkip => prevSkip + 5);
   }, [hasMore, loading]);
-
-  useEffect(() => {
-    if (!user) navigate('/login');
-  }, [user, navigate]);
 
   const formik = useFormik({
     initialValues: {
@@ -55,21 +56,27 @@ function CreateCollectionPage() {
       description: Yup.string(),
     }),
     onSubmit: (values, { setSubmitting }) => {
-      collectionService.createCollection(values).then(() => {
+      handleSubmit({ id, data: values }).then(() => {
         setSubmitting(false);
-        navigate('/');
+        navigate(-1);
       });
     },
     validateOnBlur: false,
     validateOnChange: false,
   });
 
+  useEffect(() => {
+    if (action !== 'update') return;
+    collectionService.getSingleCollection(id).then(formik.setValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
   if (!user) return null;
 
   return (
     <section className="py-5">
       <Container className="col-md-6 m-auto">
-        <h1 className="text-center mb-5">Create a collection</h1>
+        <h1 className="text-center mb-5">{capitalize(action)} a collection</h1>
         <Form noValidate onSubmit={formik.handleSubmit}>
           <Form.Group controlId="name" className="mb-3">
             <Form.Label className="fs-4">Name</Form.Label>
@@ -100,6 +107,10 @@ function CreateCollectionPage() {
                   padding: '0.25rem',
                 }),
               }}
+              value={{
+                value: formik.values.topic,
+                label: capitalize(formik.values.topic),
+              }}
               placeholder="Enter collection topic"
               onChange={option => formik.setFieldValue('topic', option.value)}
             />
@@ -125,7 +136,7 @@ function CreateCollectionPage() {
           </Form.Group>
           <Button
             type="submit"
-            className="w-100"
+            className="w-100 text-capitalize"
             size="lg"
             disabled={formik.isSubmitting}>
             {formik.isSubmitting ? (
@@ -138,10 +149,10 @@ function CreateCollectionPage() {
                   aria-hidden="true"
                   className="me-1"
                 />
-                Creating
+                {action === 'create' ? 'creating' : 'updating'}
               </>
             ) : (
-              'Create Collection'
+              `${action} collection`
             )}
           </Button>
         </Form>
@@ -150,4 +161,4 @@ function CreateCollectionPage() {
   );
 }
 
-export default CreateCollectionPage;
+export default ManageCollection;

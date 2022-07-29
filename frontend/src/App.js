@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import Stack from 'react-bootstrap/Stack';
+import collectionService from './services/collectionService';
 import UserInfoProvider from './contexts/userInfoContext';
 import Navigation from './components/Navigation';
 import Dashboard from './pages/Dashboard';
@@ -8,8 +9,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import SingleCollection from './pages/SingleCollection';
 import SingleItem from './pages/SingleItem';
-import CreateCollectionPage from './pages/CreateCollectionPage';
-import EditCollectionPage from './pages/EditCollectionPage';
+import ManageCollection from './pages/ManageCollection';
 import CreateItemPage from './pages/CreateItemPage';
 import EditItemPage from './pages/EditItemPage';
 import UserProfile from './pages/UserProfile';
@@ -25,7 +25,15 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="items/create" element={<CreateItemPage />} />
-          <Route path="collections/create" element={<CreateCollectionPage />} />
+          <Route
+            path="collections/create"
+            element={
+              <ManageCollection
+                action="create"
+                handleSubmit={collectionService.createCollection}
+              />
+            }
+          />
           <Route path="users">
             <Route path=":id" element={<UserProfile />} />
           </Route>
@@ -36,7 +44,15 @@ function App() {
             <Route path=":id" element={<SingleItem />} />
           </Route>
           <Route path="collections/edit">
-            <Route path=":id" element={<EditCollectionPage />} />
+            <Route
+              path=":id"
+              element={
+                <ManageCollection
+                  action="update"
+                  handleSubmit={collectionService.updateCollection}
+                />
+              }
+            />
           </Route>
           <Route path="items/edit">
             <Route path=":id" element={<EditItemPage />} />

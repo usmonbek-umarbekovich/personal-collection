@@ -9,7 +9,7 @@ const getAllTopics = getPartialData(`${API_URL}/topics/all`);
 const getCollectionTags = id => getPartialData(`${API_URL}/${id}/tags`);
 const getCollectionItems = id => getPartialData(`${API_URL}/${id}/items`);
 
-const createCollection = async data => {
+const createCollection = async ({ data }) => {
   try {
     const response = await axios.post(API_URL, data);
     return response.data;
@@ -18,7 +18,7 @@ const createCollection = async data => {
   }
 };
 
-const updateCollection = async (id, data) => {
+const updateCollection = async ({ id, data }) => {
   try {
     const response = await axios.put(`${API_URL}/${id}`, data);
     return response.data;
