@@ -86,8 +86,7 @@ function Comments({ itemId, authorId, query, callback }) {
             <AuthorInfo
               weight="bolder"
               user={comment.user}
-              description={timeDiff(comment.date, 'item', 'short', true)}
-              root="../.."
+              description={timeDiff(comment.date, 'item', 'long', true)}
             />
             <p style={{ marginLeft: '2.35rem' }}>{comment.body}</p>
           </Stack>

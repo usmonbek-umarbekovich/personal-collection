@@ -29,7 +29,6 @@ function SingleCollection() {
             picSize="md"
             user={collection.user}
             description={timeDiff(collection.createdAt, 'item', 'long')}
-            root="../.."
           />
           <h1 className="lh-base">{collection.name}</h1>
           {collection.description && (
@@ -52,7 +51,6 @@ function SingleCollection() {
                 showCollection={false}
                 query={itemQuery}
                 callback={collectionService.getCollectionItems(id)}
-                root="../.."
               />
             </Col>
           </Row>

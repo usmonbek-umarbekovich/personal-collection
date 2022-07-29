@@ -34,7 +34,6 @@ function SingleItem() {
               picSize="md"
               user={item.user}
               description={timeDiff(item.createdAt, 'item', 'long')}
-              root="../.."
             />
             <h1 className="lh-base">{item.name}</h1>
             {item.description && (

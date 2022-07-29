@@ -79,7 +79,7 @@ function EditItemPage() {
     onSubmit: (values, { setSubmitting }) => {
       itemService.createItem(values).then(() => {
         setSubmitting(false);
-        navigate('/');
+        navigate(-1);
       });
     },
     validateOnBlur: false,

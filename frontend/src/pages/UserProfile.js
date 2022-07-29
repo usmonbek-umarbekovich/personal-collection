@@ -102,7 +102,6 @@ function UserProfile() {
                     showUser={false}
                     query={colQuery}
                     callback={colCallback}
-                    root="../.."
                   />
                 </div>
               </Tab>
@@ -114,7 +113,6 @@ function UserProfile() {
                     showUser={false}
                     query={itemQuery}
                     callback={itemCallback}
-                    root="../.."
                   />
                 </div>
               </Tab>

@@ -27,6 +27,7 @@ export default function UserInfoProvider({ children }) {
   const logoutUser = () => {
     authService.logout();
     setUser(null);
+    navigate('/');
   };
 
   const loginUser = async userData => {

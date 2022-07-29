@@ -14,7 +14,6 @@ function Items({
   showCollection,
   maxWords = 15,
   maxChars = 180,
-  root = '',
 }) {
   const [items, lastItemElement, loading] = useObserver(query, callback);
 
@@ -28,11 +27,9 @@ function Items({
           className="align-items-center"
           ref={items.length === index + 1 ? lastItemElement : null}>
           <Stack className="justify-content-center">
-            {showUser && (
-              <AuthorInfo user={item.user} root={root} weight="bolder" />
-            )}
+            {showUser && <AuthorInfo user={item.user} weight="bolder" />}
             <Stack className="flex-grow-0">
-              <Link className="text-reset" to={`${root}/items/${item._id}`}>
+              <Link className="text-reset" to={`/items/${item._id}`}>
                 <p className="fs-4 fw-bold text-break">{item.name}</p>
                 {item.description && (
                   <p className="fs-5 lh-sm text-break">
@@ -51,7 +48,7 @@ function Items({
                   <p>-</p>
                   <Link
                     className="text-reset"
-                    to={`${root}/collections/${item.collectionId._id}`}>
+                    to={`/collections/${item.collectionId._id}`}>
                     <p>{item.collectionId.name}</p>
                   </Link>
                 </>
