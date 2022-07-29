@@ -1,13 +1,17 @@
 import { Link } from 'react-router-dom';
 import { timeDiff, truncate } from '../helpers';
+import { useUserInfo } from '../contexts/userInfoContext';
 import useObserver from '../hooks/useObserver';
+import classNames from 'classnames';
 import AuthorInfo from './AuthorInfo';
+import CollapseContent from './CollapseContent';
 import LoadingBalls from './LoadingBalls';
 import Stack from 'react-bootstrap/Stack';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
-import { FaCheckDouble } from 'react-icons/fa';
+import { FaCheckDouble, FaPen } from 'react-icons/fa';
 
 function Collections({
   callback,
@@ -18,11 +22,11 @@ function Collections({
   topCollections,
   maxWords = 15,
   maxChars = 180,
-  root = '',
 }) {
   const [collections, lastColElement, loading] = useObserver(query, callback, {
     once: topCollections,
   });
+  const { user } = useUserInfo();
 
   // fill: true | false
   const columns = fill ? { lg: 12 } : { sm: 6, lg: 4 };
@@ -42,20 +46,16 @@ function Collections({
               {...columns}
               className="lh-1"
               ref={collections.length === index + 1 ? lastColElement : null}>
-              <Stack direction="horizontal" className="align-items-start gap-3">
+              <Stack direction="horizontal" className="align-items-start">
                 {indexes && (
-                  <p className="fs-3 fw-bold text-secondary opacity-75 mt-1">
+                  <p className="fs-3 fw-bold text-secondary opacity-75 mt-1 me-3">
                     0{index + 1}
                   </p>
                 )}
                 <Stack>
-                  {showUser && (
-                    <AuthorInfo user={col.user} weight="bolder" root={root} />
-                  )}
+                  {showUser && <AuthorInfo user={col.user} weight="bolder" />}
                   <Stack>
-                    <Link
-                      className="text-reset"
-                      to={`${root}/collections/${col._id}`}>
+                    <Link className="text-reset" to={`/collections/${col._id}`}>
                       <p className="fs-5 fw-bold text-break">{col.name}</p>
                       {col.description && (
                         <p className="fs-5 lh-sm text-break">
@@ -67,7 +67,7 @@ function Collections({
                   <Stack
                     gap="2"
                     direction="horizontal"
-                    className="align-items-start text-muted">
+                    className="align-items-center text-muted">
                     <p>
                       <Badge bg="info">{col.meta.numItems}</Badge> item
                       {col.meta.numItems > 1 ? 's' : ''}
@@ -83,6 +83,33 @@ function Collections({
                     </p>
                   </Stack>
                 </Stack>
+                {(user?._id === col.user._id || user?._id === col.user) && (
+                  <CollapseContent
+                    controlId="collection-control"
+                    iconSize={2}
+                    btnProps={{
+                      variant: 'outline-secondary',
+                      style: { width: '2rem', height: '2rem' },
+                      className: 'border-0',
+                    }}
+                    listProps={{
+                      className: classNames(
+                        { 'mt-1': topCollections },
+                        'end-0'
+                      ),
+                    }}>
+                    <ListGroup.Item
+                      action
+                      variant="dark"
+                      className="text-nowrap p-0">
+                      <Link
+                        to={`/collections/edit/${col._id}`}
+                        className="d-flex text-reset px-4 py-2 ps-3 fw-bolder">
+                        <FaPen className="me-2" /> Edit
+                      </Link>
+                    </ListGroup.Item>
+                  </CollapseContent>
+                )}
               </Stack>
             </Col>
           ))}
