@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import Stack from 'react-bootstrap/Stack';
 import collectionService from './services/collectionService';
+import itemService from './services/itemService';
 import UserInfoProvider from './contexts/userInfoContext';
 import Navigation from './components/Navigation';
 import Dashboard from './pages/Dashboard';
@@ -10,8 +11,7 @@ import Register from './pages/Register';
 import SingleCollection from './pages/SingleCollection';
 import SingleItem from './pages/SingleItem';
 import ManageCollection from './pages/ManageCollection';
-import CreateItemPage from './pages/CreateItemPage';
-import EditItemPage from './pages/EditItemPage';
+import ManageItem from './pages/ManageItem';
 import UserProfile from './pages/UserProfile';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -24,7 +24,15 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="items/create" element={<CreateItemPage />} />
+          <Route
+            path="items/create"
+            element={
+              <ManageItem
+                action="create"
+                handleSubmit={itemService.createItem}
+              />
+            }
+          />
           <Route
             path="collections/create"
             element={
@@ -55,7 +63,15 @@ function App() {
             />
           </Route>
           <Route path="items/edit">
-            <Route path=":id" element={<EditItemPage />} />
+            <Route
+              path=":id"
+              element={
+                <ManageItem
+                  action="update"
+                  handleSubmit={itemService.updateItem}
+                />
+              }
+            />
           </Route>
         </Routes>
         <ToastContainer />

@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
 import useObserver from '../hooks/useObserver';
 import { timeDiff, truncate } from '../helpers';
+import { useUserInfo } from '../contexts/userInfoContext';
 import LoadingBalls from './LoadingBalls';
 import AuthorInfo from './AuthorInfo';
 import Stack from 'react-bootstrap/Stack';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
+import { FaPen, FaTrashAlt } from 'react-icons/fa';
 
 function Items({
   query,
@@ -15,6 +17,7 @@ function Items({
   maxWords = 15,
   maxChars = 180,
 }) {
+  const { user } = useUserInfo();
   const [items, lastItemElement, loading] = useObserver(query, callback);
 
   return (
@@ -38,6 +41,24 @@ function Items({
                 )}
               </Link>
             </Stack>
+            {(user?._id === item.user._id || user?._id === item.user) && (
+              <Stack gap="2" direction="horizontal" className="mb-2">
+                <Button
+                  size="sm"
+                  variant="warning"
+                  title="Edit"
+                  className="p-0">
+                  <Link
+                    to={`/items/edit/${item._id}`}
+                    className="d-flex text-reset px-2 py-2">
+                    <FaPen />
+                  </Link>
+                </Button>
+                <Button size="sm" variant="danger" title="Delete">
+                  <FaTrashAlt />
+                </Button>
+              </Stack>
+            )}
             <Stack
               gap="2"
               direction="horizontal"

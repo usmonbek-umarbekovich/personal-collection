@@ -105,10 +105,28 @@ const updateItem = asyncHandler(async (req, res) => {
     notAuthorizedError(res);
   }
 
-  const updatedItem = Item.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  let savedTags = await Promise.all(
+    req.body.tags.map(name => {
+      return Tag.findOne({ name });
+    })
+  );
+  savedTags = savedTags.filter(Boolean);
+
+  const newTags = await Promise.all(
+    req.body.tags
+      .filter(name => !savedTags.find(tag => tag.name === name))
+      .map(name => Tag.create({ name }))
+  );
+  const tags = savedTags.concat(newTags).map(tag => tag._id);
+
+  const updatedItem = await Item.findByIdAndUpdate(
+    req.params.id,
+    { ...req.body, tags },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   res.status(200).json(updatedItem);
 });
