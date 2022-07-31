@@ -51,6 +51,7 @@ const getUserItems = asyncHandler(async (req, res) => {
     .select('items')
     .populate({
       path: 'items',
+      select: '-comments',
       populate: [
         { path: 'collectionId', select: 'name' },
         { path: 'tags', options: { limit: 3 } },

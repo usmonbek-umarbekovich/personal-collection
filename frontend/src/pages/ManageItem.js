@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useUserInfo } from '../contexts/userInfoContext';
@@ -16,17 +16,23 @@ import Spinner from 'react-bootstrap/Spinner';
 
 function ManageItem({ action, handleSubmit }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useUserInfo();
   const { id } = useParams();
+  const tagRef = useRef();
+  const colRef = useRef();
+
   const [itemTagSkip, setItemTagSkip] = useState(0);
   const [tagSkip, setTagSkip] = useState(0);
   const [colSkip, setColSkip] = useState(0);
+
   const itemTagParams = useMemo(
     () => ({ limit: 10, skip: itemTagSkip }),
     [itemTagSkip]
   );
   const tagParams = useMemo(() => ({ limit: 10, skip: tagSkip }), [tagSkip]);
   const colParams = useMemo(() => ({ limit: 6, skip: colSkip }), [colSkip]);
+
   const itemTagCallback = useCallback(
     async (params, controller) => {
       if (action !== 'update') return null;
@@ -39,9 +45,10 @@ function ManageItem({ action, handleSubmit }) {
   }, []);
   const colCallback = useCallback(
     async (params, controller) => {
+      if (action === 'update') return null;
       return userService.getUserCollections(user._id)(params, controller);
     },
-    [user._id]
+    [action, user._id]
   );
 
   let [itemTags, itemTagLoading, itemTagHasMore] = useLazyLoad(
@@ -85,9 +92,10 @@ function ManageItem({ action, handleSubmit }) {
   }, [tagHasMore, tagLoading, tagParams.limit]);
 
   useEffect(() => {
+    if (action === 'update') return;
     if (colLoading) return;
     if (colHasMore) setColSkip(prevSkip => prevSkip + colParams.limit);
-  }, [colHasMore, colLoading, colParams.limit]);
+  }, [action, colHasMore, colLoading, colParams.limit]);
 
   const formik = useFormik({
     initialValues: {
@@ -124,19 +132,34 @@ function ManageItem({ action, handleSubmit }) {
   });
 
   useEffect(() => {
-    if (action !== 'update') return;
-    itemService.getSingleItem(id).then(data => {
-      const { name, collectionId, description } = data;
-      formik.setValues({ name, collectionId, description, tags: [] });
+    if (!location.state) return;
+
+    const item = location.state;
+    formik.setValues({
+      ...formik.values,
+      ...item,
+      tags: [],
+      collectionId: item.collectionId._id,
+    });
+
+    if (!colRef.current) return;
+    colRef.current.setValue({
+      value: item.collectionId._id,
+      label: capitalize(item.collectionId.name),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [action, id]);
+  }, [action, location.state]);
 
   useEffect(() => {
     if (action !== 'update') return;
     formik.setFieldValue(
       'tags',
       itemTags.map(tag => tag.name)
+    );
+
+    if (!tagRef.current) return;
+    tagRef.current.setValue(
+      itemTags.map(({ name }) => ({ value: name, label: name }))
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action, itemTags]);
@@ -167,6 +190,8 @@ function ManageItem({ action, handleSubmit }) {
           <Form.Group controlId="collectionId" className="mb-3">
             <Form.Label className="fs-4">Collection</Form.Label>
             <Select
+              ref={colRef}
+              isDisabled={action === 'update'}
               options={savedCollections}
               className="fs-5"
               styles={{
@@ -178,12 +203,6 @@ function ManageItem({ action, handleSubmit }) {
                   ...provided,
                   padding: '0.25rem',
                 }),
-              }}
-              value={{
-                value: formik.values.collectionId,
-                label: savedCollections.find(col => {
-                  return col.value === formik.values.collectionId;
-                })?.label,
               }}
               placeholder="Enter collection for the item"
               onChange={option => {
@@ -200,6 +219,7 @@ function ManageItem({ action, handleSubmit }) {
             <Form.Label className="fs-4">Tags</Form.Label>
             <CreatableSelect
               isMulti
+              ref={tagRef}
               options={savedTags}
               className="fs-5"
               styles={{
@@ -212,9 +232,6 @@ function ManageItem({ action, handleSubmit }) {
                   padding: '0.25rem',
                 }),
               }}
-              value={formik.values.tags.map(tag => {
-                return { value: tag, label: tag };
-              })}
               placeholder="Enter tags related to the item"
               onChange={option =>
                 formik.setFieldValue(

@@ -12,7 +12,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
-import { FaCheckDouble, FaPen, FaTrashAlt } from 'react-icons/fa';
+import { FaCheckDouble, FaPlus, FaPen, FaTrashAlt } from 'react-icons/fa';
 
 function Collections({
   callback,
@@ -110,7 +110,21 @@ function Collections({
                       variant="dark"
                       className="text-nowrap p-0">
                       <Link
+                        to="/items/create"
+                        state={{
+                          collectionId: { _id: col._id, name: col.name },
+                        }}
+                        className="d-flex text-reset px-4 py-2 ps-3 fw-bolder">
+                        <FaPlus className="me-2" /> Add Item
+                      </Link>
+                    </ListGroup.Item>
+                    <ListGroup.Item
+                      action
+                      variant="dark"
+                      className="text-nowrap p-0">
+                      <Link
                         to={`/collections/edit/${col._id}`}
+                        state={col}
                         className="d-flex text-reset px-4 py-2 ps-3 fw-bolder">
                         <FaPen className="me-2" /> Edit
                       </Link>

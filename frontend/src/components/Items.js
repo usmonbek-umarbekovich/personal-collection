@@ -57,6 +57,7 @@ function Items({
                   className="p-0">
                   <Link
                     to={`/items/edit/${item._id}`}
+                    state={item}
                     className="d-flex text-reset px-2 py-2">
                     <FaPen />
                   </Link>

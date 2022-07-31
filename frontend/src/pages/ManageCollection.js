@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { useFormik } from 'formik';
@@ -14,8 +14,11 @@ import Spinner from 'react-bootstrap/Spinner';
 
 function ManageCollection({ action, handleSubmit }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useUserInfo();
   const { id } = useParams();
+  const topicRef = useRef();
+
   const [skip, setSkip] = useState(0);
   const params = useMemo(() => ({ limit: 5, skip }), [skip]);
   let [savedTopics, loading, hasMore] = useLazyLoad(
@@ -65,8 +68,18 @@ function ManageCollection({ action, handleSubmit }) {
   });
 
   useEffect(() => {
-    if (action !== 'update') return;
-    collectionService.getSingleCollection(id).then(formik.setValues);
+    if (!location.state) return;
+
+    const collection = location.state;
+    formik.setValues({
+      ...formik.values,
+      ...collection,
+    });
+
+    topicRef.current.setValue({
+      value: collection.topic,
+      label: capitalize(collection.topic),
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -96,6 +109,7 @@ function ManageCollection({ action, handleSubmit }) {
           <Form.Group controlId="topic" className="mb-3">
             <Form.Label className="fs-4">Topic</Form.Label>
             <CreatableSelect
+              ref={topicRef}
               options={savedTopics}
               className="fs-5"
               styles={{
@@ -107,10 +121,6 @@ function ManageCollection({ action, handleSubmit }) {
                   ...provided,
                   padding: '0.25rem',
                 }),
-              }}
-              value={{
-                value: formik.values.topic,
-                label: capitalize(formik.values.topic),
               }}
               placeholder="Enter collection topic"
               onChange={option => formik.setFieldValue('topic', option.value)}
