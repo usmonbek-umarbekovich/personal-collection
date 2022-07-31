@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { timeDiff, truncate } from '../helpers';
 import { useUserInfo } from '../contexts/userInfoContext';
 import useObserver from '../hooks/useObserver';
+import collectionService from '../services/collectionService';
 import classNames from 'classnames';
 import AuthorInfo from './AuthorInfo';
 import CollapseContent from './CollapseContent';
@@ -11,7 +12,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
-import { FaCheckDouble, FaPen } from 'react-icons/fa';
+import { FaCheckDouble, FaPen, FaTrashAlt } from 'react-icons/fa';
 
 function Collections({
   callback,
@@ -30,6 +31,12 @@ function Collections({
 
   // fill: true | false
   const columns = fill ? { lg: 12 } : { sm: 6, lg: 4 };
+
+  const handleDelete = id => {
+    collectionService.deleteCollection(id).then(() => {
+      window.location.reload();
+    });
+  };
 
   return (
     <div>
@@ -107,6 +114,13 @@ function Collections({
                         className="d-flex text-reset px-4 py-2 ps-3 fw-bolder">
                         <FaPen className="me-2" /> Edit
                       </Link>
+                    </ListGroup.Item>
+                    <ListGroup.Item
+                      action
+                      variant="dark"
+                      onClick={() => handleDelete(col._id)}
+                      className="text-nowrap px-4 ps-3 fw-bolder">
+                      <FaTrashAlt className="me-1" /> Delete
                     </ListGroup.Item>
                   </CollapseContent>
                 )}

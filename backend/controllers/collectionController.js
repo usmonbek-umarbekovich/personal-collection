@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Collection = require('../models/collectionModel');
+const Item = require('../models/itemModel');
 const { notFoundError, notAuthorizedError } = require('../customErrors');
 
 /**
@@ -158,7 +159,9 @@ const updateCollection = asyncHandler(async (req, res) => {
  * @access Private
  */
 const deleteCollection = asyncHandler(async (req, res) => {
-  const collection = await Collection.findById(req.params.id);
+  const { id } = req.params;
+
+  const collection = await Collection.findById(id);
   if (!collection) notFoundError(res, 'Collection');
 
   if (!collection.user.equals(req.user._id)) {
@@ -166,6 +169,7 @@ const deleteCollection = asyncHandler(async (req, res) => {
   }
 
   await collection.remove();
+  await Item.deleteMany({ collectionId: id });
 
   res.status(200).json({ id: req.params.id });
 });

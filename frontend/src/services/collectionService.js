@@ -27,6 +27,14 @@ const updateCollection = async ({ id, data }) => {
   }
 };
 
+const deleteCollection = async id => {
+  try {
+    await axios.delete(`${API_URL}/${id}`);
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const collectionService = {
   getAllCollections,
   getSingleCollection,
@@ -35,6 +43,7 @@ const collectionService = {
   getAllTopics,
   createCollection,
   updateCollection,
+  deleteCollection,
 };
 
 export default collectionService;
