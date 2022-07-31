@@ -7,6 +7,7 @@ const useLazyLoad = (params, callback) => {
   const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
+    if (!callback) return;
     setLoading(true);
 
     const controller = new AbortController();

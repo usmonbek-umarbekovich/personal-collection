@@ -13,6 +13,9 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 function ManageCollection({ action, handleSubmit }) {
+  const navigate = useNavigate();
+  const { user } = useUserInfo();
+  const { id } = useParams();
   const [skip, setSkip] = useState(0);
   const params = useMemo(() => ({ limit: 5, skip }), [skip]);
   let [savedTopics, loading, hasMore] = useLazyLoad(
@@ -26,10 +29,6 @@ function ManageCollection({ action, handleSubmit }) {
       label: capitalize(topic),
     };
   });
-
-  const { user } = useUserInfo();
-  const navigate = useNavigate();
-  const { id } = useParams();
 
   useEffect(() => {
     if (!user) navigate('/login');
@@ -76,7 +75,9 @@ function ManageCollection({ action, handleSubmit }) {
   return (
     <section className="py-5">
       <Container className="col-md-6 m-auto">
-        <h1 className="text-center mb-5">{capitalize(action)} a collection</h1>
+        <h1 className="text-center mb-5">
+          {action === 'create' ? 'Create' : 'Update'} a collection
+        </h1>
         <Form noValidate onSubmit={formik.handleSubmit}>
           <Form.Group controlId="name" className="mb-3">
             <Form.Label className="fs-4">Name</Form.Label>
@@ -136,7 +137,7 @@ function ManageCollection({ action, handleSubmit }) {
           </Form.Group>
           <Button
             type="submit"
-            className="w-100 text-capitalize"
+            className="w-100"
             size="lg"
             disabled={formik.isSubmitting}>
             {formik.isSubmitting ? (
@@ -149,10 +150,10 @@ function ManageCollection({ action, handleSubmit }) {
                   aria-hidden="true"
                   className="me-1"
                 />
-                {action === 'create' ? 'creating' : 'updating'}
+                {action === 'create' ? 'Creating' : 'Updating'}
               </>
             ) : (
-              `${action} collection`
+              `${action === 'create' ? 'Create' : 'Update'} collection`
             )}
           </Button>
         </Form>
