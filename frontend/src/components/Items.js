@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import useObserver from '../hooks/useObserver';
 import { timeDiff, truncate } from '../helpers';
 import { useUserInfo } from '../contexts/userInfoContext';
+import itemService from '../services/itemService';
 import LoadingBalls from './LoadingBalls';
 import AuthorInfo from './AuthorInfo';
 import Stack from 'react-bootstrap/Stack';
@@ -19,6 +20,12 @@ function Items({
 }) {
   const { user } = useUserInfo();
   const [items, lastItemElement, loading] = useObserver(query, callback);
+
+  const handleDelete = id => {
+    itemService.deleteItem(id).then(() => {
+      window.location.reload();
+    });
+  };
 
   return (
     <Stack gap="5" className="lh-1">
@@ -54,7 +61,11 @@ function Items({
                     <FaPen />
                   </Link>
                 </Button>
-                <Button size="sm" variant="danger" title="Delete">
+                <Button
+                  size="sm"
+                  variant="danger"
+                  title="Delete"
+                  onClick={() => handleDelete(item._id)}>
                   <FaTrashAlt />
                 </Button>
               </Stack>

@@ -27,6 +27,14 @@ const updateItem = async ({ id, data }) => {
   }
 };
 
+const deleteItem = async id => {
+  try {
+    await axios.delete(`${API_URL}/${id}`);
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const createComment = async (id, data) => {
   try {
     const response = await axios.post(`${API_URL}/${id}/comments`, data);
@@ -44,6 +52,7 @@ const itemService = {
   getItemComments,
   createItem,
   updateItem,
+  deleteItem,
   createComment,
 };
 
