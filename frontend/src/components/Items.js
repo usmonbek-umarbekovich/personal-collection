@@ -106,6 +106,9 @@ function Items({
         </Stack>
       ))}
       {loading && <LoadingBalls />}
+      {!loading && items.length === 0 && (
+        <h2 className="display-4">There are no items in this collection yet</h2>
+      )}
     </Stack>
   );
 }

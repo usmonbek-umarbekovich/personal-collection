@@ -30,7 +30,8 @@ const getAllItems = asyncHandler(async (req, res) => {
 const getSingleItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id)
     .select('-comments -tags')
-    .populate('user', '_id name avatar');
+    .populate('user', '_id name avatar')
+    .populate('collectionId', 'name');
   if (!item) notFoundError(res, 'Item');
 
   res.status(200).json(item);

@@ -34,7 +34,7 @@ function AuthorInfo({
         )}
       </div>
       {justPicture || (
-        <Stack className="justify-content-center">
+        <Stack className="justify-content-center align-items-start">
           <Link
             to={`/users/${user._id}`}
             className={classNames('text-reset', { 'pe-none': linkDisabled })}>

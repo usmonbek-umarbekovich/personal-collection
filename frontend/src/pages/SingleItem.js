@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import itemService from '../services/itemService';
+import { useUserInfo } from '../contexts/userInfoContext';
 import { timeDiff } from '../helpers';
 import Tags from '../components/Tags';
 import Comments from '../components/Comments';
@@ -11,16 +12,23 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
-import { FaComment } from 'react-icons/fa';
+import { FaComment, FaPen, FaTrashAlt } from 'react-icons/fa';
 
 function SingleItem() {
   const [item, setItem] = useState();
   const commentQuery = useMemo(() => ({ limit: 6 }), []);
   const { id } = useParams();
+  const { user } = useUserInfo();
 
   useEffect(() => {
     itemService.getSingleItem(id).then(setItem);
   }, [id]);
+
+  const handleDelete = id => {
+    itemService.deleteItem(id).then(() => {
+      window.location.reload();
+    });
+  };
 
   if (!item) return null;
 
@@ -39,6 +47,24 @@ function SingleItem() {
             {item.description && (
               <p className="text-secondary fs-4">{item.description}</p>
             )}
+            {user?._id === item.user._id && (
+              <Stack gap="2" direction="horizontal" className="fs-5">
+                <Link
+                  to={`/items/edit/${item._id}`}
+                  state={item}
+                  title="Edit"
+                  className="link-secondary px-1">
+                  <FaPen />
+                </Link>
+                <Button
+                  variant="secondary"
+                  title="Delete"
+                  onClick={() => handleDelete(item._id)}
+                  className="bg-transparent link-secondary fs-5 border-0 px-1 py-0">
+                  <FaTrashAlt />
+                </Button>
+              </Stack>
+            )}
             <div
               style={{ height: '20rem' }}
               className="bg-secondary w-100 my-5">
@@ -51,6 +77,7 @@ function SingleItem() {
               className="border sticky-lg-top"
               style={{
                 top: 'calc(var(--nav-height) + 1.75rem)',
+                minHeight: '10rem',
                 maxHeight: 'calc(100vh - var(--nav-height) - 3rem)',
               }}>
               <Comments
