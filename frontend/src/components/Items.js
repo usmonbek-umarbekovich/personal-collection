@@ -15,6 +15,8 @@ function Items({
   callback,
   showUser,
   showCollection,
+  isUserAuthorized,
+  state = null,
   maxWords = 15,
   maxChars = 180,
 }) {
@@ -107,7 +109,18 @@ function Items({
       ))}
       {loading && <LoadingBalls />}
       {!loading && items.length === 0 && (
-        <h2 className="display-4">There are no items in this collection yet</h2>
+        <Stack gap="2">
+          <h2 className="display-6">There is no item yet</h2>
+          {isUserAuthorized && (
+            <p className="fs-3">
+              Let's
+              <Link to="/items/create" state={state} className="mx-2">
+                create
+              </Link>
+              one!
+            </p>
+          )}
+        </Stack>
       )}
     </Stack>
   );

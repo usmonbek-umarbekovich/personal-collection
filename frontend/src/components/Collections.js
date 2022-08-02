@@ -21,6 +21,7 @@ function Collections({
   fill,
   query,
   topCollections,
+  isUserAuthorized,
   maxWords = 15,
   maxChars = 180,
 }) {
@@ -143,6 +144,20 @@ function Collections({
           ))}
         </Row>
         {!topCollections && loading && <LoadingBalls />}
+        {!topCollections && !loading && collections.length === 0 && (
+          <Stack gap="2">
+            <h2 className="display-6">There is no collection yet</h2>
+            {isUserAuthorized && (
+              <p className="fs-3">
+                Go ahead and
+                <Link to="/collections/create" className="mx-2">
+                  create
+                </Link>
+                one!
+              </p>
+            )}
+          </Stack>
+        )}
       </Stack>
     </div>
   );

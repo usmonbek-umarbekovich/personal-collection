@@ -47,8 +47,9 @@ function SingleCollection() {
               <p className="text-secondary fs-4">{collection.description}</p>
             )}
             {user?._id === collection.user._id && (
-              <Stack gap="2" direction="horizontal" className="fs-5">
-                <Link
+              <Stack gap="2" direction="horizontal">
+                <Button
+                  as={Link}
                   to="/items/create"
                   state={{
                     collectionId: {
@@ -56,22 +57,28 @@ function SingleCollection() {
                       name: collection.name,
                     },
                   }}
+                  size="sm"
+                  variant="info"
                   title="Add Item"
-                  className="link-secondary px-1">
+                  className="fs-5 pt-0">
                   <FaPlus />
-                </Link>
-                <Link
+                </Button>
+                <Button
+                  as={Link}
                   to={`/collections/edit/${collection._id}`}
                   state={collection}
+                  size="sm"
+                  variant="warning"
                   title="Edit"
-                  className="link-secondary px-1">
+                  className="fs-5 pt-0">
                   <FaPen />
-                </Link>
+                </Button>
                 <Button
-                  variant="secondary"
+                  size="sm"
+                  variant="danger"
                   title="Delete"
                   onClick={() => handleDelete(collection._id)}
-                  className="bg-transparent link-secondary fs-5 border-0 px-1 py-0">
+                  className="fs-5 pt-0">
                   <FaTrashAlt />
                 </Button>
               </Stack>
@@ -90,9 +97,16 @@ function SingleCollection() {
             </Col>
             <Col lg={{ span: 8, order: 'first' }} className="py-lg-0 py-3">
               <Items
+                state={{
+                  collectionId: {
+                    _id: collection._id,
+                    name: collection.name,
+                  },
+                }}
                 showUser={false}
                 showCollection={false}
                 query={itemQuery}
+                isUserAuthorized={user?._id === collection.user._id}
                 callback={collectionService.getCollectionItems(id)}
               />
             </Col>

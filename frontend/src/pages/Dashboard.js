@@ -45,6 +45,7 @@ function Dashboard() {
                 showUser={true}
                 showCollection={true}
                 query={{ createdAt: 'desc', limit: 6 }}
+                isUserAuthorized={!!user}
                 callback={itemService.getAllItems}
               />
             </Col>

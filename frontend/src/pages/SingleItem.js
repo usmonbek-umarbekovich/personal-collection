@@ -48,19 +48,23 @@ function SingleItem() {
               <p className="text-secondary fs-4">{item.description}</p>
             )}
             {user?._id === item.user._id && (
-              <Stack gap="2" direction="horizontal" className="fs-5">
-                <Link
+              <Stack gap="2" direction="horizontal">
+                <Button
+                  as={Link}
                   to={`/items/edit/${item._id}`}
                   state={item}
+                  size="sm"
+                  variant="warning"
                   title="Edit"
-                  className="link-secondary px-1">
+                  className="fs-5 pt-0">
                   <FaPen />
-                </Link>
+                </Button>
                 <Button
-                  variant="secondary"
+                  size="sm"
+                  variant="danger"
                   title="Delete"
                   onClick={() => handleDelete(item._id)}
-                  className="bg-transparent link-secondary fs-5 border-0 px-1 py-0">
+                  className="fs-5 pt-0">
                   <FaTrashAlt />
                 </Button>
               </Stack>

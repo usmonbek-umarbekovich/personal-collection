@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { getFullName, timeDiff } from '../helpers';
 import userService from '../services/userService';
+import { useUserInfo } from '../contexts/userInfoContext';
 import Items from '../components/Items';
 import Collections from '../components/Collections';
 import AuthorInfo from '../components/AuthorInfo';
@@ -17,6 +18,7 @@ import { FaBan, FaCheck } from 'react-icons/fa';
 function UserProfile() {
   const [user, setUser] = useState();
   const { id } = useParams();
+  const { user: authenticedUser } = useUserInfo();
 
   const [itemQuery, setItemQuery] = useState({ createdAt: 'desc', limit: 6 });
   const [colQuery, setColQuery] = useState({ createdAt: 'desc', limit: 6 });
@@ -101,6 +103,7 @@ function UserProfile() {
                     fill={true}
                     showUser={false}
                     query={colQuery}
+                    isUserAuthorized={authenticedUser?._id === user._id}
                     callback={colCallback}
                   />
                 </div>
@@ -112,6 +115,7 @@ function UserProfile() {
                     showCollection={true}
                     showUser={false}
                     query={itemQuery}
+                    isUserAuthorized={authenticedUser?._id === user._id}
                     callback={itemCallback}
                   />
                 </div>
