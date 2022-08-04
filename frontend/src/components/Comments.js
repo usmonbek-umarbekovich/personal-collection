@@ -11,7 +11,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 
-function Comments({ itemId, authorId, query, callback }) {
+function Comments({ itemId, authorId, query, callback, onAddComment }) {
   const [currUser, setCurrUser] = useState();
   const [newComment, setNewComment] = useState('');
   const [comments, lastCommentElement, loading, setComments] = useObserver(
@@ -46,7 +46,10 @@ function Comments({ itemId, authorId, query, callback }) {
           return [prevComments[0], response.data, ...prevComments.slice(1)];
         });
       })
-      .finally(() => setNewComment(''));
+      .finally(() => {
+        setNewComment('');
+        onAddComment();
+      });
   };
 
   return (
@@ -92,6 +95,9 @@ function Comments({ itemId, authorId, query, callback }) {
           </Stack>
         ))}
         {loading && <LoadingBalls />}
+        {!loading && comments.length === 0 && (
+          <p className="fs-4 m-auto">No Comments</p>
+        )}
       </Stack>
     </>
   );

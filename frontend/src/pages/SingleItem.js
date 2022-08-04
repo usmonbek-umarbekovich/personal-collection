@@ -48,6 +48,13 @@ function SingleItem() {
     document.querySelector('#comment-form input')?.focus();
   };
 
+  const handleAddComment = () => {
+    setItem(prevItem => ({
+      ...prevItem,
+      commentCount: prevItem.commentCount + 1,
+    }));
+  };
+
   const handleLikeOrUnlike = id => {
     if (!user) return navigate('/login');
 
@@ -161,6 +168,7 @@ function SingleItem() {
                 itemId={item._id}
                 authorId={item.user._id}
                 query={commentQuery}
+                onAddComment={handleAddComment}
                 callback={itemService.getItemComments(id)}
               />
             </Stack>
