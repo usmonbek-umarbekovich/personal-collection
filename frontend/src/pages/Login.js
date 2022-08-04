@@ -13,6 +13,10 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = 'Login';
+  }, []);
+
+  useEffect(() => {
     if (user) navigate('/');
   }, [user, navigate]);
 

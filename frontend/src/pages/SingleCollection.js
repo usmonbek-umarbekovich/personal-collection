@@ -24,6 +24,11 @@ function SingleCollection() {
     collectionService.getSingleCollection(id).then(setCollection);
   }, [id]);
 
+  useEffect(() => {
+    if (!collection) return;
+    document.title = collection.name;
+  }, [collection]);
+
   const handleDelete = id => {
     collectionService.deleteCollection(id).then(() => {
       navigate(-1);

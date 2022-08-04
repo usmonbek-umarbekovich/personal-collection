@@ -32,6 +32,11 @@ function SingleItem() {
     itemService.getSingleItem(id).then(setItem);
   }, [id]);
 
+  useEffect(() => {
+    if (!item) return;
+    document.title = item.name;
+  }, [item]);
+
   const handleDelete = id => {
     itemService.deleteItem(id).then(() => {
       navigate(-1);

@@ -34,6 +34,10 @@ function ManageCollection({ action, handleSubmit }) {
   });
 
   useEffect(() => {
+    document.title = `${capitalize(action)} Collection`
+  }, [action])
+
+  useEffect(() => {
     if (!user) navigate('/login');
   }, [user, navigate]);
 

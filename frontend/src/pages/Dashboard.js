@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useUserInfo } from '../contexts/userInfoContext';
 import collectionService from '../services/collectionService';
 import itemService from '../services/itemService';
@@ -13,6 +13,10 @@ import Col from 'react-bootstrap/Col';
 function Dashboard() {
   const { user } = useUserInfo();
   const colQuery = useMemo(() => ({ 'meta.numItems': 'desc', limit: 6 }), []);
+
+  useEffect(() => {
+    document.title = 'Dashboard';
+  }, []);
 
   return (
     <>

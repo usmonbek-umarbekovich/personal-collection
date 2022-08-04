@@ -75,6 +75,10 @@ function ManageItem({ action, handleSubmit }) {
   });
 
   useEffect(() => {
+    document.title = `${capitalize(action)} Item`;
+  }, [action]);
+
+  useEffect(() => {
     if (!user) navigate('/login');
   }, [user, navigate]);
 

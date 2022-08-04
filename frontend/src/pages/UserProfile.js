@@ -39,6 +39,11 @@ function UserProfile() {
     userService.getSingleUser(id).then(setUser);
   }, [id]);
 
+  useEffect(() => {
+    if (!user) return;
+    document.title = getFullName(user.name);
+  }, [user]);
+
   if (!user) return null;
 
   return (

@@ -15,6 +15,10 @@ function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = 'Sign Up';
+  }, []);
+
+  useEffect(() => {
     if (user) navigate('/');
   }, [user, navigate]);
 
