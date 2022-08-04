@@ -72,6 +72,7 @@ function Comments({ itemId, authorId, query, callback, onAddComment }) {
               onChange={e => setNewComment(e.target.value)}
             />
             <Button
+              type="submit"
               id="btn-comment"
               disabled={!newComment}
               className="bg-white text-primary fw-bolder ps-0">
