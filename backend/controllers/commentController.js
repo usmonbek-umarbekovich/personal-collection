@@ -56,13 +56,6 @@ const createComment = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
-  const userCommented = item.comments.find(com => {
-    return com.user.equals(req.user._id);
-  });
-  if (userCommented) {
-    throw new Error('You have already commented on this item');
-  }
-
   const newComment = await item.comments.create({
     user: req.user._id,
     ...req.body,
