@@ -44,6 +44,15 @@ const createComment = async (id, data) => {
   }
 };
 
+const likeOrUnlikeItem = async id => {
+  try {
+    const response = await axios.post(`${API_URL}/${id}/likes`);
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const itemService = {
   getSingleItem,
   getAllItems,
@@ -54,6 +63,7 @@ const itemService = {
   updateItem,
   deleteItem,
   createComment,
+  likeOrUnlikeItem,
 };
 
 export default itemService;

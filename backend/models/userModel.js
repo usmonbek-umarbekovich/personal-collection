@@ -47,12 +47,6 @@ schema.virtual('collections', {
   foreignField: 'user',
 });
 
-schema.virtual('items', {
-  ref: 'Item',
-  localField: '_id',
-  foreignField: 'user',
-});
-
 schema.plugin(passportLocalMongoose, {
   usernameField: 'email',
   selectFields: ['name', 'email', '_id'],

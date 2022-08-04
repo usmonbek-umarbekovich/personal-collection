@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import collectionService from '../services/collectionService';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { timeDiff } from '../helpers';
@@ -16,6 +16,7 @@ import { FaPlus, FaPen, FaTrashAlt } from 'react-icons/fa';
 function SingleCollection() {
   const [collection, setCollection] = useState();
   const itemQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), []);
+  const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useUserInfo();
 
@@ -25,7 +26,7 @@ function SingleCollection() {
 
   const handleDelete = id => {
     collectionService.deleteCollection(id).then(() => {
-      window.location.reload();
+      navigate(-1);
     });
   };
 
@@ -43,11 +44,8 @@ function SingleCollection() {
               description={timeDiff(collection.createdAt, 'item', 'long')}
             />
             <h1 className="lh-base">{collection.name}</h1>
-            {collection.description && (
-              <p className="text-secondary fs-4">{collection.description}</p>
-            )}
             {user?._id === collection.user._id && (
-              <Stack gap="2" direction="horizontal">
+              <Stack gap="2" direction="horizontal" className="my-3">
                 <Button
                   as={Link}
                   to="/items/create"
@@ -82,6 +80,9 @@ function SingleCollection() {
                   <FaTrashAlt />
                 </Button>
               </Stack>
+            )}
+            {collection.description && (
+              <p className="text-secondary fs-4">{collection.description}</p>
             )}
           </Stack>
         </Container>

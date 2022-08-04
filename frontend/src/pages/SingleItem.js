@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import itemService from '../services/itemService';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { timeDiff } from '../helpers';
@@ -12,11 +12,19 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
-import { FaComment, FaPen, FaTrashAlt } from 'react-icons/fa';
+import {
+  FaPen,
+  FaTrashAlt,
+  FaHeart,
+  FaComment,
+  FaRegComment,
+  FaRegHeart,
+} from 'react-icons/fa';
 
 function SingleItem() {
   const [item, setItem] = useState();
   const commentQuery = useMemo(() => ({ limit: 6 }), []);
+  const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useUserInfo();
 
@@ -26,7 +34,29 @@ function SingleItem() {
 
   const handleDelete = id => {
     itemService.deleteItem(id).then(() => {
-      window.location.reload();
+      navigate(-1);
+    });
+  };
+
+  const handleCommentScroll = () => {
+    document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' });
+    document.querySelector('#comment-form input')?.focus();
+  };
+
+  const handleLikeOrUnlike = id => {
+    if (!user) return navigate('/login');
+
+    itemService.likeOrUnlikeItem(id).then(() => {
+      setItem(prevItem => {
+        if (prevItem.likes[user._id]) {
+          delete prevItem.likes[user._id];
+          prevItem.likeCount--;
+        } else {
+          prevItem.likes[user._id] = user._id;
+          prevItem.likeCount++;
+        }
+        return { ...prevItem };
+      });
     });
   };
 
@@ -44,30 +74,68 @@ function SingleItem() {
               description={timeDiff(item.createdAt, 'item', 'long')}
             />
             <h1 className="lh-base">{item.name}</h1>
+            <Stack gap="4" direction="horizontal" className="my-3">
+              <Stack
+                gap="2"
+                direction="horizontal"
+                className="align-items-center">
+                <Button
+                  size="sm"
+                  variant="dark"
+                  style={{ boxShadow: 'none' }}
+                  onClick={() => handleLikeOrUnlike(item._id)}
+                  className="p-0 bg-transparent border-0">
+                  {item.likes[user?._id] ? (
+                    <FaHeart className="text-danger" fontSize={25} />
+                  ) : (
+                    <FaRegHeart className="text-dark" fontSize={25} />
+                  )}
+                </Button>
+                {item.likeCount > 0 && (
+                  <span className="text-dark fs-4">{item.likeCount}</span>
+                )}
+              </Stack>
+              <Stack
+                gap="2"
+                direction="horizontal"
+                className="align-items-center">
+                <Button
+                  size="sm"
+                  variant="dark"
+                  onClick={handleCommentScroll}
+                  style={{ boxShadow: 'none' }}
+                  className="p-0 bg-transparent border-0">
+                  <FaRegComment className="text-dark" fontSize={25} />
+                </Button>
+                {item.commentCount > 0 && (
+                  <span className="text-dark fs-4">{item.commentCount}</span>
+                )}
+              </Stack>
+              {user?._id === item.user._id && (
+                <Stack gap="2" direction="horizontal">
+                  <Button
+                    as={Link}
+                    to={`/items/edit/${item._id}`}
+                    state={item}
+                    size="sm"
+                    variant="warning"
+                    title="Edit"
+                    className="fs-5 pt-0">
+                    <FaPen />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    title="Delete"
+                    onClick={() => handleDelete(item._id)}
+                    className="fs-5 pt-0">
+                    <FaTrashAlt />
+                  </Button>
+                </Stack>
+              )}
+            </Stack>
             {item.description && (
               <p className="text-secondary fs-4">{item.description}</p>
-            )}
-            {user?._id === item.user._id && (
-              <Stack gap="2" direction="horizontal">
-                <Button
-                  as={Link}
-                  to={`/items/edit/${item._id}`}
-                  state={item}
-                  size="sm"
-                  variant="warning"
-                  title="Edit"
-                  className="fs-5 pt-0">
-                  <FaPen />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="danger"
-                  title="Delete"
-                  onClick={() => handleDelete(item._id)}
-                  className="fs-5 pt-0">
-                  <FaTrashAlt />
-                </Button>
-              </Stack>
             )}
             <div
               style={{ height: '20rem' }}
@@ -76,7 +144,7 @@ function SingleItem() {
             </div>
             <Tags callback={itemService.getItemTags(id)} />
           </Col>
-          <Col as="section" lg={5} className="my-lg-0 mt-5">
+          <Col as="section" lg={5} id="comments" className="my-lg-0 mt-5">
             <Stack
               className="border sticky-lg-top"
               style={{
@@ -95,7 +163,7 @@ function SingleItem() {
         </Row>
       </Container>
       <Button
-        onClick={() => document.querySelector('#comment-form input').focus()}
+        onClick={handleCommentScroll}
         className="position-fixed bottom-0 start-50 translate-middle-x rounded-pill mb-3 d-lg-none opacity-75">
         <FaComment className="me-1" /> Comments
       </Button>

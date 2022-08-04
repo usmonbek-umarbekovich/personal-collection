@@ -35,14 +35,14 @@ const schema = new mongoose.Schema(
         body: String,
       },
     ],
-    likes: [
-      {
+    likes: {
+      type: Map,
+      of: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: 'User',
-        immutable: true,
       },
-    ],
+      default: {},
+    },
     tags: [
       {
         type: mongoose.Schema.Types.ObjectId,

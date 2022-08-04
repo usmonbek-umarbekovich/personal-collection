@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const mongoose = require('mongoose');
 const Item = require('../models/itemModel');
 const Collection = require('../models/collectionModel');
 const Tag = require('../models/tagModel');
@@ -10,15 +11,7 @@ const { notFoundError, notAuthorizedError } = require('../customErrors');
  * @access Public
  */
 const getAllItems = asyncHandler(async (req, res) => {
-  const { limit, skip, ...sortBy } = req.query;
-  const items = await Item.find({})
-    .sort(sortBy)
-    .limit(limit)
-    .skip(skip)
-    .populate('collectionId', 'name')
-    .populate('user', '_id name avatar')
-    .populate({ path: 'tags', options: { limit: 3 } });
-
+  const items = await getItemsAggregation({}, req.query);
   res.status(200).json(items);
 });
 
@@ -28,12 +21,10 @@ const getAllItems = asyncHandler(async (req, res) => {
  * @access Public
  */
 const getSingleItem = asyncHandler(async (req, res) => {
-  const item = await Item.findById(req.params.id)
-    .select('-comments -tags')
-    .populate('user', '_id name avatar')
-    .populate('collectionId', 'name');
-  if (!item) notFoundError(res, 'Item');
-
+  const [item] = await getItemsAggregation(
+    { _id: new mongoose.Types.ObjectId(req.params.id) },
+    { skip: 0, limit: Number.MAX_SAFE_INTEGER, createdAt: -1 }
+  );
   res.status(200).json(item);
 });
 
@@ -148,7 +139,7 @@ const deleteItem = asyncHandler(async (req, res) => {
   await item.remove();
 
   const collection = await Collection.findById(item.collectionId);
-  await collection.update(
+  await collection.updateOne(
     { 'meta.numItems': collection.meta.numItems - 1 },
     { runValidators: true }
   );
@@ -166,25 +157,68 @@ const likeOrUnlikeItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (!item) notFoundError(res, 'Item');
 
-  const userIndex = item.likes.findIndex(l => {
-    return l.user.equals(req.user._id);
-  });
-
-  if (userIndex < 0) {
-    item.likes.push({ user: req.user._id });
+  if (item.likes.get(req.user._id)) {
+    item.likes.delete(req.user._id);
   } else {
-    item.likes.splice(userIndex, 1);
+    item.likes.set(req.user._id, req.user._id);
   }
+
   await item.save();
 
-  res.status(200).json({ message: 'request was successfull' });
+  res.status(200).json({ user: req.user._id });
 });
+
+const getItemsAggregation = async (filters, query = {}) => {
+  const { limit, skip, ...sortBy } = query;
+
+  return await Item.aggregate()
+    .match(filters)
+    .addFields({
+      commentCount: { $size: '$comments' },
+      likeCount: { $size: { $objectToArray: '$likes' } },
+    })
+    .project('-comments')
+    .sort(sortBy)
+    .skip(+skip)
+    .limit(+limit)
+    .lookup({
+      from: 'users',
+      localField: 'user',
+      foreignField: '_id',
+      as: 'user',
+      pipeline: [
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            avatar: 1,
+          },
+        },
+      ],
+    })
+    .lookup({
+      from: 'collections',
+      localField: 'collectionId',
+      foreignField: '_id',
+      as: 'collectionId',
+      pipeline: [{ $project: { name: 1 } }],
+    })
+    .lookup({
+      from: 'tags',
+      localField: 'tags',
+      foreignField: '_id',
+      as: 'tags',
+      pipeline: [{ $limit: 3 }],
+    })
+    .unwind('user', 'collectionId');
+};
 
 module.exports = {
   getAllItems,
   getSingleItem,
   getAllTags,
   getItemTags,
+  getItemsAggregation,
   createItem,
   updateItem,
   deleteItem,
