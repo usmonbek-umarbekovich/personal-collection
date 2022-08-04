@@ -15,7 +15,7 @@ function Dashboard() {
   const colQuery = useMemo(() => ({ 'meta.numItems': 'desc', limit: 6 }), []);
 
   useEffect(() => {
-    document.title = 'Dashboard';
+    document.title = 'Personal Collection';
   }, []);
 
   return (
