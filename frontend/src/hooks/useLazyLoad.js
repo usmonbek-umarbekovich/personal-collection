@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 
 const useLazyLoad = (params, callback) => {
   const [data, setData] = useState([]);
@@ -19,7 +18,7 @@ const useLazyLoad = (params, callback) => {
         setHasMore(currData.length > 0);
       })
       .catch(e => {
-        if (axios.isCancel(e)) return;
+        console.log(e.message);
       })
       .finally(() => setLoading(false));
 

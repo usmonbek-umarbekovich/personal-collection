@@ -13,6 +13,7 @@ import Col from 'react-bootstrap/Col';
 function Dashboard() {
   const { user } = useUserInfo();
   const colQuery = useMemo(() => ({ 'meta.numItems': 'desc', limit: 6 }), []);
+  const itemQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), []);
 
   useEffect(() => {
     document.title = 'Personal Collection';
@@ -48,7 +49,7 @@ function Dashboard() {
               <Items
                 showUser={true}
                 showCollection={true}
-                query={{ createdAt: 'desc', limit: 6 }}
+                query={itemQuery}
                 isUserAuthorized={!!user}
                 callback={itemService.getAllItems}
               />
