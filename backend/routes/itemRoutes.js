@@ -9,6 +9,7 @@ const {
   updateItem,
   deleteItem,
   likeOrUnlikeItem,
+  searchItems,
 } = require('../controllers/itemController');
 const {
   getItemComments,
@@ -20,6 +21,7 @@ const {
 const router = express.Router();
 
 router.route('/').get(getAllItems).post(ensureLoggedIn, createItem);
+router.route('/search').get(searchItems);
 
 router.get('/tags/all', getAllTags);
 router.get('/:id/tags', getItemTags);

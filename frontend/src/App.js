@@ -6,6 +6,7 @@ import itemService from './services/itemService';
 import UserInfoProvider from './contexts/userInfoContext';
 import Navigation from './components/Navigation';
 import Dashboard from './pages/Dashboard';
+import Search from './pages/Search';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import SingleCollection from './pages/SingleCollection';
@@ -22,6 +23,7 @@ function App() {
         <Navigation />
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="search" element={<Search />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route

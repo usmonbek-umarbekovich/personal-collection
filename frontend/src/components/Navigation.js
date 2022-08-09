@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { getFullName } from '../helpers';
+import SearchForm from './SearchForm';
 import CollapseContent from './CollapseContent';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
 import { FaUser, FaPlus } from 'react-icons/fa';
 
@@ -99,14 +99,7 @@ function Navigation() {
                   </>
                 )}
               </Nav>
-              <Form className="search-form">
-                <Form.Control
-                  type="search"
-                  placeholder="Search for everything"
-                  className="me-2"
-                  aria-label="Search"
-                />
-              </Form>
+              <SearchForm />
             </Stack>
           </Navbar.Collapse>
         </Container>

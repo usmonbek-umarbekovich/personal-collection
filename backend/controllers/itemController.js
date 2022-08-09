@@ -1,9 +1,34 @@
 const asyncHandler = require('express-async-handler');
 const mongoose = require('mongoose');
+const Tag = require('../models/tagModel');
 const Item = require('../models/itemModel');
 const Collection = require('../models/collectionModel');
-const Tag = require('../models/tagModel');
 const { notFoundError, notAuthorizedError } = require('../customErrors');
+
+const searchItems = asyncHandler(async (req, res) => {
+  const { term, limit, skip, ...sortBy } = req.query;
+  const pipeline = [
+    {
+      $search: {
+        index: 'searchItems',
+        text: {
+          query: term,
+          path: ['name', 'description'],
+          fuzzy: { maxExpansions: 10 },
+        },
+      },
+    },
+    {
+      $addFields: {score: {$meta: 'searchScore'}}
+    }
+  ];
+
+  const items = await Item.aggregate([
+    ...pipeline,
+    ...getItemsPipeline({}, { skip, limit, score: -1 }),
+  ]);
+  res.status(200).json(items);
+});
 
 /**
  * @desc Get all items
@@ -11,7 +36,7 @@ const { notFoundError, notAuthorizedError } = require('../customErrors');
  * @access Public
  */
 const getAllItems = asyncHandler(async (req, res) => {
-  const items = await getItemsAggregation({}, req.query);
+  const items = await Item.aggregate(getItemsPipeline({}, req.query));
   res.status(200).json(items);
 });
 
@@ -21,9 +46,11 @@ const getAllItems = asyncHandler(async (req, res) => {
  * @access Public
  */
 const getSingleItem = asyncHandler(async (req, res) => {
-  const [item] = await getItemsAggregation(
-    { _id: new mongoose.Types.ObjectId(req.params.id) },
-    { skip: 0, limit: Number.MAX_SAFE_INTEGER, createdAt: -1 }
+  const [item] = await Item.aggregate(
+    getItemsPipeline(
+      { _id: new mongoose.Types.ObjectId(req.params.id) },
+      { skip: 0, limit: Number.MAX_SAFE_INTEGER, createdAt: -1 }
+    )
   );
   res.status(200).json(item);
 });
@@ -168,49 +195,62 @@ const likeOrUnlikeItem = asyncHandler(async (req, res) => {
   res.status(200).json({ user: req.user._id });
 });
 
-const getItemsAggregation = async (filters, query = {}) => {
+const getItemsPipeline = (filters, query = {}) => {
   const { limit, skip, ...sortBy } = query;
+  Object.entries(sortBy).forEach(([key, value]) => {
+    sortBy[key] = +value;
+  });
 
-  return await Item.aggregate()
-    .match(filters)
-    .addFields({
-      commentCount: { $size: '$comments' },
-      likeCount: { $size: { $objectToArray: '$likes' } },
-    })
-    .project('-comments')
-    .sort(sortBy)
-    .skip(+skip)
-    .limit(+limit)
-    .lookup({
-      from: 'users',
-      localField: 'user',
-      foreignField: '_id',
-      as: 'user',
-      pipeline: [
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            avatar: 1,
+  return [
+    { $match: filters },
+    {
+      $addFields: {
+        commentCount: { $size: '$comments' },
+        likeCount: { $size: { $objectToArray: '$likes' } },
+      },
+    },
+    { $project: { comments: 0 } },
+    { $sort: sortBy },
+    { $skip: +skip },
+    { $limit: +limit },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user',
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              avatar: 1,
+            },
           },
-        },
-      ],
-    })
-    .lookup({
-      from: 'collections',
-      localField: 'collectionId',
-      foreignField: '_id',
-      as: 'collectionId',
-      pipeline: [{ $project: { name: 1 } }],
-    })
-    .lookup({
-      from: 'tags',
-      localField: 'tags',
-      foreignField: '_id',
-      as: 'tags',
-      pipeline: [{ $limit: 3 }],
-    })
-    .unwind('user', 'collectionId');
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'collections',
+        localField: 'collectionId',
+        foreignField: '_id',
+        as: 'collectionId',
+        pipeline: [{ $project: { name: 1 } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'tags',
+        localField: 'tags',
+        foreignField: '_id',
+        as: 'tags',
+        pipeline: [{ $limit: 3 }],
+      },
+    },
+    { $unwind: '$user' },
+    { $unwind: '$collectionId' },
+  ];
 };
 
 module.exports = {
@@ -218,9 +258,10 @@ module.exports = {
   getSingleItem,
   getAllTags,
   getItemTags,
-  getItemsAggregation,
+  getItemsPipeline,
   createItem,
   updateItem,
   deleteItem,
   likeOrUnlikeItem,
+  searchItems,
 };
