@@ -146,7 +146,7 @@ function Collections({
         {!topCollections && loading && <LoadingBalls />}
         {!topCollections && !loading && collections.length === 0 && (
           <Stack gap="2">
-            <h2 className="display-6">There is no collection yet</h2>
+            <h2 className="display-6 mx-auto">There is no collection</h2>
             {isUserAuthorized && (
               <p className="fs-3">
                 Go ahead and

@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 
 const PREFIX = 'personal-collection.';
 
+// TODO: expire session
 function getSavedValue(key, initialValue) {
-  const jsonValue = JSON.parse(localStorage.getItem(key));
-  if (jsonValue != null) return jsonValue;
+  const parsedValue = JSON.parse(localStorage.getItem(key));
+  if (parsedValue != null) return parsedValue;
 
   if (typeof initialValue === 'function') {
     return initialValue();

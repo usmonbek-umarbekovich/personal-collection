@@ -180,7 +180,7 @@ function Items({
       {loading && <LoadingBalls />}
       {!loading && items.length === 0 && (
         <Stack gap="2">
-          <h2 className="display-6">There is no item yet</h2>
+          <h2 className="display-6 mx-auto">There is no item</h2>
           {isUserAuthorized && (
             <p className="fs-3">
               Let's

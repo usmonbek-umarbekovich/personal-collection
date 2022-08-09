@@ -10,7 +10,7 @@ const useObserver = (query, callback, { once = false } = {}) => {
     setSkip(0);
     setData([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [callback]);
+  }, [callback, query]);
 
   const observer = useRef();
   const lastElement = useCallback(
