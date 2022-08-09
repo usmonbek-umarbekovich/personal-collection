@@ -40,7 +40,6 @@ app.use(
       clientPromise,
       stringify: false,
       ttl: 30 * 24 * 60 * 60, // 30 days
-      touchAfter: 24 * 3600, // 24 hours
     }),
   })
 );
