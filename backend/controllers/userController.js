@@ -1,7 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const mongoose = require('mongoose');
 const User = require('../models/userModel');
-const { getItemsAggregation } = require('./itemController');
+const Item = require('../models/itemModel');
+const { getItemsPipeline } = require('./itemController');
 const { notFoundError } = require('../customErrors');
 
 /**
@@ -45,9 +46,11 @@ const getUserCollections = asyncHandler(async (req, res) => {
  * @access Public
  */
 const getUserItems = asyncHandler(async (req, res) => {
-  const items = await getItemsAggregation(
-    { user: new mongoose.Types.ObjectId(req.params.id) },
-    req.query
+  const items = await Item.aggregate(
+    getItemsPipeline(
+      { user: new mongoose.Types.ObjectId(req.params.id) },
+      req.query
+    )
   );
   res.status(200).json(items);
 });

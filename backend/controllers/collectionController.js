@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const mongoose = require('mongoose');
 const Collection = require('../models/collectionModel');
 const Item = require('../models/itemModel');
-const { getItemsAggregation } = require('./itemController');
+const { getItemsPipeline } = require('./itemController');
 const { notFoundError, notAuthorizedError } = require('../customErrors');
 
 /**
@@ -42,9 +42,11 @@ const getSingleCollection = asyncHandler(async (req, res) => {
  * @access Public
  */
 const getCollectionItems = asyncHandler(async (req, res) => {
-  const items = await getItemsAggregation(
-    { collectionId: new mongoose.Types.ObjectId(req.params.id) },
-    req.query
+  const items = await Item.aggregate(
+    getItemsPipeline(
+      { collectionId: new mongoose.Types.ObjectId(req.params.id) },
+      req.query
+    )
   );
   res.status(200).json(items);
 });
