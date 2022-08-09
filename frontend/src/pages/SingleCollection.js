@@ -15,7 +15,7 @@ import { FaPlus, FaPen, FaTrashAlt } from 'react-icons/fa';
 
 function SingleCollection() {
   const [collection, setCollection] = useState();
-  const itemQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), []);
+  const itemQuery = useMemo(() => ({ createdAt: -1, limit: 6 }), []);
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useUserInfo();

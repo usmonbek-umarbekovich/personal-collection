@@ -20,8 +20,8 @@ function UserProfile() {
   const { id } = useParams();
   const { user: authenticedUser } = useUserInfo();
 
-  const [itemQuery, setItemQuery] = useState({ createdAt: 'desc', limit: 6 });
-  const [colQuery, setColQuery] = useState({ createdAt: 'desc', limit: 6 });
+  const [itemQuery, setItemQuery] = useState({ createdAt: -1, limit: 6 });
+  const [colQuery, setColQuery] = useState({ createdAt: -1, limit: 6 });
   const itemCallback = useCallback(
     async (params, controller) => {
       return userService.getUserItems(id)(params, controller);

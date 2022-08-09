@@ -12,8 +12,8 @@ import Col from 'react-bootstrap/Col';
 
 function Dashboard() {
   const { user } = useUserInfo();
-  const colQuery = useMemo(() => ({ 'meta.numItems': 'desc', limit: 6 }), []);
-  const itemQuery = useMemo(() => ({ createdAt: 'desc', limit: 6 }), []);
+  const colQuery = useMemo(() => ({ 'meta.numItems': -1, limit: 6 }), []);
+  const itemQuery = useMemo(() => ({ createdAt: -1, limit: 6 }), []);
 
   useEffect(() => {
     document.title = 'Personal Collection';
