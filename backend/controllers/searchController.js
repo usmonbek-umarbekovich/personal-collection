@@ -38,7 +38,7 @@ const search = asyncHandler(async (req, res) => {
       },
     },
     { $addFields: { score: { $meta: 'searchScore' } } },
-    { $sort: { score: -1 } },
+    { $sort: { score: -1, createdAt: -1 } },
     { $skip: +skip },
     { $limit: +limit },
     {
@@ -101,7 +101,7 @@ const search = asyncHandler(async (req, res) => {
         numItems: '$numItems.num',
       },
     },
-    { $sort: { score: -1 } },
+    { $sort: { score: -1, registrationTime: -1 } },
     { $skip: +skip },
     { $limit: +limit },
   ];
@@ -111,7 +111,7 @@ const search = asyncHandler(async (req, res) => {
   if (type === 'item' || type === 'all') {
     result.items = await Item.aggregate([
       ...itemPipeline,
-      ...getItemsPipeline({}, { skip, limit, score: -1 }),
+      ...getItemsPipeline({}, { skip, limit, score: -1, createdAt: -1 }),
     ]);
   }
   if (type === 'collection' || type === 'all') {
