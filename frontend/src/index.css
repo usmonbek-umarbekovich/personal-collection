@@ -22,12 +22,16 @@ textarea {
 
 @media (min-width: 992px) {
   .search-form {
-    width: 25%;
+    width: 70%;
+  }
+
+  .search-form input {
+    flex-grow: 0 !important;
     transition: 0.3s ease-in-out;
   }
 
-  .search-form:focus-within {
-    width: 50%;
+  .search-form input:focus-within {
+    flex-grow: 1 !important;
   }
 
   .tags {
