@@ -23,6 +23,8 @@ function Items({
   showCollection,
   isUserAuthorized,
   data = [],
+  setData = null,
+  lastDataElement = null,
   state = null,
   maxWords = 15,
   maxChars = 180,
@@ -34,6 +36,8 @@ function Items({
     callback
   );
   items = data.length > 0 ? data : items;
+  lastItemElement = lastDataElement || lastItemElement;
+  setItems = setData || setItems;
 
   const handleDelete = id => {
     itemService.deleteItem(id).then(() => {

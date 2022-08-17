@@ -3,11 +3,13 @@ import AuthorInfo from './AuthorInfo';
 import Stack from 'react-bootstrap/Stack';
 import Badge from 'react-bootstrap/Badge';
 
-function Users({ data = [] }) {
+function Users({ data = [], lastDataElement = null }) {
   return (
     <Stack gap="5">
-      {data.map(user => (
-        <Stack key={user._id}>
+      {data.map((user, index) => (
+        <Stack
+          key={user._id}
+          ref={data.length === index + 1 ? lastDataElement : null}>
           <AuthorInfo
             fontSize="lg"
             picSize="md"

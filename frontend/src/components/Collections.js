@@ -23,6 +23,7 @@ function Collections({
   topCollections,
   isUserAuthorized,
   data = [],
+  lastDataElement = null,
   maxWords = 15,
   maxChars = 180,
 }) {
@@ -30,6 +31,7 @@ function Collections({
     once: topCollections,
   });
   collections = data.length > 0 ? data : collections;
+  lastColElement = lastDataElement || lastColElement;
   const { user } = useUserInfo();
 
   // fill: true | false

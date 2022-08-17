@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 
 const useLazyLoad = (params, callback) => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
-    if (!callback || !params.limit) return;
+    if (!callback || !params.limit) return setLoading(false);
     setLoading(true);
 
     const controller = new AbortController();
@@ -14,13 +14,25 @@ const useLazyLoad = (params, callback) => {
       .then(currData => {
         if (!currData) return;
 
-        setData(prevData => prevData.concat(currData));
-        setHasMore(currData.length > 0);
+        if (Array.isArray(currData)) {
+          setData(prevData => prevData.concat(currData));
+          setHasMore(currData.length > 0);
+        } else {
+          setData(prevData => {
+            return [
+              ...prevData,
+              {
+                items: currData.items,
+                collections: currData.collections,
+                users: currData.users,
+              },
+            ];
+          });
+          setHasMore(Object.values(currData).some(data => data.length > 0));
+        }
       })
-      .catch(e => {
-        console.log(e.message);
-      })
-      .finally(() => setLoading(false));
+      .catch(e => console.log(e.message))
+      .finally(() => setTimeout(() => setLoading(false), 100));
 
     return () => controller.abort();
   }, [params, callback]);
