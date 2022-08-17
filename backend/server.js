@@ -53,6 +53,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/collections', require('./routes/collectionRoutes'));
 app.use('/api/items', require('./routes/itemRoutes'));
+app.get('/api/search', require('./controllers/searchController'));
 
 // use static files [production]
 if (process.env.NODE_ENV === 'production') {
