@@ -5,31 +5,6 @@ const Item = require('../models/itemModel');
 const Collection = require('../models/collectionModel');
 const { notFoundError, notAuthorizedError } = require('../customErrors');
 
-const searchItems = asyncHandler(async (req, res) => {
-  const { term, limit, skip, ...sortBy } = req.query;
-  const pipeline = [
-    {
-      $search: {
-        index: 'searchItems',
-        text: {
-          query: term,
-          path: ['name', 'description'],
-          fuzzy: { maxExpansions: 10 },
-        },
-      },
-    },
-    {
-      $addFields: {score: {$meta: 'searchScore'}}
-    }
-  ];
-
-  const items = await Item.aggregate([
-    ...pipeline,
-    ...getItemsPipeline({}, { skip, limit, score: -1 }),
-  ]);
-  res.status(200).json(items);
-});
-
 /**
  * @desc Get all items
  * @route GET /api/items
@@ -263,5 +238,4 @@ module.exports = {
   updateItem,
   deleteItem,
   likeOrUnlikeItem,
-  searchItems,
 };
