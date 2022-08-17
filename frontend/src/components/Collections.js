@@ -22,12 +22,14 @@ function Collections({
   query,
   topCollections,
   isUserAuthorized,
+  data = [],
   maxWords = 15,
   maxChars = 180,
 }) {
-  const [collections, lastColElement, loading] = useObserver(query, callback, {
+  let [collections, lastColElement, loading] = useObserver(query, callback, {
     once: topCollections,
   });
+  collections = data.length > 0 ? data : collections;
   const { user } = useUserInfo();
 
   // fill: true | false

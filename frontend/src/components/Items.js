@@ -22,16 +22,18 @@ function Items({
   showUser,
   showCollection,
   isUserAuthorized,
+  data = [],
   state = null,
   maxWords = 15,
   maxChars = 180,
 }) {
   const navigate = useNavigate();
   const { user } = useUserInfo();
-  const [items, lastItemElement, loading, setItems] = useObserver(
+  let [items, lastItemElement, loading, setItems] = useObserver(
     query,
     callback
   );
+  items = data.length > 0 ? data : items;
 
   const handleDelete = id => {
     itemService.deleteItem(id).then(() => {
