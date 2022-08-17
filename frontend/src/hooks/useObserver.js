@@ -26,7 +26,7 @@ const useObserver = (query, callback, { once = false } = {}) => {
       });
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore, query.limit, once]
+    [loading, hasMore, query, once]
   );
 
   return [data, lastElement, loading, setData];
