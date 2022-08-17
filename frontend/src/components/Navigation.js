@@ -23,7 +23,10 @@ function Navigation() {
         expand="md"
         className="py-3 px-2 border-bottom border-1 border-dark">
         <Container fluid="md">
-          <Navbar.Brand as={NavLink} to="/" className="me-auto fs-4 fw-bold">
+          <Navbar.Brand
+            as={NavLink}
+            to="/"
+            className="me-auto pe-4 fs-4 fw-bold">
             Personal Collection
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbar" />
