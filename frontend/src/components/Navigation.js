@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { getFullName } from '../helpers';
@@ -11,16 +12,28 @@ import Stack from 'react-bootstrap/Stack';
 import { FaUser, FaPlus } from 'react-icons/fa';
 
 function Navigation() {
+  const [expanded, setExpanded] = useState(false);
   const { user, logoutUser } = useUserInfo();
+
+  const handleNavbarSelect = eventKey => {
+    const excludedKeys = ['all', 'item', 'collection', 'user'];
+    if (!excludedKeys.includes(eventKey)) setExpanded(false);
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    setExpanded(false);
+  };
 
   return (
     <header style={{ marginTop: 'var(--nav-height)' }}>
       <Navbar
-        collapseOnSelect
         fixed="top"
         bg="warning"
         variant="light"
         expand="md"
+        expanded={expanded}
+        onSelect={handleNavbarSelect}
         className="py-3 px-2 border-bottom border-1 border-dark">
         <Container fluid="md">
           <Navbar.Brand
@@ -29,7 +42,10 @@ function Navigation() {
             className="me-auto pe-4 fs-4 fw-bold">
             Personal Collection
           </Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbar" />
+          <Navbar.Toggle
+            aria-controls="navbar"
+            onClick={() => setExpanded(prev => !prev)}
+          />
           <Navbar.Collapse id="navbar">
             <Stack
               gap="3"
@@ -42,18 +58,22 @@ function Navigation() {
                       Icon={FaPlus}
                       btnProps={{ title: 'Create' }}>
                       <ListGroup.Item action className="text-nowrap p-0">
-                        <NavLink
+                        <Nav.Link
+                          as={NavLink}
+                          eventKey="create-collection"
                           to="collections/create"
                           className="d-block text-reset fs-5 px-4 py-2">
                           Create Collection
-                        </NavLink>
+                        </Nav.Link>
                       </ListGroup.Item>
                       <ListGroup.Item action className="text-nowrap p-0">
-                        <NavLink
+                        <Nav.Link
+                          as={NavLink}
+                          eventKey="create-item"
                           to="items/create"
                           className="d-block text-reset fs-5 px-4 py-2">
                           Add Item
-                        </NavLink>
+                        </Nav.Link>
                       </ListGroup.Item>
                     </CollapseContent>
 
@@ -65,17 +85,24 @@ function Navigation() {
                         title: 'Profile',
                       }}>
                       <ListGroup.Item action className="text-nowrap p-0">
-                        <NavLink
+                        <Nav.Link
+                          as={NavLink}
+                          eventKey="profile"
                           to={`users/${user._id}`}
                           className="d-block text-reset fs-5 px-4 py-2">
                           {getFullName(user.name)}
-                        </NavLink>
+                        </Nav.Link>
                       </ListGroup.Item>
                       <ListGroup.Item
                         action
                         onClick={logoutUser}
                         className="fs-5 px-4 text-nowrap">
-                        Logout
+                        <Nav.Link
+                          as="span"
+                          eventKey="logout"
+                          className="text-reset p-0">
+                          Logout
+                        </Nav.Link>
                       </ListGroup.Item>
                     </CollapseContent>
                   </Stack>
@@ -102,7 +129,7 @@ function Navigation() {
                   </>
                 )}
               </Nav>
-              <SearchForm />
+              <SearchForm onSubmit={handleSubmit} />
             </Stack>
           </Navbar.Collapse>
         </Container>

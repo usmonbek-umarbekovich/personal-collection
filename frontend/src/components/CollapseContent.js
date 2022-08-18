@@ -43,7 +43,9 @@ function CollapseContent({
   };
 
   return (
-    <div className={classNames('position-relative', className)}>
+    <div
+      className={classNames('position-relative', className)}
+      style={{ zIndex: 1000 }}>
       <Button
         onClick={() => setOpen(!open)}
         onBlur={e => handleBlur(e, controlId)}

@@ -5,7 +5,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 
-function SearchForm() {
+function SearchForm({ onSubmit }) {
   const [term, setTerm] = useState('');
   const [type, setType] = useState({ label: 'All Documents', value: 'all' });
   const setSearchParams = useSearchParams()[1];
@@ -36,7 +36,7 @@ function SearchForm() {
   }, [term]);
 
   return (
-    <Form className="search-form me-2" onSubmit={e => e.preventDefault()}>
+    <Form className="search-form me-2" onSubmit={onSubmit}>
       <InputGroup className="justify-content-end">
         <Form.Control
           type="search"
