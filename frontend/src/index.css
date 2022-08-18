@@ -1,5 +1,7 @@
 :root {
-  --nav-height: 4.7rem;
+  --nav-sm-height: 4.7rem;
+  --nav-md-height: 10.8rem;
+  --nav-lg-height: 13.8rem;
 }
 
 li {
@@ -12,6 +14,10 @@ a {
 
 textarea {
   resize: none;
+}
+
+header {
+  transition: 0.3s ease-in-out;
 }
 
 #comment-form input,

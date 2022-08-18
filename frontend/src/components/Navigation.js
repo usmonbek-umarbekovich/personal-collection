@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import classNames from 'classnames';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { getFullName } from '../helpers';
 import SearchForm from './SearchForm';
@@ -13,7 +14,15 @@ import { FaUser, FaPlus } from 'react-icons/fa';
 
 function Navigation() {
   const [expanded, setExpanded] = useState(false);
+  const [navHeight, setNavHeight] = useState('var(--nav-sm-height)');
   const { user, logoutUser } = useUserInfo();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (expanded && user) setNavHeight('var(--nav-md-height)');
+    else if (expanded && !user) setNavHeight('var(--nav-lg-height)');
+    else setNavHeight('var(--nav-sm-height)');
+  }, [expanded, user]);
 
   const handleNavbarSelect = eventKey => {
     const excludedKeys = ['all', 'item', 'collection', 'user'];
@@ -26,7 +35,11 @@ function Navigation() {
   };
 
   return (
-    <header style={{ marginTop: 'var(--nav-height)' }}>
+    <header
+      style={{ paddingTop: navHeight }}
+      className={classNames({
+        'bg-warning': !user && location.pathname === '/',
+      })}>
       <Navbar
         fixed="top"
         bg="warning"
