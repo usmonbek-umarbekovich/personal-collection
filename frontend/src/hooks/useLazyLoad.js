@@ -32,7 +32,7 @@ const useLazyLoad = (params, callback) => {
         }
       })
       .catch(e => console.log(e.message))
-      .finally(() => setTimeout(() => setLoading(false), 100));
+      .finally(() => setLoading(false));
 
     return () => controller.abort();
   }, [params, callback]);
