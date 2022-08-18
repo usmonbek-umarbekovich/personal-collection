@@ -70,7 +70,10 @@ function Navigation() {
                       controlId="create"
                       Icon={FaPlus}
                       btnProps={{ title: 'Create' }}>
-                      <ListGroup.Item action className="text-nowrap p-0">
+                      <ListGroup.Item
+                        action
+                        active={location.pathname === '/collections/create'}
+                        className="text-nowrap p-0">
                         <Nav.Link
                           as={NavLink}
                           eventKey="create-collection"
@@ -79,7 +82,10 @@ function Navigation() {
                           Create Collection
                         </Nav.Link>
                       </ListGroup.Item>
-                      <ListGroup.Item action className="text-nowrap p-0">
+                      <ListGroup.Item
+                        action
+                        active={location.pathname === '/items/create'}
+                        className="text-nowrap p-0">
                         <Nav.Link
                           as={NavLink}
                           eventKey="create-item"
@@ -97,7 +103,10 @@ function Navigation() {
                         variant: 'secondary',
                         title: 'Profile',
                       }}>
-                      <ListGroup.Item action className="text-nowrap p-0">
+                      <ListGroup.Item
+                        action
+                        active={location.pathname === `/users/${user._id}`}
+                        className="text-nowrap p-0">
                         <Nav.Link
                           as={NavLink}
                           eventKey="profile"
