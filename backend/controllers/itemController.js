@@ -57,6 +57,68 @@ const getItemTags = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc Get items by tag
+ * @route GET /api/items/tags/:id
+ * @access Public
+ */
+const getItemsByTag = asyncHandler(async (req, res) => {
+  const { skip, limit } = req.query;
+  const { id } = req.params;
+
+  const items = await Item.aggregate()
+    .match({ $expr: { $in: [new mongoose.Types.ObjectId(id), '$tags'] } })
+    .addFields({
+      commentCount: { $size: '$comments' },
+      likeCount: { $size: { $objectToArray: '$likes' } },
+    })
+    .project('-comments')
+    .sort({ createdAt: -1 })
+    .skip(+skip)
+    .limit(+limit)
+    .lookup({
+      from: 'users',
+      localField: 'user',
+      foreignField: '_id',
+      as: 'user',
+      pipeline: [
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            avatar: 1,
+          },
+        },
+      ],
+    })
+    .lookup({
+      from: 'collections',
+      localField: 'collectionId',
+      foreignField: '_id',
+      as: 'collectionId',
+      pipeline: [{ $project: { name: 1 } }],
+    })
+    .lookup({
+      from: 'tags',
+      localField: 'tags',
+      foreignField: '_id',
+      as: 'tags',
+      pipeline: [
+        { $project: { name: 1 } },
+        {
+          $addFields: {
+            priority: { $eq: ['$_id', new mongoose.Types.ObjectId(id)] },
+          },
+        },
+        { $sort: { priority: -1 } },
+        { $limit: 3 },
+      ],
+    })
+    .unwind('user', 'collectionId');
+
+  res.status(200).json(items);
+});
+
+/**
  * @desc Create collection item
  * @route POST /api/items
  * @access Private
@@ -233,6 +295,7 @@ module.exports = {
   getSingleItem,
   getAllTags,
   getItemTags,
+  getItemsByTag,
   getItemsPipeline,
   createItem,
   updateItem,

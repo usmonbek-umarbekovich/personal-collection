@@ -7,6 +7,7 @@ const getSingleItem = getById(API_URL);
 const getAllItems = getPartialData(API_URL);
 const getAllTags = getPartialData(`${API_URL}/tags/all`);
 const getItemTags = id => getPartialData(`${API_URL}/${id}/tags`);
+const getItemsByTag = id => getPartialData(`${API_URL}/tags/${id}`);
 const getItemComments = id => getPartialData(`${API_URL}/${id}/comments`);
 
 const createItem = async ({ data }) => {
@@ -58,6 +59,7 @@ const itemService = {
   getAllItems,
   getAllTags,
   getItemTags,
+  getItemsByTag,
   getItemComments,
   createItem,
   updateItem,

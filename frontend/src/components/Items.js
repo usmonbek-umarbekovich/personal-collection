@@ -170,7 +170,13 @@ function Items({
               direction="horizontal"
               className="align-items-center">
               {item.tags.map(tag => (
-                <Button key={tag._id} variant="secondary" className="fw-bolder">
+                <Button
+                  key={tag._id}
+                  as={Link}
+                  to={`/tags?name=${tag.name}`}
+                  state={{ id: tag._id }}
+                  variant="secondary"
+                  className="fw-bolder">
                   {tag.name}
                 </Button>
               ))}

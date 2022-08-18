@@ -5,6 +5,7 @@ const {
   getSingleItem,
   getAllTags,
   getItemTags,
+  getItemsByTag,
   createItem,
   updateItem,
   deleteItem,
@@ -22,6 +23,7 @@ const router = express.Router();
 router.route('/').get(getAllItems).post(ensureLoggedIn, createItem);
 
 router.get('/tags/all', getAllTags);
+router.get('/tags/:id', getItemsByTag);
 router.get('/:id/tags', getItemTags);
 router.post('/:id/likes', ensureLoggedIn, likeOrUnlikeItem);
 

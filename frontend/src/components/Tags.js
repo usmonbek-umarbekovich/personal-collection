@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import useLazyLoad from '../hooks/useLazyLoad';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -18,7 +19,12 @@ function Tags({ callback }) {
     <Row className="g-3 row-cols-auto justify-content-lg-start justify-content-center">
       {tags.map(tag => (
         <Col key={tag._id}>
-          <Button variant="secondary" className="fw-bolder">
+          <Button
+            as={Link}
+            to={`/tags?name=${tag.name}`}
+            state={{ id: tag._id }}
+            variant="secondary"
+            className="fw-bolder">
             {tag.name}
           </Button>
         </Col>

@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import SingleCollection from './pages/SingleCollection';
 import SingleItem from './pages/SingleItem';
+import ItemsByTag from './pages/ItemsByTag';
 import ManageCollection from './pages/ManageCollection';
 import ManageItem from './pages/ManageItem';
 import UserProfile from './pages/UserProfile';
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="search" element={<Search />} />
+          <Route path="tags" element={<ItemsByTag />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route
