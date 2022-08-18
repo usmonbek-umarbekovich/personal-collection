@@ -98,7 +98,7 @@ function SingleCollection() {
             <Col
               lg={{ span: 4, order: 'last' }}
               className="tags sticky-lg-top border-bottom py-lg-0 py-3"
-              style={{ top: 'calc(var(--nav-sm-height) + 2.5rem)' }}>
+              style={{ top: 'calc(var(--nav-height) + 2.5rem)' }}>
               <Tags callback={collectionService.getCollectionTags(id)} />
             </Col>
             <Col lg={{ span: 8, order: 'first' }} className="py-lg-0 py-3">

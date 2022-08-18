@@ -19,7 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
-    <Stack className="min-vh-100">
+    <Stack className="min-vh-100" style={{ marginTop: 'var(--nav-height)' }}>
       <UserInfoProvider>
         <Navigation />
         <Routes>
