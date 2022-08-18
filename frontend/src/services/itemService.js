@@ -39,7 +39,7 @@ const deleteItem = async id => {
 const createComment = async (id, data) => {
   try {
     const response = await axios.post(`${API_URL}/${id}/comments`, data);
-    return response;
+    return response.data;
   } catch (error) {
     return error.response;
   }
