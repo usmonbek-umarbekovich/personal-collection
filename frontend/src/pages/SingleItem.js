@@ -160,9 +160,9 @@ function SingleItem() {
             <Stack
               className="border sticky-lg-top"
               style={{
-                top: 'calc(var(--nav-height) + 1.75rem)',
+                top: 'calc(var(--nav-sm-height) + 1.75rem)',
                 minHeight: '10rem',
-                maxHeight: 'calc(100vh - var(--nav-height) - 3rem)',
+                maxHeight: 'calc(100vh - var(--nav-sm-height) - 3rem)',
               }}>
               <Comments
                 itemId={item._id}
