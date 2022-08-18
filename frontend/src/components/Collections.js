@@ -3,7 +3,6 @@ import { timeDiff, truncate } from '../helpers';
 import { useUserInfo } from '../contexts/userInfoContext';
 import useObserver from '../hooks/useObserver';
 import collectionService from '../services/collectionService';
-import classNames from 'classnames';
 import AuthorInfo from './AuthorInfo';
 import CollapseContent from './CollapseContent';
 import LoadingBalls from './LoadingBalls';
@@ -104,12 +103,7 @@ function Collections({
                       style: { width: '2rem', height: '2rem' },
                       className: 'border-0',
                     }}
-                    listProps={{
-                      className: classNames(
-                        { 'mt-1': topCollections },
-                        'end-0'
-                      ),
-                    }}>
+                    listProps={{ className: 'top-100 end-0 mt-2' }}>
                     <ListGroup.Item
                       action
                       variant="dark"

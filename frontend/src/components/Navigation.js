@@ -61,6 +61,7 @@ function Navigation() {
                     <CollapseContent
                       controlId="create"
                       Icon={FaPlus}
+                      listProps={{ className: 'top-100 mt-2' }}
                       btnProps={{ title: 'Create' }}>
                       <ListGroup.Item
                         action
@@ -91,6 +92,7 @@ function Navigation() {
                     <CollapseContent
                       controlId="avatar"
                       Icon={FaUser}
+                      listProps={{ className: 'top-100 mt-2' }}
                       btnProps={{
                         variant: 'secondary',
                         title: 'Profile',

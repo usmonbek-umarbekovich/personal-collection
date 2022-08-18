@@ -22,10 +22,7 @@ function CollapseContent({
   };
   listProps = {
     ...listProps,
-    className: classNames(
-      'position-absolute top-100 mt-2',
-      listProps.className
-    ),
+    className: classNames('position-absolute', listProps.className),
   };
   iconSize = 7 - iconSize;
 
