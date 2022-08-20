@@ -1,113 +1,86 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useUserInfo } from '../contexts/userInfoContext';
-import itemService from '../services/itemService';
-import userService from '../services/userService';
-import useObserver from '../hooks/useObserver';
 import { timeDiff } from '../helpers';
-import AuthorInfo from '../components/AuthorInfo';
-import CollapseContent from '../components/CollapseContent';
-import LoadingBalls from '../components/LoadingBalls';
+import itemService from '../services/itemService';
+import useObserver from '../hooks/useObserver';
+import CommentForm from './CommentForm';
+import AuthorInfo from './AuthorInfo';
+import CollapseContent from './CollapseContent';
+import LoadingBalls from './LoadingBalls';
 import Stack from 'react-bootstrap/Stack';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Button from 'react-bootstrap/Button';
 import { FaPen, FaTrashAlt } from 'react-icons/fa';
 
-function Comments({ itemId, authorId, query, callback, onAddComment }) {
-  const [currUser, setCurrUser] = useState();
-  const [newComment, setNewComment] = useState('');
+function Comments({
+  itemId,
+  authorId,
+  query,
+  callback,
+  onAddComment,
+  onDeleteComment,
+}) {
   const [action, setAction] = useState('create');
+  const [data, setData] = useState({});
   const [comments, lastCommentElement, loading, setComments] = useObserver(
     query,
     callback
   );
 
-  const commentInputRef = useRef();
   const { user } = useUserInfo();
 
-  useEffect(() => {
-    if (!user) return;
-    userService.getSingleUser(user._id).then(setCurrUser);
-  }, [user]);
+  const handleSubmit = (newComment, index) => {
+    setComments(prevComments => {
+      if (action === 'update') {
+        return [
+          ...prevComments.slice(0, index),
+          newComment,
+          ...prevComments.slice(index),
+        ];
+      }
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    if (!newComment) return;
+      const isAuthor = newComment.user._id === authorId;
+      if (isAuthor) return [newComment, ...prevComments];
 
-    itemService
-      .createComment(itemId, { body: newComment })
-      .then(data => {
-        setComments(prevComments => {
-          const isAuthor = data.user._id === authorId;
-          if (isAuthor) return [data, ...prevComments];
+      const authorHasComment =
+        prevComments.length > 0 && prevComments[0].user._id === authorId;
+      if (!authorHasComment) {
+        return [newComment, ...prevComments];
+      }
 
-          const authorHasComment =
-            prevComments.length > 0 && prevComments[0].user._id === authorId;
-          if (!authorHasComment) {
-            return [data, ...prevComments];
-          }
+      return [prevComments[0], newComment, ...prevComments.slice(1)];
+    });
 
-          return [prevComments[0], data, ...prevComments.slice(1)];
-        });
-      })
-      .finally(() => {
-        setNewComment('');
-        onAddComment();
-      });
+    if (action === 'create') onAddComment();
+    else {
+      setAction('create');
+      setData({});
+    }
   };
 
-  const handleEdit = comment => {
+  const handleEdit = (comment, index) => {
     setComments(prevComments =>
       prevComments.filter(c => c._id !== comment._id)
     );
-    setNewComment(comment.body);
-    setAction('edit');
-    commentInputRef.current.focus();
-
-    // TODO edit the comment
-
-    setAction('create');
+    setAction('update');
+    setData({ comment, index });
   };
 
-  const handleDelete = comment => {
-    setComments(prevComments =>
-      prevComments.filter(c => c._id !== comment._id)
-    );
-
-    // TODO delete the comment
+  const handleDelete = commentId => {
+    itemService.deleteComment({ itemId, commentId }).then(() => {
+      setComments(prev => prev.filter(c => c._id !== commentId));
+      onDeleteComment();
+    });
   };
 
   return (
     <>
-      {currUser && (
-        <Form
-          id="comment-form"
-          className="order-lg-last"
-          onSubmit={handleSubmit}>
-          <InputGroup className="border-top border-bottom">
-            <div className="ps-3 pe-1">
-              <AuthorInfo user={currUser} justPicture={true} />
-            </div>
-            <Form.Control
-              ref={commentInputRef}
-              className="ps-1"
-              placeholder="Add a comment..."
-              aria-label="Add a comment"
-              aria-describedby="btn-comment"
-              value={newComment}
-              onChange={e => setNewComment(e.target.value)}
-            />
-            <Button
-              type="submit"
-              id="btn-comment"
-              disabled={!newComment}
-              className="bg-white text-primary fw-bolder ps-0">
-              post
-            </Button>
-          </InputGroup>
-        </Form>
-      )}
+      <CommentForm
+        action={action}
+        data={data}
+        itemId={itemId}
+        userId={user._id}
+        onSubmit={handleSubmit}
+      />
       <Stack className="px-3 pt-2 overflow-auto order-lg-first">
         {comments.map((comment, index) => (
           <Stack
@@ -122,7 +95,7 @@ function Comments({ itemId, authorId, query, callback, onAddComment }) {
                 user={comment.user}
                 description={timeDiff(comment.date, 'item', 'long', true)}
               />
-              {currUser?._id === comment.user._id && (
+              {user?._id === comment.user._id && (
                 <CollapseContent
                   controlId="collection-control"
                   iconSize={2}
@@ -135,14 +108,14 @@ function Comments({ itemId, authorId, query, callback, onAddComment }) {
                   <ListGroup.Item
                     action
                     variant="dark"
-                    onClick={() => handleEdit(comment)}
+                    onClick={() => handleEdit(comment, index)}
                     className="text-nowrap px-4 ps-3 fw-bolder">
                     <FaPen className="me-1" /> Edit
                   </ListGroup.Item>
                   <ListGroup.Item
                     action
                     variant="dark"
-                    onClick={() => handleDelete(comment)}
+                    onClick={() => handleDelete(comment._id)}
                     className="text-nowrap px-4 ps-3 fw-bolder">
                     <FaTrashAlt className="me-1" /> Delete
                   </ListGroup.Item>

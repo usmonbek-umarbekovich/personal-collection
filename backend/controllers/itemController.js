@@ -207,6 +207,7 @@ const deleteItem = asyncHandler(async (req, res) => {
     { 'meta.numItems': collection.meta.numItems - 1 },
     { runValidators: true }
   );
+  // TODO delete tags that has no pointer
 
   res.status(200).json({ id: req.params.id });
 });

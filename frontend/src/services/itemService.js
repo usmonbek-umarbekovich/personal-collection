@@ -36,10 +36,30 @@ const deleteItem = async id => {
   }
 };
 
-const createComment = async (id, data) => {
+const createComment = async ({ itemId, data }) => {
   try {
-    const response = await axios.post(`${API_URL}/${id}/comments`, data);
+    const response = await axios.post(`${API_URL}/${itemId}/comments`, data);
     return response.data;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const updateComment = async ({ itemId, commentId, data }) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/${itemId}/comments/${commentId}`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const deleteComment = async ({ itemId, commentId }) => {
+  try {
+    await axios.delete(`${API_URL}/${itemId}/comments/${commentId}`);
   } catch (error) {
     return error.response;
   }
@@ -65,6 +85,8 @@ const itemService = {
   updateItem,
   deleteItem,
   createComment,
+  updateComment,
+  deleteComment,
   likeOrUnlikeItem,
 };
 

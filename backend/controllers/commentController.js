@@ -84,7 +84,8 @@ const updateComment = asyncHandler(async (req, res) => {
   Object.assign(comment, req.body);
   await item.save();
 
-  res.status(200).json(comment);
+  const user = await User.findById(req.user._id).select('_id name avatar');
+  res.status(200).json({ ...comment._doc, user });
 });
 
 /**
