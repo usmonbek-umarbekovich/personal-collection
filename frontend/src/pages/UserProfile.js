@@ -44,6 +44,14 @@ function UserProfile() {
     document.title = getFullName(user.name);
   }, [user]);
 
+  const blockOrUnblockUser = id => {
+    userService
+      .blockOrUnblockUser(id)
+      .then(data =>
+        setUser(prevUser => ({ ...prevUser, active: data.active }))
+      );
+  };
+
   if (!user) return null;
 
   return (
@@ -70,14 +78,24 @@ function UserProfile() {
                 {user.bio && <p className="mt-3 fs-5 text-muted">{user.bio}</p>}
               </div>
               <div className="d-lg-none position-absolute top-0 end-0 mt-4">
-                {user.active ? (
-                  <Button variant="outline-danger" title="Block the user">
-                    <FaBan className="fs-5" />
-                  </Button>
-                ) : (
-                  <Button variant="outline-success" title="Unblock the user">
-                    <FaCheck className="fs-5" />
-                  </Button>
+                {authenticedUser && (
+                  <div>
+                    {user.active ? (
+                      <Button
+                        variant="outline-danger"
+                        title="Block the user"
+                        onClick={() => blockOrUnblockUser(user._id)}>
+                        <FaBan className="fs-5" />
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline-success"
+                        title="Unblock the user"
+                        onClick={() => blockOrUnblockUser(user._id)}>
+                        <FaCheck className="fs-5" />
+                      </Button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -87,14 +105,24 @@ function UserProfile() {
               direction="horizontal"
               className="align-items-center justify-content-between d-lg-flex d-none">
               <h1>{getFullName(user.name)}</h1>
-              {user.active ? (
-                <Button variant="outline-danger">
-                  <FaBan className="fs-5" />
-                </Button>
-              ) : (
-                <Button variant="outline-success">
-                  <FaCheck className="fs-5" />
-                </Button>
+              {authenticedUser && (
+                <div>
+                  {user.active ? (
+                    <Button
+                      variant="outline-danger"
+                      title="Block the user"
+                      onClick={() => blockOrUnblockUser(user._id)}>
+                      <FaBan className="fs-5" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline-success"
+                      title="Unblock the user"
+                      onClick={() => blockOrUnblockUser(user._id)}>
+                      <FaCheck className="fs-5" />
+                    </Button>
+                  )}
+                </div>
               )}
             </Stack>
             <Tabs

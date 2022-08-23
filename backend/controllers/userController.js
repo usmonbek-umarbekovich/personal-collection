@@ -55,8 +55,23 @@ const getUserItems = asyncHandler(async (req, res) => {
   res.status(200).json(items);
 });
 
+/**
+ * @desc Block or Unblock user
+ * @route POST /api/users/:id/block
+ * @access Private
+ */
+const blockOrUnblockUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) notFoundError(res, 'User');
+
+  user.active = !user.active;
+  await user.save();
+  res.status(200).json({ id: req.params.id, active: user.active });
+});
+
 module.exports = {
   getSingleUser,
   getUserItems,
   getUserCollections,
+  blockOrUnblockUser,
 };
