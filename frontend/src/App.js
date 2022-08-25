@@ -8,10 +8,10 @@ import Navigation from './components/Navigation';
 import Dashboard from './pages/Dashboard';
 import Search from './pages/Search';
 import Login from './pages/Login';
-import Register from './pages/Register';
 import SingleCollection from './pages/SingleCollection';
 import SingleItem from './pages/SingleItem';
 import ItemsByTag from './pages/ItemsByTag';
+import ManageAccount from './pages/ManageAccount';
 import ManageCollection from './pages/ManageCollection';
 import ManageItem from './pages/ManageItem';
 import UserProfile from './pages/UserProfile';
@@ -27,7 +27,7 @@ function App() {
           <Route path="search" element={<Search />} />
           <Route path="tags" element={<ItemsByTag />} />
           <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
+          <Route path="register" element={<ManageAccount action="create" />} />
           <Route
             path="items/create"
             element={
@@ -46,6 +46,9 @@ function App() {
               />
             }
           />
+          <Route path="users/edit">
+            <Route path=":id" element={<ManageAccount action="update" />} />
+          </Route>
           <Route path="users">
             <Route path=":id" element={<UserProfile />} />
           </Route>

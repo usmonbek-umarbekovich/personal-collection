@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { capitalize } from '../helpers';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import userService from '../services/userService';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -10,17 +12,19 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useUserInfo } from '../contexts/userInfoContext';
 
-function Register() {
-  const { registerUser, user } = useUserInfo();
+function Register({ action }) {
+  const { registerUser, updateUser, user } = useUserInfo();
+  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Sign Up';
-  }, []);
+    document.title = `${capitalize(action)} Item`;
+  }, [action]);
 
   useEffect(() => {
-    if (user) navigate('/');
-  }, [user, navigate]);
+    if (user && action === 'create') return navigate('/');
+    if (!user && action === 'update') return navigate('/login');
+  }, [user, action, navigate]);
 
   const handleImageSelect = e => {
     const image = e.target.files[0];
@@ -33,6 +37,22 @@ function Register() {
     }
   };
 
+  const schema = Yup.object({
+    firstName: Yup.string()
+      .max(20, 'First Name must be 20 characters at most')
+      .required('First Name is required'),
+    lastName: Yup.string()
+      .max(20, 'First Name must be 20 characters at most')
+      .required('Last Name is required'),
+    email: Yup.string()
+      .email()
+      .max(30, 'Email must be 30 characters at most')
+      .required('Email is required'),
+    bio: Yup.string().max(250, 'Bio must be 250 characters at most'),
+    password: Yup.string().required('Password is required'),
+    avatar: Yup.mixed(),
+  });
+
   const formik = useFormik({
     initialValues: {
       firstName: '',
@@ -42,33 +62,45 @@ function Register() {
       bio: '',
       avatar: null,
     },
-    validationSchema: Yup.object({
-      firstName: Yup.string()
-        .max(20, 'First Name must be 20 characters at most')
-        .required('First Name is required'),
-      lastName: Yup.string()
-        .max(20, 'First Name must be 20 characters at most')
-        .required('Last Name is required'),
-      email: Yup.string()
-        .email()
-        .max(20, 'Email must be 30 characters at most')
-        .required('Email is required'),
-      bio: Yup.string().max(250, 'Bio must be 250 characters at most'),
-      password: Yup.string().required('Password is required'),
-      avatar: Yup.mixed(),
-    }),
+    validationSchema: action === 'create' ? schema : schema.omit(['password']),
     onSubmit: (values, { setSubmitting }) => {
-      registerUser(values).then(() => setSubmitting(false));
+      const callback = {
+        create: registerUser,
+        update: updateUser,
+      };
+
+      callback[action]({ id, data: values }).then(() => {
+        setSubmitting(false);
+        if (action === 'update') navigate(-1);
+      });
     },
     validateOnBlur: false,
     validateOnChange: false,
   });
 
-  if (user) return null;
+  useEffect(() => {
+    if (action !== 'update') return;
+    userService.getSingleUser(id).then(userData => {
+      const formikData = {
+        firstName: userData.name.first,
+        lastName: userData.name.last,
+        email: userData.email,
+        bio: userData.bio,
+        avatar: userData.avatar,
+      };
+      formik.setValues(formikData);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, action]);
+
+  if (action === 'create' && user) return null;
+  if (action === 'update' && !user) return null;
 
   return (
     <Container className="col-md-6 m-auto py-5">
-      <h1 className="text-center mt-2 mb-4">Create an account</h1>
+      <h1 className="text-center mt-2 mb-4">
+        {action === 'create' ? 'Create an account' : 'Update account info'}
+      </h1>
       <Form noValidate onSubmit={formik.handleSubmit}>
         <Row className="mb-3 gap-3 gap-lg-0">
           <Form.Group as={Col} lg="6" controlId="firstName">
@@ -126,20 +158,22 @@ function Register() {
             {formik.errors.email}
           </Form.Control.Feedback>
         </Form.Group>
-        <Form.Group controlId="password" className="mb-3">
-          <Form.Label className="fs-4">Password</Form.Label>
-          <Form.Control
-            type="password"
-            size="lg"
-            placeholder="Enter Password"
-            autoComplete="off"
-            isInvalid={!!formik.errors.password}
-            {...formik.getFieldProps('password')}
-          />
-          <Form.Control.Feedback type="invalid">
-            {formik.errors.password}
-          </Form.Control.Feedback>
-        </Form.Group>
+        {action === 'create' && (
+          <Form.Group controlId="password" className="mb-3">
+            <Form.Label className="fs-4">Password</Form.Label>
+            <Form.Control
+              type="password"
+              size="lg"
+              placeholder="Enter Password"
+              autoComplete="off"
+              isInvalid={!!formik.errors.password}
+              {...formik.getFieldProps('password')}
+            />
+            <Form.Control.Feedback type="invalid">
+              {formik.errors.password}
+            </Form.Control.Feedback>
+          </Form.Group>
+        )}
         <Form.Group controlId="avatar" className="mb-4">
           <Form.Control
             type="file"
@@ -167,10 +201,12 @@ function Register() {
                 aria-hidden="true"
                 className="me-1"
               />
-              Signing Up
+              {action === 'create' ? 'Signing Up' : 'Updating info'}
             </>
-          ) : (
+          ) : action === 'create' ? (
             'Sign Up'
+          ) : (
+            'Update account'
           )}
         </Button>
       </Form>
