@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { getFullName, timeDiff } from '../helpers';
 import userService from '../services/userService';
 import { useUserInfo } from '../contexts/userInfoContext';
@@ -13,12 +13,12 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import { FaBan, FaCheck } from 'react-icons/fa';
+import { FaBan, FaPen, FaCheck } from 'react-icons/fa';
 
 function UserProfile() {
   const [user, setUser] = useState();
   const { id } = useParams();
-  const { user: authenticedUser } = useUserInfo();
+  const { user: authenticatedUser } = useUserInfo();
 
   const [itemQuery, setItemQuery] = useState({ createdAt: -1, limit: 6 });
   const [colQuery, setColQuery] = useState({ createdAt: -1, limit: 6 });
@@ -78,8 +78,17 @@ function UserProfile() {
                 {user.bio && <p className="mt-3 fs-5 text-muted">{user.bio}</p>}
               </div>
               <div className="d-lg-none position-absolute top-0 end-0 mt-4">
-                {authenticedUser && (
-                  <div>
+                {authenticatedUser && (
+                  <Stack direction="horizontal" gap="3">
+                    {authenticatedUser._id === user._id && (
+                      <Button
+                        as={Link}
+                        to={`/users/edit/${user._id}`}
+                        variant="warning"
+                        title="Edit User info">
+                        <FaPen className="fa-5" />
+                      </Button>
+                    )}
                     {user.active ? (
                       <Button
                         variant="outline-danger"
@@ -95,7 +104,7 @@ function UserProfile() {
                         <FaCheck className="fs-5" />
                       </Button>
                     )}
-                  </div>
+                  </Stack>
                 )}
               </div>
             </div>
@@ -105,8 +114,17 @@ function UserProfile() {
               direction="horizontal"
               className="align-items-center justify-content-between d-lg-flex d-none">
               <h1>{getFullName(user.name)}</h1>
-              {authenticedUser && (
-                <div>
+              {authenticatedUser && (
+                <Stack direction="horizontal" gap="3">
+                  {authenticatedUser._id === user._id && (
+                    <Button
+                      as={Link}
+                      to={`/users/edit/${user._id}`}
+                      variant="warning"
+                      title="Edit User info">
+                      <FaPen className="fa-5" />
+                    </Button>
+                  )}
                   {user.active ? (
                     <Button
                       variant="outline-danger"
@@ -122,7 +140,7 @@ function UserProfile() {
                       <FaCheck className="fs-5" />
                     </Button>
                   )}
-                </div>
+                </Stack>
               )}
             </Stack>
             <Tabs
@@ -136,7 +154,7 @@ function UserProfile() {
                     fill={true}
                     showUser={false}
                     query={colQuery}
-                    isUserAuthorized={authenticedUser?._id === user._id}
+                    isUserAuthorized={authenticatedUser?._id === user._id}
                     callback={colCallback}
                   />
                 </div>
@@ -148,7 +166,7 @@ function UserProfile() {
                     showCollection={true}
                     showUser={false}
                     query={itemQuery}
-                    isUserAuthorized={authenticedUser?._id === user._id}
+                    isUserAuthorized={authenticatedUser?._id === user._id}
                     callback={itemCallback}
                   />
                 </div>

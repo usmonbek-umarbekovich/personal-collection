@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useLocalStorage from '../hooks/useLocalStorage';
 import authService from '../services/authService';
+import userService from '../services/userService';
 
 const UserInfoContext = React.createContext();
 
@@ -30,13 +31,18 @@ export default function UserInfoProvider({ children }) {
     navigate('/');
   };
 
-  const loginUser = async userData => {
-    const response = await authService.login(userData);
+  const loginUser = async data => {
+    const response = await authService.login(data);
     parseData(response);
   };
 
-  const registerUser = async userData => {
-    const response = await authService.register(userData);
+  const registerUser = async ({ data }) => {
+    const response = await authService.register(data);
+    parseData(response);
+  };
+
+  const updateUser = async ({ id, data }) => {
+    const response = await userService.updateUser(id, data);
     parseData(response);
   };
 
@@ -50,6 +56,7 @@ export default function UserInfoProvider({ children }) {
     loginUser,
     registerUser,
     logoutUser,
+    updateUser,
   };
 
   return (
