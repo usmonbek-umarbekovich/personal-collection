@@ -27,9 +27,13 @@ const clientPromise = mongoose
   });
 
 const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: process.env.REQUEST_LIMIT }));
+app.use(
+  express.urlencoded({
+    extended: false,
+    limit: process.env.REQUEST_LIMIT,
+  })
+);
 app.use(
   session({
     resave: false,

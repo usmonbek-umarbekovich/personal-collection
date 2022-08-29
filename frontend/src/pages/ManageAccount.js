@@ -18,7 +18,7 @@ function Register({ action }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = `${capitalize(action)} Item`;
+    document.title = `${capitalize(action)} Account`;
   }, [action]);
 
   useEffect(() => {
@@ -35,6 +35,19 @@ function Register({ action }) {
     } else {
       formik.setFieldError('avatar', 'You can only upload image');
     }
+  };
+
+  const handleRequest = (data, { setSubmitting }) => {
+    const callback = {
+      create: registerUser,
+      update: updateUser,
+    };
+
+    callback[action]({ id, data })
+      .then(() => {
+        if (action === 'update') navigate(-1);
+      })
+      .finally(() => setSubmitting(false));
   };
 
   const schema = Yup.object({
@@ -64,15 +77,16 @@ function Register({ action }) {
     },
     validationSchema: action === 'create' ? schema : schema.omit(['password']),
     onSubmit: (values, { setSubmitting }) => {
-      const callback = {
-        create: registerUser,
-        update: updateUser,
-      };
-
-      callback[action]({ id, data: values }).then(() => {
-        setSubmitting(false);
-        if (action === 'update') navigate(-1);
-      });
+      if (values.avatar) {
+        const reader = new FileReader();
+        reader.readAsDataURL(values.avatar);
+        reader.addEventListener('load', () => {
+          values.avatar = reader.result;
+          handleRequest(values, { setSubmitting });
+        });
+      } else {
+        handleRequest(values, { setSubmitting });
+      }
     },
     validateOnBlur: false,
     validateOnChange: false,

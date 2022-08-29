@@ -1,5 +1,6 @@
 const passport = require('passport');
 const User = require('../models/userModel');
+const mongoose = require('mongoose');
 
 /**
  * @desc Register new user

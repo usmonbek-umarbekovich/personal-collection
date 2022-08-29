@@ -34,7 +34,7 @@ const schema = new mongoose.Schema(
       type: String,
       maxLength: 250,
     },
-    avatar: Buffer,
+    avatar: String,
   },
   {
     timestamps: { createdAt: 'registrationTime' },

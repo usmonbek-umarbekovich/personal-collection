@@ -30,7 +30,16 @@ function AuthorInfo({
         style={{ width: pictureSize[picSize], height: pictureSize[picSize] }}
         className="bg-secondary rounded-circle">
         {user.avatar && (
-          <Image src={user.avatar} alt={getFullName(user.name)} />
+          <Image
+            src={user.avatar}
+            alt={getFullName(user.name)}
+            roundedCircle
+            style={{
+              objectFit: 'cover',
+              width: pictureSize[picSize],
+              height: pictureSize[picSize],
+            }}
+          />
         )}
       </div>
       {justPicture || (
