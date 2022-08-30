@@ -101,7 +101,7 @@ function Collections({
                     btnProps={{
                       variant: 'outline-secondary',
                       style: { width: '2rem', height: '2rem' },
-                      className: 'border-0',
+                      className: 'border-0 p-1',
                     }}
                     listProps={{ className: 'top-100 end-0 mt-2' }}>
                     <ListGroup.Item

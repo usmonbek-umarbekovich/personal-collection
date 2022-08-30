@@ -34,11 +34,9 @@ function AuthorInfo({
             src={user.avatar}
             alt={getFullName(user.name)}
             roundedCircle
-            style={{
-              objectFit: 'cover',
-              width: pictureSize[picSize],
-              height: pictureSize[picSize],
-            }}
+            width="100%"
+            height="100%"
+            style={{ objectFit: 'cover' }}
           />
         )}
       </div>

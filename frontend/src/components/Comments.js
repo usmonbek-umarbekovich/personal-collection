@@ -103,7 +103,7 @@ function Comments({
                   btnProps={{
                     variant: 'outline-secondary',
                     style: { width: '2rem', height: '2rem' },
-                    className: 'border-0',
+                    className: 'border-0 p-1',
                   }}>
                   <ListGroup.Item
                     action
