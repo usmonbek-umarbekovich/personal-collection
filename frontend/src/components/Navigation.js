@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import classNames from 'classnames';
 import { useUserInfo } from '../contexts/userInfoContext';
 import { getFullName } from '../helpers';
+import userService from '../services/userService';
+import classNames from 'classnames';
 import SearchForm from './SearchForm';
 import CollapseContent from './CollapseContent';
 import Container from 'react-bootstrap/Container';
@@ -14,8 +15,14 @@ import { FaUser, FaPlus } from 'react-icons/fa';
 
 function Navigation() {
   const [expanded, setExpanded] = useState(false);
+  const [avatar, setAvatar] = useState(null);
   const { user, logoutUser } = useUserInfo();
   const location = useLocation();
+
+  useEffect(() => {
+    if (!user) return;
+    userService.getSingleUser(user._id).then(({ avatar }) => setAvatar(avatar));
+  }, [user]);
 
   const handleNavbarSelect = eventKey => {
     const excludedKeys = ['all', 'item', 'collection', 'user'];
@@ -62,7 +69,7 @@ function Navigation() {
                       controlId="create"
                       Icon={FaPlus}
                       listProps={{ className: 'top-100 mt-2' }}
-                      btnProps={{ title: 'Create' }}>
+                      btnProps={{ title: 'Create', className: 'p-1' }}>
                       <ListGroup.Item
                         action
                         active={location.pathname === '/collections/create'}
@@ -92,10 +99,17 @@ function Navigation() {
                     <CollapseContent
                       controlId="avatar"
                       Icon={FaUser}
+                      picture={
+                        avatar && {
+                          src: avatar,
+                          alt: getFullName(user.name),
+                        }
+                      }
                       listProps={{ className: 'top-100 mt-2' }}
                       btnProps={{
                         variant: 'secondary',
                         title: 'Profile',
+                        className: avatar ? 'p-0' : 'p-1',
                       }}>
                       <ListGroup.Item
                         action
