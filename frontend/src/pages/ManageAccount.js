@@ -85,7 +85,8 @@ function Register({ action }) {
           handleRequest(values, { setSubmitting });
         });
       } else {
-        handleRequest(values, { setSubmitting });
+        const { avatar, ...data } = values;
+        handleRequest(data, { setSubmitting });
       }
     },
     validateOnBlur: false,
@@ -100,7 +101,7 @@ function Register({ action }) {
         lastName: userData.name.last,
         email: userData.email,
         bio: userData.bio,
-        avatar: userData.avatar,
+        avatar: null,
       };
       formik.setValues(formikData);
     });

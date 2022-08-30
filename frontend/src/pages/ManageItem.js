@@ -152,6 +152,7 @@ function ManageItem({ action, handleSubmit }) {
       ...formik.values,
       ...item,
       tags: [],
+      picture: null,
       collectionId: item.collectionId._id,
     });
 
