@@ -4,12 +4,14 @@ import classNames from 'classnames';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import ListGroup from 'react-bootstrap/ListGroup';
+import Image from 'react-bootstrap/Image';
 import { FaEllipsisH } from 'react-icons/fa';
 
 function CollapseContent({
   children,
   controlId,
   className = '',
+  picture = null,
   Icon = FaEllipsisH,
   iconSize = 3,
   btnProps = {},
@@ -18,7 +20,7 @@ function CollapseContent({
   btnProps = {
     style: { width: '2.75rem', height: '2.75rem' },
     ...btnProps,
-    className: classNames('d-flex rounded-circle p-1', btnProps.className),
+    className: classNames('d-flex rounded-circle', btnProps.className),
   };
   listProps = {
     ...listProps,
@@ -49,7 +51,18 @@ function CollapseContent({
         aria-controls={controlId}
         aria-expanded={open}
         {...btnProps}>
-        <Icon className={`m-auto fs-${iconSize}`} />
+        {picture ? (
+          <Image
+            src={picture.src}
+            alt={picture.alt}
+            roundedCircle
+            width="100%"
+            height="100%"
+            style={{ objectFit: 'cover' }}
+          />
+        ) : (
+          <Icon className={`m-auto fs-${iconSize}`} />
+        )}
       </Button>
       <Collapse in={open} timeout={200}>
         <ListGroup id={controlId} {...listProps}>
