@@ -121,22 +121,20 @@ function ManageItem({ action, handleSubmit }) {
       picture: Yup.mixed(),
     }),
     onSubmit: (values, { setSubmitting }) => {
-      let data;
       if (action === 'update') {
-        const { name, tags, description, picture } = values;
-        data = { name, tags, description, picture };
-      } else {
-        data = values;
+        const { collectionId, ...others } = values;
+        values = others;
       }
 
-      if (data.picture) {
+      if (values.picture) {
         const reader = new FileReader();
-        reader.readAsDataURL(data.picture);
+        reader.readAsDataURL(values.picture);
         reader.addEventListener('load', () => {
-          data.picture = reader.result;
-          handleRequest(data, { setSubmitting });
+          values.picture = reader.result;
+          handleRequest(values, { setSubmitting });
         });
       } else {
+        const { picture, ...data } = values;
         handleRequest(data, { setSubmitting });
       }
     },
