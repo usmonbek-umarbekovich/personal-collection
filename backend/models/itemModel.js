@@ -50,7 +50,7 @@ const schema = new mongoose.Schema(
       },
     ],
     description: String,
-    picture: Buffer,
+    picture: String,
   },
   { timestamps: true }
 );

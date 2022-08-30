@@ -107,6 +107,7 @@ function ManageItem({ action, handleSubmit }) {
       description: '',
       collectionId: '',
       tags: [],
+      picture: null,
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -117,19 +118,27 @@ function ManageItem({ action, handleSubmit }) {
       ),
       tags: Yup.array(),
       description: Yup.string(),
+      picture: Yup.mixed(),
     }),
     onSubmit: (values, { setSubmitting }) => {
       let data;
       if (action === 'update') {
-        const { name, tags, description } = values;
-        data = { name, tags, description };
+        const { name, tags, description, picture } = values;
+        data = { name, tags, description, picture };
       } else {
         data = values;
       }
-      handleSubmit({ id, data }).then(() => {
-        setSubmitting(false);
-        navigate(-1);
-      });
+
+      if (data.picture) {
+        const reader = new FileReader();
+        reader.readAsDataURL(data.picture);
+        reader.addEventListener('load', () => {
+          data.picture = reader.result;
+          handleRequest(data, { setSubmitting });
+        });
+      } else {
+        handleRequest(data, { setSubmitting });
+      }
     },
     validateOnBlur: false,
     validateOnChange: false,
@@ -167,6 +176,25 @@ function ManageItem({ action, handleSubmit }) {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action, itemTags]);
+
+  const handleImageSelect = e => {
+    const image = e.target.files[0];
+
+    if (['image/png', 'image/jpg', 'image/jpeg'].includes(image.type)) {
+      formik.setFieldValue('picture', image);
+      formik.validateField('picture');
+    } else {
+      formik.setFieldError('picture', 'You can only upload image');
+    }
+  };
+
+  const handleRequest = (data, { setSubmitting }) => {
+    handleSubmit({ id, data })
+      .then(() => {
+        if (action === 'update') navigate(-1);
+      })
+      .finally(() => setSubmitting(false));
+  };
 
   if (!user) return null;
 
@@ -262,6 +290,18 @@ function ManageItem({ action, handleSubmit }) {
             />
             <Form.Control.Feedback type="invalid">
               {formik.errors.description}
+            </Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group controlId="picture" className="mb-4">
+            <Form.Control
+              type="file"
+              size="lg"
+              accept="image/png, image/jpg, image/jpeg"
+              onChange={handleImageSelect}
+              isInvalid={!!formik.errors.picture}
+            />
+            <Form.Control.Feedback type="invalid">
+              {formik.errors.picture}
             </Form.Control.Feedback>
           </Form.Group>
           <Button

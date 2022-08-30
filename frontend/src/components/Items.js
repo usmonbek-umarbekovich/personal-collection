@@ -185,7 +185,18 @@ function Items({
           <div
             style={{ width: '12rem', height: '9rem' }}
             className="bg-secondary d-none d-sm-block flex-shrink-0">
-            {item.picture && <Image src={item.picture} alt={item.name} />}
+            {item.picture && (
+              <Image
+                src={item.picture}
+                alt={item.name}
+                width="100%"
+                height="100%"
+                style={{
+                  objectFit: 'cover',
+                  boxShadow: '0 0 1px rgba(0, 0, 0, 0.5)',
+                }}
+              />
+            )}
           </div>
         </Stack>
       ))}

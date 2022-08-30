@@ -153,14 +153,25 @@ function SingleItem() {
                 </Stack>
               )}
             </Stack>
-            {item.description && (
-              <p className="text-secondary fs-4">{item.description}</p>
-            )}
             <div
               style={{ height: '20rem' }}
-              className="bg-secondary w-100 my-5">
-              {item.picture && <Image src={item.picture} alt={item.name} />}
+              className="bg-secondary w-100 my-4">
+              {item.picture && (
+                <Image
+                  src={item.picture}
+                  alt={item.name}
+                  width="100%"
+                  height="100%"
+                  style={{
+                    objectFit: 'cover',
+                    boxShadow: '0 0 1px rgba(0, 0, 0, 0.5)',
+                  }}
+                />
+              )}
             </div>
+            {item.description && (
+              <p className="text-secondary fs-4 mb-5">{item.description}</p>
+            )}
             <Tags callback={itemService.getItemTags(id)} />
           </Col>
           <Col as="section" lg={5} id="comments" className="my-lg-0 mt-5">
