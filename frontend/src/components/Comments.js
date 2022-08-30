@@ -74,13 +74,15 @@ function Comments({
 
   return (
     <>
-      <CommentForm
-        action={action}
-        data={data}
-        itemId={itemId}
-        userId={user._id}
-        onSubmit={handleSubmit}
-      />
+      {user && (
+        <CommentForm
+          action={action}
+          data={data}
+          itemId={itemId}
+          userId={user._id}
+          onSubmit={handleSubmit}
+        />
+      )}
       <Stack className="px-3 pt-2 overflow-auto order-lg-first">
         {comments.map((comment, index) => (
           <Stack
