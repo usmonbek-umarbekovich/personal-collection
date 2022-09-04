@@ -2,9 +2,11 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const path = require('path');
-const mongoose = require('mongoose');
+const http = require('http');
 const MongoStore = require('connect-mongo');
+const { WebSocketServer } = require('ws');
 const configurePassport = require('./config/passportConfig');
+const db = require('./config/db');
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
@@ -12,21 +14,15 @@ if (process.env.NODE_ENV !== 'production') {
 
 const port = process.env.PORT || 5000;
 
-// Database Connection
-const clientPromise = mongoose
-  .connect(process.env.MONGO_URI)
-  .then(mongo => {
-    const db = mongo.connection;
-    console.log(`Databse Connected: ${db.host}`);
-
-    return db.getClient();
-  })
-  .catch(err => {
-    console.error(err);
-    process.exit(1);
-  });
-
+// create server & web socket
 const app = express();
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
+// configure database
+const clientPromise = db(wss);
+
+// apply middlewares
 app.use(express.json({ limit: process.env.REQUEST_LIMIT }));
 app.use(
   express.urlencoded({
@@ -72,4 +68,4 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(require('./middlewares/errorHandler'));
 
-app.listen(port, () => console.log(`Server started on port ${port}`));
+server.listen(port, () => console.log(`Server started on port ${port}`));
