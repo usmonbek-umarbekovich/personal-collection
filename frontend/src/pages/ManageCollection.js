@@ -34,8 +34,8 @@ function ManageCollection({ action, handleSubmit }) {
   });
 
   useEffect(() => {
-    document.title = `${capitalize(action)} Collection`
-  }, [action])
+    document.title = `${capitalize(action)} Collection`;
+  }, [action]);
 
   useEffect(() => {
     if (!user) navigate('/login');
@@ -62,10 +62,9 @@ function ManageCollection({ action, handleSubmit }) {
       description: Yup.string(),
     }),
     onSubmit: (values, { setSubmitting }) => {
-      handleSubmit({ id, data: values }).then(() => {
-        setSubmitting(false);
-        navigate(-1);
-      });
+      handleSubmit({ id, data: values })
+        .then(() => navigate(-1))
+        .finally(() => setSubmitting(false));
     },
     validateOnBlur: false,
     validateOnChange: false,

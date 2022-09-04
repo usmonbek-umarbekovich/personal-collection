@@ -189,9 +189,7 @@ function ManageItem({ action, handleSubmit }) {
 
   const handleRequest = (data, { setSubmitting }) => {
     handleSubmit({ id, data })
-      .then(() => {
-        if (action === 'update') navigate(-1);
-      })
+      .then(() => navigate(-1))
       .finally(() => setSubmitting(false));
   };
 
