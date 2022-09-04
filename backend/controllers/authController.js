@@ -1,6 +1,6 @@
 const passport = require('passport');
+const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
-const mongoose = require('mongoose');
 
 /**
  * @desc Register new user
@@ -36,17 +36,26 @@ const signup = (req, res, next) => {
  * @access Public
  */
 const login = (req, res, next) => {
-  passport.authenticate('local', (_, user, err) => {
-    if (err) {
-      res.status(401);
-      return next(err);
-    }
+  passport.authenticate(
+    'local',
+    asyncHandler(async (_, user, err) => {
+      if (err) {
+        res.status(401);
+        return next(err);
+      }
 
-    req.login(user, err => {
-      if (err) next(err);
-      res.json(user);
-    });
-  })(req, res, () => res.json(req.user));
+      const fullUser = await User.findById(user._id);
+      if (!fullUser.active) {
+        res.status(401);
+        return next(new Error('Sorry, you are blocked'));
+      }
+
+      req.login(user, err => {
+        if (err) next(err);
+        res.json(user);
+      });
+    })
+  )(req, res, () => res.json(req.user));
 };
 
 /**
