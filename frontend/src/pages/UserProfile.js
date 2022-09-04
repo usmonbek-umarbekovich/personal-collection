@@ -52,6 +52,12 @@ function UserProfile() {
       );
   };
 
+  const handleLastSeen = () => {
+    if (!user.active) return 'Last seen a long time ago';
+    if (user.isOnline) return 'Online';
+    return timeDiff(user.lastSeen, 'user', 'long');
+  };
+
   if (!user) return null;
 
   return (
@@ -73,7 +79,7 @@ function UserProfile() {
                   direction="vertical"
                   user={user}
                   linkDisabled={true}
-                  description={timeDiff(user.lastSeen, 'user', 'long')}
+                  description={handleLastSeen()}
                 />
                 {user.bio && <p className="mt-3 fs-5 text-muted">{user.bio}</p>}
               </div>

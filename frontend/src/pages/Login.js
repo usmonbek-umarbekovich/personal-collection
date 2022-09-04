@@ -27,7 +27,7 @@ function Login() {
       password: Yup.string().required('Password is required'),
     }),
     onSubmit: (values, { setSubmitting }) => {
-      loginUser(values).then(() => setSubmitting(false));
+      loginUser(values).finally(() => setSubmitting(false));
     },
     validateOnBlur: false,
     validateOnChange: false,
