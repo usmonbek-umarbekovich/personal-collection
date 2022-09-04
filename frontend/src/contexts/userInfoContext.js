@@ -14,19 +14,80 @@ export function useUserInfo() {
 export default function UserInfoProvider({ children }) {
   const [user, setUser] = useLocalStorage('user', null);
   const [error, setError] = useState('');
+  const [socket, setSocket] = useState(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (error) toast.error(error);
+    if (!user) return;
+    userService.updateUser(user._id, { isOnline: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
-    return () => {
-      setError('');
-    };
+  useEffect(() => {
+    window.addEventListener('unload', async () => {
+      if (socket) socket.close();
+      if (user)
+        await updateUser({
+          id: user._id,
+          data: {
+            isOnline: false,
+            lastSeen: new Date(),
+          },
+        });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const controller = new AbortController();
+
+    socket.addEventListener(
+      'message',
+      e => {
+        if (!user) return;
+        const change = JSON.parse(e.data);
+        if (!(change.ns.coll === 'users')) return;
+
+        const userId = change.documentKey._id;
+        if (change.operationType === 'update') {
+          const { updateDescription: desc } = change;
+          if (desc.updatedFields.active === false && userId === user._id) {
+            toast.error('You have been blocked');
+            logoutUser();
+          }
+        }
+      },
+      {
+        signal: controller.signal,
+      }
+    );
+
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
+  useEffect(() => {
+    if (error) toast.error(error);
+    return () => setError('');
   }, [navigate, error]);
 
-  const logoutUser = () => {
-    authService.logout();
+  useEffect(() => {
+    const ws = new WebSocket('wss://usmonbek-collection.herokuapp.com');
+    ws.onopen = () => setSocket(ws);
+    ws.onerror = () => toast.error('WebSocket error');
+  }, []);
+
+  const logoutUser = async () => {
+    await userService.updateUser(user._id, {
+      isOnline: false,
+      lastSeen: new Date(),
+    });
+    await authService.logout();
+    socket.close();
+    setSocket(null);
     setUser(null);
     navigate('/');
   };
@@ -53,6 +114,7 @@ export default function UserInfoProvider({ children }) {
 
   const value = {
     user,
+    socket,
     loginUser,
     registerUser,
     logoutUser,
