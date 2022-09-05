@@ -54,7 +54,7 @@ function UserProfile() {
 
   const handleLastSeen = () => {
     if (!user.active) return 'Last seen a long time ago';
-    if (user.isOnline) return 'Online';
+    if (user.onlineDevices.length > 0) return 'Online';
     return timeDiff(user.lastSeen, 'user', 'long');
   };
 

@@ -20,18 +20,18 @@ export default function UserInfoProvider({ children }) {
 
   useEffect(() => {
     if (!user) return;
-    userService.updateUser(user._id, { isOnline: true });
+    userService.updateUser(user._id, { online: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
-    window.addEventListener('unload', async () => {
+    window.addEventListener('beforeunload', async () => {
       if (socket) socket.close();
       if (user)
         await updateUser({
           id: user._id,
           data: {
-            isOnline: false,
+            online: false,
             lastSeen: new Date(),
           },
         });
@@ -53,16 +53,14 @@ export default function UserInfoProvider({ children }) {
 
         const userId = change.documentKey._id;
         if (change.operationType === 'update') {
-          const { updateDescription: desc } = change;
-          if (desc.updatedFields.active === false && userId === user._id) {
+          const { updatedFields } = change.updateDescription;
+          if (updatedFields.active === false && userId === user._id) {
             toast.error('You have been blocked');
             logoutUser();
           }
         }
       },
-      {
-        signal: controller.signal,
-      }
+      { signal: controller.signal }
     );
 
     return () => controller.abort();
@@ -75,14 +73,14 @@ export default function UserInfoProvider({ children }) {
   }, [navigate, error]);
 
   useEffect(() => {
-    const ws = new WebSocket('wss://usmonbek-collection.herokuapp.com');
+    const ws = new WebSocket('ws://localhost:5000');
     ws.onopen = () => setSocket(ws);
     ws.onerror = () => toast.error('WebSocket error');
   }, []);
 
   const logoutUser = async () => {
     await userService.updateUser(user._id, {
-      isOnline: false,
+      online: false,
       lastSeen: new Date(),
     });
     await authService.logout();

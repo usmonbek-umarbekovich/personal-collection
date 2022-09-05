@@ -52,10 +52,7 @@ const timeDiff = (time, type, dateStyle = 'short', noPrefix = false) => {
     const timeDiff = new Date() - new Date(time);
 
     const minutes = Math.trunc(timeDiff / 1000 / 60);
-    if (minutes === 0) {
-      if (type === 'user') return 'Online';
-      if (type === 'item') return 'Just now';
-    }
+    if (minutes === 0) return 'Just now';
     if (minutes === 1) return `${prefix}a minute ago`;
     if (minutes < 60) return `${prefix}${minutes} minutes ago`;
 
