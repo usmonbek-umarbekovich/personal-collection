@@ -22,13 +22,10 @@ const schema = new mongoose.Schema(
       lowercase: true,
       maxLength: 30,
     },
+    onlineDevices: [String],
     lastSeen: {
       type: Date,
       default: Date.now,
-    },
-    isOnline: {
-      type: Boolean,
-      default: true,
     },
     active: {
       type: Boolean,

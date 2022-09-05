@@ -70,9 +70,16 @@ const updateUser = asyncHandler(async (req, res) => {
     last: req.body.lastName ?? user.name.last,
   };
 
+  let onlineDevices = [...user.onlineDevices];
+  if (req.body.online === true && !onlineDevices.includes(req.sessionID)) {
+    onlineDevices.push(req.sessionID);
+  } else if (req.body.online === false) {
+    onlineDevices = onlineDevices.filter(d => d !== req.sessionID);
+  }
+
   const updatedUser = await User.findByIdAndUpdate(
     req.params.id,
-    { ...req.body, name },
+    { ...req.body, name, onlineDevices },
     {
       new: true,
       runValidators: true,
