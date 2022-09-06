@@ -19,12 +19,6 @@ export default function UserInfoProvider({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) return;
-    updateUser(user._id, { online: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  useEffect(() => {
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         if (!user) return;
