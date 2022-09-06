@@ -73,7 +73,7 @@ export default function UserInfoProvider({ children }) {
   }, [navigate, error]);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:5000');
+    const ws = new WebSocket('wss://usmonbek-collection.herokuapp.com');
     ws.onopen = () => setSocket(ws);
     ws.onerror = () => toast.error('WebSocket error');
   }, []);
