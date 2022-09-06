@@ -20,21 +20,28 @@ export default function UserInfoProvider({ children }) {
 
   useEffect(() => {
     if (!user) return;
-    userService.updateUser(user._id, { online: true });
+    updateUser(user._id, { online: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
-    window.addEventListener('beforeunload', async () => {
-      if (socket) socket.close();
-      if (user)
-        await updateUser({
-          id: user._id,
-          data: {
-            online: false,
-            lastSeen: new Date(),
-          },
-        });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        if (!user) return;
+        return updateUser(user._id, { online: true });
+      }
+
+      if (document.visibilityState === 'hidden') {
+        if (socket) socket.close();
+        if (user)
+          updateUser({
+            id: user._id,
+            data: {
+              online: false,
+              lastSeen: new Date(),
+            },
+          });
+      }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -84,8 +91,6 @@ export default function UserInfoProvider({ children }) {
       lastSeen: new Date(),
     });
     await authService.logout();
-    socket.close();
-    setSocket(null);
     setUser(null);
     navigate('/');
   };
