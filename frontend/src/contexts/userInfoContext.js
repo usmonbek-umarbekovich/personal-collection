@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useLocalStorage from '../hooks/useLocalStorage';
@@ -18,25 +18,30 @@ export default function UserInfoProvider({ children }) {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        if (!user) return;
-        return updateUser(user._id, { online: true });
-      }
+  const handleVisibility = useCallback(() => {
+    if (document.visibilityState === 'visible') {
+      if (user) return userService.updateUser(user._id, { online: true });
+    }
 
-      if (document.visibilityState === 'hidden') {
-        if (socket) socket.close();
-        if (user)
-          updateUser({
-            id: user._id,
-            data: {
-              online: false,
-              lastSeen: new Date(),
-            },
-          });
-      }
-    });
+    if (document.visibilityState === 'hidden') {
+      if (socket) socket.close();
+      if (user)
+        userService.updateUser(user._id, {
+          online: false,
+          lastSeen: new Date(),
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    handleVisibility();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  useEffect(() => {
+    document.addEventListener('visibilitychange', handleVisibility);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
