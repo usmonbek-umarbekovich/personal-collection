@@ -18,7 +18,7 @@ import { FaBan, FaPen, FaCheck } from 'react-icons/fa';
 function UserProfile() {
   const [user, setUser] = useState();
   const { id } = useParams();
-  const { user: authenticatedUser } = useUserInfo();
+  const { user: authenticatedUser, socket } = useUserInfo();
 
   const [itemQuery, setItemQuery] = useState({ createdAt: -1, limit: 6 });
   const [colQuery, setColQuery] = useState({ createdAt: -1, limit: 6 });
@@ -43,6 +43,23 @@ function UserProfile() {
     if (!user) return;
     document.title = getFullName(user.name);
   }, [user]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.addEventListener(
+      'message',
+      e => {
+        const change = JSON.parse(e.data);
+        if (change.ns.coll !== 'users') return;
+        if (change.operationType !== 'update') return;
+
+        const { updatedFields } = change.updateDescription;
+        setUser(prevUser => ({ ...prevUser, ...updatedFields }));
+      },
+      { once: true }
+    );
+  }, [socket]);
 
   const blockOrUnblockUser = id => {
     userService

@@ -40,7 +40,6 @@ export default function UserInfoProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
     handleVisibility();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
