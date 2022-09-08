@@ -18,18 +18,23 @@ export default function UserInfoProvider({ children }) {
 
   const navigate = useNavigate();
 
+  const handleWindowClose = useCallback(() => {
+    if (socket) socket.close();
+    if (user)
+      userService.updateUser(user._id, {
+        online: false,
+        lastSeen: new Date(),
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleVisibility = useCallback(() => {
     if (document.visibilityState === 'visible') {
       if (user) return userService.updateUser(user._id, { online: true });
     }
 
     if (document.visibilityState === 'hidden') {
-      if (socket) socket.close();
-      if (user)
-        userService.updateUser(user._id, {
-          online: false,
-          lastSeen: new Date(),
-        });
+      handleWindowClose();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -41,7 +46,12 @@ export default function UserInfoProvider({ children }) {
   }, [user]);
 
   useEffect(() => {
+    const ws = new WebSocket('wss://usmonbek-collection.herokuapp.com');
+    ws.onopen = () => setSocket(ws);
+    ws.onerror = () => toast.error('WebSocket error');
+
     document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('beforeunload', handleWindowClose);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -77,12 +87,6 @@ export default function UserInfoProvider({ children }) {
     if (error) toast.error(error);
     return () => setError('');
   }, [navigate, error]);
-
-  useEffect(() => {
-    const ws = new WebSocket('wss://usmonbek-collection.herokuapp.com');
-    ws.onopen = () => setSocket(ws);
-    ws.onerror = () => toast.error('WebSocket error');
-  }, []);
 
   const logoutUser = async () => {
     await userService.updateUser(user._id, {
