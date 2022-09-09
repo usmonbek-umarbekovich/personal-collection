@@ -47,6 +47,8 @@ function UserProfile() {
   useEffect(() => {
     if (!socket) return;
 
+    const controller = new AbortController();
+
     socket.addEventListener(
       'message',
       e => {
@@ -55,10 +57,19 @@ function UserProfile() {
         if (change.operationType !== 'update') return;
 
         const { updatedFields } = change.updateDescription;
-        setUser(prevUser => ({ ...prevUser, ...updatedFields }));
+        if (updatedFields.onlineDevices == null) return;
+
+        const prevLength = user ? user.onlineDevices.length : 0;
+        const currLength = updatedFields.onlineDevices.length;
+        if (prevLength === 0 || currLength === 0) {
+          setUser(prevUser => ({ ...prevUser, ...updatedFields }));
+        }
       },
-      { once: true }
+      { signal: controller.signal }
     );
+
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   const blockOrUnblockUser = id => {

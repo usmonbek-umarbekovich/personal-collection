@@ -64,8 +64,8 @@ export default function UserInfoProvider({ children }) {
       e => {
         if (!user) return;
         const change = JSON.parse(e.data);
+        // console.log(change);
         if (!(change.ns.coll === 'users')) return;
-
         const userId = change.documentKey._id;
         if (change.operationType === 'update') {
           const { updatedFields } = change.updateDescription;
