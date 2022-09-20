@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const PREFIX = 'personal-collection.';
+const PREFIX = 'personal-collection';
 
 function getSavedValue(key, initialValue) {
   const parsedValue = JSON.parse(localStorage.getItem(key));
