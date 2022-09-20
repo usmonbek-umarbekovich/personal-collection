@@ -1,4 +1,4 @@
-import { timeDiff, truncate } from '../helpers';
+import { handleLastSeen, truncate } from '../helpers';
 import AuthorInfo from './AuthorInfo';
 import Stack from 'react-bootstrap/Stack';
 import Badge from 'react-bootstrap/Badge';
@@ -15,7 +15,7 @@ function Users({ data = [], lastDataElement = null }) {
             picSize="md"
             weight="bolder"
             user={user}
-            description={timeDiff(user.lastSeen, 'user', 'long')}
+            description={handleLastSeen(user)}
           />
           {user.bio && (
             <p className="fs-5 lh-sm text-break">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getFullName, timeDiff } from '../helpers';
+import { getFullName, handleLastSeen } from '../helpers';
 import userService from '../services/userService';
 import { useUserInfo } from '../contexts/userInfoContext';
 import Items from '../components/Items';
@@ -80,12 +80,6 @@ function UserProfile() {
       );
   };
 
-  const handleLastSeen = () => {
-    if (!user.active) return 'Last seen a long time ago';
-    if (user.onlineDevices.length > 0) return 'Online';
-    return timeDiff(user.lastSeen, 'user', 'long');
-  };
-
   if (!user) return null;
 
   return (
@@ -107,7 +101,7 @@ function UserProfile() {
                   direction="vertical"
                   user={user}
                   linkDisabled={true}
-                  description={handleLastSeen()}
+                  description={handleLastSeen(user)}
                 />
                 {user.bio && <p className="mt-3 fs-5 text-muted">{user.bio}</p>}
               </div>

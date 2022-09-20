@@ -75,4 +75,10 @@ const timeDiff = (time, type, dateStyle = 'short', noPrefix = false) => {
   return result[0].toUpperCase() + result.slice(1);
 };
 
-export { getFullName, capitalize, truncate, timeDiff };
+const handleLastSeen = user => {
+  if (!user.active) return 'Last seen a long time ago';
+  if (user.onlineDevices.length > 0) return 'Online';
+  return timeDiff(user.lastSeen, 'user', 'long');
+};
+
+export { getFullName, capitalize, truncate, timeDiff, handleLastSeen };
