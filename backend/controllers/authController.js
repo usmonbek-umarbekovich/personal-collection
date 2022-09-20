@@ -25,7 +25,9 @@ const signup = (req, res, next) => {
 
     req.login(user, err => {
       if (err) next(err);
-      res.json(user);
+      res
+        .status(200)
+        .json({ ...user._doc, expires: req.session.cookie.expires });
     });
   });
 };
@@ -52,10 +54,12 @@ const login = (req, res, next) => {
 
       req.login(user, err => {
         if (err) next(err);
-        res.json(user);
+        res
+          .status(200)
+          .json({ ...user._doc, expires: req.session.cookie.expires });
       });
     })
-  )(req, res, () => res.json(req.user));
+  )(req, res);
 };
 
 /**

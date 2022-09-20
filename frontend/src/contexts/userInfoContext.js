@@ -37,7 +37,7 @@ export default function UserInfoProvider({ children }) {
       handleWindowClose();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     handleVisibility();
@@ -62,17 +62,25 @@ export default function UserInfoProvider({ children }) {
     socket.addEventListener(
       'message',
       e => {
-        if (!user) return;
         const change = JSON.parse(e.data);
-        // console.log(change);
-        if (!(change.ns.coll === 'users')) return;
-        const userId = change.documentKey._id;
-        if (change.operationType === 'update') {
-          const { updatedFields } = change.updateDescription;
-          if (updatedFields.active === false && userId === user._id) {
-            toast.error('You have been blocked');
-            logoutUser();
-          }
+        if (
+          !user ||
+          change.documentKey._id !== user._id ||
+          change.operationType !== 'update'
+        )
+          return;
+
+        const { updatedFields } = change.updateDescription;
+        if (change.ns.coll === 'sessions' && updatedFields.expires != null) {
+          return setUser(prevUser => ({
+            ...prevUser,
+            expires: updatedFields.expires,
+          }));
+        }
+
+        if (change.ns.coll === 'users' && updatedFields.active === false) {
+          toast.error('You have been blocked');
+          return logoutUser();
         }
       },
       { signal: controller.signal }
