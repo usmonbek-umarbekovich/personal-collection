@@ -43,7 +43,7 @@ function Navigation() {
         fixed="top"
         bg="warning"
         variant="light"
-        expand="md"
+        expand="lg"
         expanded={expanded}
         onSelect={handleNavbarSelect}
         className="py-3 px-2 border-bottom border-1 border-dark">
