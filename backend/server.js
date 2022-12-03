@@ -55,16 +55,16 @@ app.use('/api/collections', require('./routes/collectionRoutes'));
 app.use('/api/items', require('./routes/itemRoutes'));
 app.get('/api/search', require('./controllers/searchController'));
 
-// // use static files [production]
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(express.static(path.join(__dirname, '../frontend/build')));
+// use static files [production]
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-//   app.get('*', (req, res) =>
-//     res.sendFile(
-//       path.resolve(__dirname, '../', 'frontend', 'build', 'index.html')
-//     )
-//   );
-// }
+  app.get('*', (req, res) =>
+    res.sendFile(
+      path.resolve(__dirname, '../', 'frontend', 'build', 'index.html')
+    )
+  );
+}
 
 app.use(require('./middlewares/errorHandler'));
 

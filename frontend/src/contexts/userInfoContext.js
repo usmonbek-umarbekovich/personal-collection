@@ -107,6 +107,7 @@ export default function UserInfoProvider({ children }) {
 
   const loginUser = async data => {
     const response = await authService.login(data);
+    console.log(response);
     parseData(response);
   };
 

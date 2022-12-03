@@ -54,7 +54,6 @@ const login = (req, res, next) => {
 
       req.login(user, err => {
         if (err) next(err);
-        console.log('User:', user);
         res
           .status(200)
           .json({ ...user._doc, expires: req.session.cookie.expires });
