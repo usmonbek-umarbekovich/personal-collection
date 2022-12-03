@@ -45,7 +45,7 @@ export default function UserInfoProvider({ children }) {
   }, [user]);
 
   useEffect(() => {
-    const ws = new WebSocket('wss://usmonbek-collection.herokuapp.com');
+    const ws = new WebSocket(`wss://${window.location.host}`);
     ws.onopen = () => setSocket(ws);
     ws.onerror = () => toast.error('WebSocket error');
 
