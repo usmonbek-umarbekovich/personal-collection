@@ -107,7 +107,6 @@ export default function UserInfoProvider({ children }) {
 
   const loginUser = async data => {
     const response = await authService.login(data);
-    console.log(response);
     parseData(response);
   };
 
@@ -122,7 +121,7 @@ export default function UserInfoProvider({ children }) {
   };
 
   function parseData(response) {
-    if (response.statusText === 'OK') setUser(response.data);
+    if (response.status === 200) setUser(response.data);
     else setError(response.data.message);
   }
 
