@@ -45,7 +45,7 @@ export default function UserInfoProvider({ children }) {
   }, [user]);
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://${window.location.host}`);
+    const ws = new WebSocket('wss://personal-collection-wrol.onrender.com');
     ws.onopen = () => setSocket(ws);
     ws.onerror = () => toast.error('WebSocket error');
 
