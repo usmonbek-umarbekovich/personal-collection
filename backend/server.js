@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
+const cors = require('cors');
 const path = require('path');
 const http = require('http');
 const MongoStore = require('connect-mongo');
@@ -23,6 +24,7 @@ const wss = new WebSocketServer({ server });
 const clientPromise = db(wss);
 
 // apply middlewares
+app.use(cors());
 app.use(express.json({ limit: process.env.REQUEST_LIMIT }));
 app.use(
   express.urlencoded({
