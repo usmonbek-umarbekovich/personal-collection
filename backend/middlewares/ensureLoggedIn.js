@@ -1,6 +1,5 @@
 const ensureLoggedIn = (req, res, next) => {
-  console.log('REQQQQ', req.user);
-  if (!req.user) {
+  if (!req.isAuthenticated()) {
     res.status(401);
     throw new Error('Unauthorized user');
   }
