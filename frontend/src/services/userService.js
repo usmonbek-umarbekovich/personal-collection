@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getById, getPartialData } from './helpers';
 
-const API_URL = '/api/users';
+const API_URL = 'https://personal-collection-wrol.onrender.com/api/users';
 
 const getSingleUser = getById(API_URL);
 const getUserItems = id => getPartialData(`${API_URL}/${id}/items`);

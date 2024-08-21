@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { makeAuthRequest } from './helpers';
 
-const API_URL = '/api/auth';
+const API_URL = 'https://personal-collection-wrol.onrender.com/api/auth';
 
 const register = makeAuthRequest(`${API_URL}/signup`);
 const login = makeAuthRequest(`${API_URL}/login`);

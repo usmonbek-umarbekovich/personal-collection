@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getById, getPartialData } from './helpers';
 
-const API_URL = '/api/collections';
+const API_URL = 'https://personal-collection-wrol.onrender.com/api/collections';
 
 const getSingleCollection = getById(API_URL);
 const getAllCollections = getPartialData(API_URL);
