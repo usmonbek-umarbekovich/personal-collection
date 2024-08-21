@@ -121,7 +121,7 @@ export default function UserInfoProvider({ children }) {
   };
 
   function parseData(response) {
-    if (response.statusText === 'OK') setUser(response.data);
+    if (response.status === 200) setUser(response.data);
     else setError(response.data.message);
   }
 
